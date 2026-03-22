@@ -8,20 +8,21 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using static MyPitch.ServiceProvider;
 
 namespace MyPitch.Controls;
 
 internal class CircleOfFifths : Control
 {
     private readonly String[] _noteGraduations = { "C", "G", "D", "A", "E", "B", "F#", "C#", "A♭ ", "E♭ ", "B♭ ", "F" };
-    private const double inner_radius_ratio = 0.75;
+    private const double INNER_RADIUS_RATIO = 0.75;
 
     private int? _mouseOnIndex = null;
     private int? _clickedIndex = null;
     public override void Render(DrawingContext context)
     {
         var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2;
-        var inner_radius = outer_radius * inner_radius_ratio;
+        var inner_radius = outer_radius * INNER_RADIUS_RATIO;
         Point center = new(Bounds.Width / 2, Bounds.Height / 2);
 
         for (var i = 0; i < 12; i++)
@@ -48,7 +49,6 @@ internal class CircleOfFifths : Control
         ctx.LineTo(p3);
         ctx.ArcTo(p4, new Size(inner_radius, inner_radius), 0, false, SweepDirection.CounterClockwise);
         ctx.EndFigure(true);
-
         //draw segment
         context.DrawGeometry(_clickedIndex == index ? Brushes.Teal : Brushes.Transparent, new Pen(Brushes.Teal, 1), geo);
 
@@ -84,7 +84,6 @@ internal class CircleOfFifths : Control
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        Debug.WriteLine("triggering click event");
         HitTestSegment(e.GetCurrentPoint(this), true);
 
     }
@@ -104,7 +103,7 @@ internal class CircleOfFifths : Control
     {
         Point center = new(Bounds.Width / 2, Bounds.Height / 2);
         var outerRadius = Math.Min(Bounds.Width, Bounds.Height) / 2;
-        var innerRadius = outerRadius * inner_radius_ratio;
+        var innerRadius = outerRadius * INNER_RADIUS_RATIO;
         var p = point.Position;
         double dx = p.X - center.X;
         double dy = p.Y - center.Y;
@@ -115,16 +114,15 @@ internal class CircleOfFifths : Control
         double offsetAngle = angle + (15 * Math.PI / 180);
         if (offsetAngle >= 2 * Math.PI) offsetAngle -= 2 * Math.PI;
         int index = (int)(offsetAngle / (Math.PI / 6)) % 12;
-        if (click == false) 
+        if (click == false)
         {
             if (index == _mouseOnIndex) return;
             _mouseOnIndex = index;
         }
         else
         {
-
             _clickedIndex = index;
-            Debug.WriteLine("Setting click index");
+            AudioDriver.Play();
         }
         InvalidateVisual();
     }

@@ -2,6 +2,7 @@
 using Android.Content.PM;
 using Avalonia;
 using Avalonia.Android;
+using SilkAudioDriver;
 
 namespace MyPitch.Android;
 
@@ -15,6 +16,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 {
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
+        ServiceProvider.AudioDriver = new OpenAlAudioDriver();
         return base.CustomizeAppBuilder(builder)
             .WithInterFont();
     }
