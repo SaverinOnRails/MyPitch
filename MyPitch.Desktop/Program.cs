@@ -1,6 +1,6 @@
 ﻿using System;
+using System.IO;
 using Avalonia;
-using SilkAudioDriver;
 
 namespace MyPitch.Desktop;
 
@@ -12,10 +12,10 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        ServiceProvider.AudioDriver = new OpenAlAudioDriver();
+        ServiceProvider.AudioDriver = new OpenAlAudioDriver(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "default.sf2"));
         BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);
-        ServiceProvider.AudioDriver.Dispose();
+        if (ServiceProvider.AudioDriver is IDisposable d) d.Dispose();
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

@@ -24,6 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyPitch\MyPitch.csproj" />
-    <ProjectReference Include="..\SilkAudioDriver\SilkAudioDriver.csproj" />
+    <ProjectReference Include="..\Synthesizer\Synthesizer.csproj" />
   </ItemGroup>
 </Project>
