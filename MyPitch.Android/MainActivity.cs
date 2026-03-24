@@ -6,7 +6,7 @@ using Avalonia.Android;
 using Java.Nio.FileNio;
 using System.IO;
 
-namespace MyPitch.Android;
+namespace MyPitch.Droid;
 
 [Activity(
     Label = "MyPitch.Android",
