@@ -10,4 +10,5 @@ const dotnetRuntime = await dotnet
 
 const config = dotnetRuntime.getConfig();
 
+
 await dotnetRuntime.runMain(config.mainAssemblyName, [globalThis.location.href]);

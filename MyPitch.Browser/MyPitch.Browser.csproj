@@ -13,4 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="..\MyPitch\MyPitch.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Soundfonts\" />
+  </ItemGroup>
 </Project>
