@@ -3,8 +3,6 @@ using Synthesizer;
 using System;
 using System.IO;
 using System.Net.Http;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MyPitch.Browser;
@@ -32,7 +30,6 @@ public class WebAudioDriver : IAudioDriver
        // _inner.NoteOffAll(false);
     }
 
-    // WebAudioDriver.cs
     public unsafe nint WriteToSink()
     {
         _inner.RenderInterleaved(_buffer);
@@ -42,7 +39,6 @@ public class WebAudioDriver : IAudioDriver
            // Interop.PostAudio((nint)p, _buffer.Length);
         }
     }
-
 
     public void Stop()
     {
