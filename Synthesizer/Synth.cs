@@ -10,7 +10,9 @@ public interface IAudioDriver
 {
     void Stop();
 
-    void Play();
+    void Play(int note);
+
+    void Release();
 }
 
 public static class Helper

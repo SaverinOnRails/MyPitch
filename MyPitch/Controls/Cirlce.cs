@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using MyPitch.Models.MusicTheory;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,8 +15,12 @@ namespace MyPitch.Controls;
 
 internal class CircleOfFifths : Control
 {
-    private readonly String[] _noteGraduations = { "C", "G", "D", "A", "E", "B", "F#", "C#", "A♭ ", "E♭ ", "B♭ ", "F" };
+    private readonly String[] _noteGraduations = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6 ", "♭3 ", "♭7 ", "4" };
+
+
     private const double INNER_RADIUS_RATIO = 0.75;
+
+    private Models.MusicTheory.Key _tonic = Models.MusicTheory.Key.C;
 
     private int? _mouseOnIndex = null;
     private int? _clickedIndex = null;
@@ -51,7 +56,6 @@ internal class CircleOfFifths : Control
         ctx.EndFigure(true);
         //draw segment
         context.DrawGeometry(_clickedIndex == index ? Brushes.Teal : Brushes.Transparent, new Pen(Brushes.Teal, 1), geo);
-
         //For Hover
         if (_mouseOnIndex == index)
         {
@@ -90,6 +94,7 @@ internal class CircleOfFifths : Control
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
+        AudioDriver!.Release();
         _clickedIndex = null;
         InvalidateVisual();
     }
@@ -122,7 +127,8 @@ internal class CircleOfFifths : Control
         else
         {
             _clickedIndex = index;
-            AudioDriver.Play();
+            var note = MusicTheory.ToMidiNote(MusicTheory.NoteAtDegree(_tonic, index + 1, true));
+            AudioDriver.Play(note);
         }
         InvalidateVisual();
     }
@@ -135,3 +141,4 @@ internal class CircleOfFifths : Control
         );
     }
 }
+

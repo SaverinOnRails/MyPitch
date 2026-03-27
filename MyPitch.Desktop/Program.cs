@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Avalonia;
+using System;
 using System.IO;
-using Avalonia;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace MyPitch.Desktop;
 
@@ -12,10 +14,32 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        ServiceProvider.AudioDriver = new OpenAlAudioDriver(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "default.sf2"));
+        NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), DllImportResolver);
+        ServiceProvider.AudioDriver = new FluidAudioDriver(Path.Join(AppContext.BaseDirectory, "default.sf2"));
         BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);
         if (ServiceProvider.AudioDriver is IDisposable d) d.Dispose();
+    }
+
+    private static nint DllImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+    {
+        if (libraryName == "fluidsynth")
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                return NativeLibrary.Load("libfluidsynth-3.dll");
+
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                return NativeLibrary.Load("libfluidsynth.so.3");
+
+            }
+            else return nint.Zero;
+        }
+
+        // Otherwise, fallback to default import resolver.
+        return nint.Zero;
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
