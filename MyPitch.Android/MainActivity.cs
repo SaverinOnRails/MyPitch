@@ -4,7 +4,10 @@ using Android.Content.Res;
 using Avalonia;
 using Avalonia.Android;
 using Java.Nio.FileNio;
+using System;
 using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace MyPitch.Droid;
 
@@ -31,5 +34,5 @@ public class MainActivity : AvaloniaMainActivity<App>
         return base.CustomizeAppBuilder(builder)
             .WithInterFont();
     }
-   
+  
 }

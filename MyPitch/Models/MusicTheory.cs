@@ -25,12 +25,16 @@ internal static class MusicTheory
         return _chromaticScale[noteIndex];
     }
 
-    public static int ToMidiNote(string key, int octave = 4)
+    public static int ToMidiNote(string tonic, string note, int octave = 4)
     {
         int baseMidiC0 = 12;
-        int semitoneOffset = Array.IndexOf(_chromaticScale, key.ToString());
-        int midiNumber = baseMidiC0 + semitoneOffset + (octave * 12);
-        return midiNumber;
+        int tonicIndex = Array.IndexOf(_chromaticScale, tonic);
+        int noteIndex = Array.IndexOf(_chromaticScale, note);
+        int semitoneOffset = noteIndex - tonicIndex;
+        if (semitoneOffset < 0)
+            semitoneOffset += 12;
+        int tonicMidi = baseMidiC0 + tonicIndex + (octave * 12);
+        return tonicMidi + semitoneOffset;
     }
 }
 

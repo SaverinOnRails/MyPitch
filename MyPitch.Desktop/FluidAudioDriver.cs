@@ -35,6 +35,7 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null
+            _synth.Dispose();
             disposedValue = true;
         }
     }

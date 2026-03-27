@@ -20,7 +20,7 @@ internal class CircleOfFifths : Control
 
     private const double INNER_RADIUS_RATIO = 0.75;
 
-    private Models.MusicTheory.Key _tonic = Models.MusicTheory.Key.C;
+    private Models.MusicTheory.Key _tonic = Models.MusicTheory.Key.Gflat;
 
     private int? _mouseOnIndex = null;
     private int? _clickedIndex = null;
@@ -127,7 +127,7 @@ internal class CircleOfFifths : Control
         else
         {
             _clickedIndex = index;
-            var note = MusicTheory.ToMidiNote(MusicTheory.NoteAtDegree(_tonic, index + 1, true));
+            var note = MusicTheory.ToMidiNote(_tonic.ToString(), MusicTheory.NoteAtDegree(_tonic, index + 1, true));
             AudioDriver.Play(note);
         }
         InvalidateVisual();

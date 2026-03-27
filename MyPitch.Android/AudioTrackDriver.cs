@@ -19,7 +19,6 @@ internal class AudioTrackDriver : IAudioDriver
     public static int SAMPLE_RATE = 44100;
     private MeltySynth.Synthesizer _inner;
     private AudioTrack _audioTrack;
-    object mutex = new object();
 
     private float[] _interlaced;
     public AudioTrackDriver(string soundFont)
@@ -39,48 +38,36 @@ internal class AudioTrackDriver : IAudioDriver
             .SetSampleRate(SAMPLE_RATE)
             .SetChannelMask(ChannelOut.Stereo)
             .Build()!;
-        int blocksize = 1024;
+        int blocksize = 512;
         Debug.WriteLine($"Min buffer size of {minBufferSize}");
         _audioTrack = new AudioTrack.Builder()
             .SetAudioAttributes(audioAttributes)
             .SetAudioFormat(audioFormat)
             .SetTransferMode(AudioTrackMode.Stream)
-            .SetBufferSizeInBytes(minBufferSize * 4)
+            .SetBufferSizeInBytes(blocksize)
             .Build();
         _interlaced = new float[blocksize * 2];
         _audioTrack.Play();
         Task.Factory.StartNew(WriteToSink, TaskCreationOptions.LongRunning);
-
     }
-
-    public void Play()
+    public void Play(int note)
     {
-        Task.Run(async () =>
-        {
-            lock (mutex)
-            {
-                _inner.NoteOn(0, 60, 100);
-            }
-            await Task.Delay(1500);
-            lock (mutex)
-            {
-                _inner.NoteOffAll(false);
-            }
-        });
+        _inner.NoteOn(0, note, 100);
     }
     public void WriteToSink()
     {
         while (true)
         {
-            lock (mutex)
-            {
-                _inner.RenderInterleaved(_interlaced);
-            }
+            _inner.RenderInterleaved(_interlaced);
             _audioTrack.Write(_interlaced, 0, _interlaced.Length, WriteMode.Blocking);
         }
     }
     public void Stop()
     {
 
+    }
+    public void Release()
+    {
+        _inner.NoteOffAll(false);
     }
 }

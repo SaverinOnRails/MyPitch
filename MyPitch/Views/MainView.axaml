@@ -14,7 +14,6 @@
 		<vm:MainViewModel />
 	</Design.DataContext>
 	<Grid RowDefinitions="*" x:Name="GradientGrid">
-
 		<controls:CircleOfFifths  Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"/>
 	</Grid>
 </UserControl>
