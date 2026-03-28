@@ -1,23 +1,15 @@
 ﻿using Avalonia;
 using Avalonia.Browser;
-using MyPitch;
-using MyPitch.Browser;
-using System;
-using System.Net.Http;
 using System.Runtime.InteropServices.JavaScript;
-using System.Runtime.Versioning;
 using System.Threading.Tasks;
 namespace MyPitch.Browser;
+
 internal sealed partial class Program
 {
     private static async Task Main(string[] args)
     {
-        await JSHost.ImportAsync("Interop", "../js/WebAudio/WebAudio.js");
-        var http = new HttpClient
-        {
-            BaseAddress = new Uri(Interop.BaseHref())
-        };
-        ServiceProvider.AudioDriver = await WebAudioDriver.CreateAsync(http);
+        await JSHost.ImportAsync("Interop", "../js/synth.js");
+        ServiceProvider.AudioDriver = new WebAudioDriver();
         await BuildAvaloniaApp()
             .WithInterFont()
             .StartBrowserAppAsync("out");
@@ -28,21 +20,10 @@ internal sealed partial class Program
 
 internal static partial class Interop
 {
-    [JSImport("baseHref","Interop")]
-    public static partial string BaseHref();
+    [JSImport("startSynth", "Interop")]
+    public static partial void StartSynth();
 
-    [JSImport("startAudioServer", "Interop")]
-    public static partial void StartAudioServer();
-
-    [JSImport("postAudioData", "Interop")]
-    public static partial void PostAudio(
-        nint buffer, int length
-    );
-
-    [JSExport]
-    public static nint WriteToSink()
-    {
-        return ((WebAudioDriver)ServiceProvider.AudioDriver).WriteToSink();
-    }
+    [JSImport("noteOn", "Interop")]
+    public static partial void NoteOn(int channel, int note);
 }
 

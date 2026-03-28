@@ -1,11 +1,6 @@
-﻿using MeltySynth;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+﻿namespace Synthesizer;
 
-namespace Synthesizer;
-
+//TODO move this to main avalonia project
 public interface IAudioDriver
 {
 

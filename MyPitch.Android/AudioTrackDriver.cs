@@ -52,7 +52,7 @@ internal class AudioTrackDriver : IAudioDriver
     }
     public void Play(int note)
     {
-        _inner.NoteOn(0, note, 100);
+        _inner.NoteOn(0, note, 127);
     }
     public void WriteToSink()
     {
