@@ -6,6 +6,6 @@ public interface IAudioDriver
 
     void Play(int note);
 
-    void Release();
+    void Release(int note);
 }
 

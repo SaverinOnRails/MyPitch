@@ -17,13 +17,13 @@ namespace MyPitch.Droid;
 internal class AudioTrackDriver : IAudioDriver
 {
     public static int SAMPLE_RATE = 44100;
-    private MeltySynth.Synthesizer _inner;
+    private MeltySynth.Synthesizer _synth;
     private AudioTrack _audioTrack;
 
     private float[] _interlaced;
     public AudioTrackDriver(string soundFont)
     {
-        _inner = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
+        _synth = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
         var minBufferSize = AudioTrack.GetMinBufferSize(
              SAMPLE_RATE,
              ChannelOut.Stereo,
@@ -52,13 +52,13 @@ internal class AudioTrackDriver : IAudioDriver
     }
     public void Play(int note)
     {
-        _inner.NoteOn(0, note, 127);
+        _synth.NoteOn(0, note, 127);
     }
     public void WriteToSink()
     {
         while (true)
         {
-            _inner.RenderInterleaved(_interlaced);
+            _synth.RenderInterleaved(_interlaced);
             _audioTrack.Write(_interlaced, 0, _interlaced.Length, WriteMode.Blocking);
         }
     }
@@ -66,8 +66,8 @@ internal class AudioTrackDriver : IAudioDriver
     {
 
     }
-    public void Release()
+    public void Release(int note)
     {
-        _inner.NoteOffAll(false);
+        _synth.NoteOff(0, note);
     }
 }

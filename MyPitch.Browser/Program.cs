@@ -25,5 +25,8 @@ internal static partial class Interop
 
     [JSImport("noteOn", "Interop")]
     public static partial void NoteOn(int channel, int note);
+
+    [JSImport("noteOff", "Interop")]
+    public static partial void NoteOff(int channel, int note);
 }
 

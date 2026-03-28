@@ -7,6 +7,6 @@ namespace MyPitch;
 
 public static class ServiceProvider
 {
-    public static IAudioDriver? AudioDriver;
+    public static IAudioDriver AudioDriver;
 }
 

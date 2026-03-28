@@ -1,5 +1,6 @@
 ﻿var synth;
-var startedLoadingSynth
+var startedLoadingSynth;
+var synthReady = false;
 export function startSynth() {
     //hack for browser autoplay rules
     document.body.onclick = function () {
@@ -21,6 +22,7 @@ async function loadSynth() {
     var sfontBuffer = await loadArrayBuffer("/SoundFonts/default.sf2");
     synth.loadSFont(sfontBuffer).then(function () {
         //  synth.midiNoteOn(0, 60, 127)
+        synthReady = true;
     })
 }
 async function loadArrayBuffer(url) {
@@ -34,6 +36,10 @@ async function loadArrayBuffer(url) {
 export function noteOn(channel, note) {
     synth.midiNoteOn(channel, note, 127);
 }
-export function NoteOff(channel, note) {
-    //ignore for now
+export function noteOff(channel, note) {
+    if (!synthReady) { synthNotReady(); return; }
+    synth.midiNoteOff(channel, note);
+}
+function synthNotReady() {
+    alert("Browser Synth is not ready yet, Please try again.");
 }

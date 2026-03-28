@@ -54,8 +54,8 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public void Release()
+    public void Release(int note)
     {
-        _synth.AllNotesOff(0);
+        _synth.NoteOff(0, note);
     }
 }

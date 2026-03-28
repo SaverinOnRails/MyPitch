@@ -11,12 +11,11 @@ public class WebAudioDriver : IAudioDriver
     }
     public void Play(int note)
     {
-        //  throw new NotImplementedException();
         Interop.NoteOn(0, note);
     }
 
-    public void Release()
+    public void Release(int note)
     {
-        //throw new NotImplementedException();
+        Interop.NoteOff(0,note);
     }
 }

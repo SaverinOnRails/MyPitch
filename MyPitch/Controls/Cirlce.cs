@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using static MyPitch.ServiceProvider;
 
@@ -17,45 +18,73 @@ internal class CircleOfFifths : Control
 {
     private readonly String[] _noteGraduations = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6 ", "♭3 ", "♭7 ", "4" };
 
-
-    private const double INNER_RADIUS_RATIO = 0.75;
-
-    private Models.MusicTheory.Key _tonic = Models.MusicTheory.Key.Gflat;
+    private const double FIRST_INNER_RADIUS_RATIO = 0.75;
+    private const double SECOND_INNER_RADIUS_RATIO = 0.65;
+    private const double THIRD_INNER_RADIUS_RATIO = 0.3;
+    private Typeface _notoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
+    private Models.MusicTheory.Key _tonic = Models.MusicTheory.Key.A;
 
     private int? _mouseOnIndex = null;
     private int? _clickedIndex = null;
     public override void Render(DrawingContext context)
     {
         var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2;
-        var inner_radius = outer_radius * INNER_RADIUS_RATIO;
+        var first_inner_radius = outer_radius * FIRST_INNER_RADIUS_RATIO;
+        var second_inner_radius = outer_radius * SECOND_INNER_RADIUS_RATIO;
+        var third_inner_radius = outer_radius * THIRD_INNER_RADIUS_RATIO;
         Point center = new(Bounds.Width / 2, Bounds.Height / 2);
 
         for (var i = 0; i < 12; i++)
         {
             var angle = ((i * 30 + 0) * Math.PI / 180) - (15 * Math.PI / 180); //angle to the vertical
-            DrawSegment(i, angle, outer_radius, inner_radius, center, context);
+            DrawSegment(i, angle, outer_radius, first_inner_radius, second_inner_radius, center, context);
         }
-
+        context.DrawEllipse(Brushes.Transparent, new Pen(Brushes.Teal), center, third_inner_radius, third_inner_radius);
+        string tonicString = _tonic.ToString();
+        string tonicText = tonicString.Length > 1 ? tonicString[0] + "♭" : tonicString;
+        var formattedText = new FormattedText(tonicText.Trim(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, third_inner_radius), Brushes.Teal);
+        var textOrigin = new Point(center.X - formattedText.Width / 2, center.Y - formattedText.Height / 2);
+        context.DrawText(formattedText, textOrigin);
         base.Render(context);
     }
-    private void DrawSegment(int index, double angle, double outer_radius, double inner_radius, Point center, DrawingContext context)
+    private void DrawSegment(int index, double angle, double outer_radius, double first_inner_radius, double second_inner_radius, Point center, DrawingContext context)
     {
         var geo = new StreamGeometry();
         var end_angle = angle + (Math.PI / 6);
         using var ctx = geo.Open();
         //four points on a segment
         var p1 = PointOnCircle(center, angle, outer_radius);
-        var p2 = PointOnCircle(center, end_angle, outer_radius);
-        var p3 = PointOnCircle(center, end_angle, inner_radius);
-        var p4 = PointOnCircle(center, angle, inner_radius);
-
+        var p2 = PointOnCircle(center, end_angle, outer_radius);    
+        var p3 = PointOnCircle(center, end_angle, first_inner_radius);
+        var p4 = PointOnCircle(center, angle, first_inner_radius);
         ctx.BeginFigure(p1, true);
         ctx.ArcTo(p2, new Size(outer_radius, outer_radius), 0, false, SweepDirection.Clockwise);
         ctx.LineTo(p3);
-        ctx.ArcTo(p4, new Size(inner_radius, inner_radius), 0, false, SweepDirection.CounterClockwise);
+        ctx.ArcTo(p4, new Size(first_inner_radius, first_inner_radius), 0, false, SweepDirection.CounterClockwise);
         ctx.EndFigure(true);
         //draw segment
         context.DrawGeometry(_clickedIndex == index ? Brushes.Teal : Brushes.Transparent, new Pen(Brushes.Teal, 1), geo);
+
+        //draw segment foot
+        var segmentFootGeo = new StreamGeometry();
+        var p5 = PointOnCircle(center, end_angle, second_inner_radius);
+        var p6 = PointOnCircle(center, angle, second_inner_radius);
+        using var ctx3 = segmentFootGeo.Open();
+        ctx3.BeginFigure(p3, true);
+        ctx3.LineTo(p5);
+        ctx3.ArcTo(p6, new Size(second_inner_radius, second_inner_radius), 0, false, SweepDirection.CounterClockwise);
+        ctx3.LineTo(p4);
+        ctx3.EndFigure(false);
+        context.DrawGeometry(Brushes.Transparent, new Pen(Brushes.Teal), segmentFootGeo);
+        double midRadius1 = (first_inner_radius + second_inner_radius) / 2;
+        double midAngle1 = angle + (Math.PI / 12);
+        var textPos1 = PointOnCircle(center, midAngle1, midRadius1);
+        //notes for degree
+        var noteAtDeg = MusicTheory.NoteAtDegree(_tonic, index + 1, true);
+        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), Brushes.Teal);
+        var textOrigin1 = new Point(textPos1.X - ft1.Width / 2, textPos1.Y - ft1.Height / 2);
+        context.DrawText(ft1, textOrigin1);
+
         //For Hover
         if (_mouseOnIndex == index)
         {
@@ -68,10 +97,11 @@ internal class CircleOfFifths : Control
             //draw arc
             context.DrawGeometry(Brushes.Transparent, new Pen(Brushes.Teal, 10), arcThicknessGeo);
         }
-        double midRadius = (outer_radius + inner_radius) / 2;
+
+        double midRadius = (outer_radius + first_inner_radius) / 2;
         double midAngle = angle + (Math.PI / 12);
         var textPos = PointOnCircle(center, midAngle, midRadius);
-        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans"), Math.Max(10, (outer_radius - inner_radius) / 2), new SolidColorBrush(_clickedIndex == index ? Colors.White : Colors.Teal));
+        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), new SolidColorBrush(_clickedIndex == index ? Colors.White : Colors.Teal));
         var textOrigin = new Point(textPos.X - ft.Width / 2, textPos.Y - ft.Height / 2);
         context.DrawText(ft, textOrigin);
     }
@@ -94,7 +124,12 @@ internal class CircleOfFifths : Control
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
-        AudioDriver!.Release();
+        if (_clickedIndex is not null)
+        {
+            var note = MusicTheory.ToMidiNote(_tonic.ToString(), MusicTheory.NoteAtDegree(_tonic, _clickedIndex.Value + 1, true));
+            AudioDriver!.Release(note);
+        }
+
         _clickedIndex = null;
         InvalidateVisual();
     }
@@ -108,7 +143,7 @@ internal class CircleOfFifths : Control
     {
         Point center = new(Bounds.Width / 2, Bounds.Height / 2);
         var outerRadius = Math.Min(Bounds.Width, Bounds.Height) / 2;
-        var innerRadius = outerRadius * INNER_RADIUS_RATIO;
+        var innerRadius = outerRadius * FIRST_INNER_RADIUS_RATIO;
         var p = point.Position;
         double dx = p.X - center.X;
         double dy = p.Y - center.Y;
