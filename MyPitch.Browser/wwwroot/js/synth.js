@@ -7,7 +7,6 @@ export function startSynth() {
         if (startedLoadingSynth) return;
         startedLoadingSynth = true;
         JSSynth.waitForReady().then(loadSynth);
-
     }
 }
 async function loadSynth() {
@@ -19,10 +18,16 @@ async function loadSynth() {
     var node = synth.createAudioNode(context, 8192); // 8192 is the frame count of buffer
     node.connect(context.destination);
 
-    var sfontBuffer = await loadArrayBuffer("/SoundFonts/default.sf2");
-    synth.loadSFont(sfontBuffer).then(function () {
+    var sfontBuffer1 = await loadArrayBuffer("/SoundFonts/default.sf2");
+    var sfontBuffer2 = await loadArrayBuffer("/SoundFonts/warm pad.sf2");
+
+    synth.loadSFont(sfontBuffer1).then(function (sf1) {
         //  synth.midiNoteOn(0, 60, 127)
-        synthReady = true;
+        synth.loadSFont(sfontBuffer2).then(function (sf2) {
+            synth.midiProgramSelect(0, sf1, 0, 0);
+            synth.midiProgramSelect(5, sf2, 0, 0);
+            synthReady = true;
+        })
     })
 }
 async function loadArrayBuffer(url) {
@@ -39,6 +44,10 @@ export function noteOn(channel, note) {
 export function noteOff(channel, note) {
     if (!synthReady) { synthNotReady(); return; }
     synth.midiNoteOff(channel, note);
+}
+export function allNotesOff(channel) {
+    if (!synthReady) { synthNotReady(); return; }
+    synth.midiAllNotesOff(channel);
 }
 function synthNotReady() {
     alert("Browser Synth is not ready yet, Please try again.");

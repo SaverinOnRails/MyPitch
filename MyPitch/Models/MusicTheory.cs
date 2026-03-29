@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-namespace MyPitch.Models.MusicTheory;
+namespace MyPitch.Models;
 
 internal static class MusicTheory
 {

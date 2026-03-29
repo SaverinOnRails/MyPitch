@@ -26,6 +26,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="default.sf2">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="libfluidsynth-3.dll">
 			<CopyToOutputDirectory Condition="$([MSBuild]::IsOSPlatform('Windows'))">PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -34,6 +37,9 @@
 		</None>
 		<None Update="sndfile.dll">
 			<CopyToOutputDirectory Condition="$([MSBuild]::IsOSPlatform('Windows'))">PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="warm pad.sf2">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 </Project>

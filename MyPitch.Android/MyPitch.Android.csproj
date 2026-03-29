@@ -28,4 +28,10 @@
 		<ProjectReference Include="..\MyPitch\MyPitch.csproj" />
 		<ProjectReference Include="..\Synthesizer\Synthesizer.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <AndroidAsset Update="Assets\warm pad.sf2">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </AndroidAsset>
+	</ItemGroup>
 </Project>

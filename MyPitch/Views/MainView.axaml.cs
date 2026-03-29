@@ -15,12 +15,12 @@ public partial class MainView : UserControl
     {
         var insetsmanager = TopLevel.GetTopLevel(this)?.InsetsManager;
         if (insetsmanager is not null && System.OperatingSystem.IsAndroid())
-        { 
+        {
             insetsmanager.DisplayEdgeToEdgePreference = true;
         }
         if (System.OperatingSystem.IsWindows())
         {
-            Background = Brushes.Transparent; //will fallback to mica
+           // Background = Brushes.Transparent; //will fallback to mica
         }
         base.OnAttachedToVisualTree(e);
     }

@@ -45,6 +45,15 @@ internal static class LibFluidSynth
     public static extern int fluid_synth_program_change(nint synth, int chan, int program);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int fluid_synth_program_select(
+     nint synth,   // fluid_synth_t* pointer
+     int channel,    // MIDI channel (0-15)
+     int sfont_id,   // SoundFont ID returned from sfload
+     int bank_num,   // Bank number (0 = melodic, 128 = percussion)
+     int preset_num  // Preset index
+ );
+
+    [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
     public static extern int fluid_synth_bank_select(nint synth, int chan, int bank);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
@@ -88,9 +97,7 @@ public class FluidSynth : IDisposable
     private nint _audioDriver;
     private bool _disposed;
 
-    public nint Synth => _synth;
-
-    public FluidSynth(string soundFont)
+    public FluidSynth(string soundFont, string droneFont)
     {
         _settings = LibFluidSynth.new_fluid_settings();
         if (_settings == nint.Zero)
@@ -122,9 +129,12 @@ public class FluidSynth : IDisposable
         _audioDriver = LibFluidSynth.new_fluid_audio_driver(_settings, _synth);
         if (_audioDriver == nint.Zero)
             throw new Exception("Failed to create LibFluidSynthaudio driver");
-        LoadSoundFont(soundFont);
+        var s1 = LoadSoundFont(soundFont);
+        var s2 = LoadSoundFont(droneFont);
+        LibFluidSynth.fluid_synth_program_select(_synth, 0, s1, 0, 0);
+        LibFluidSynth.fluid_synth_program_select(_synth, 5, s2, 0, 0); //channel 5 for drone
         SetGain(2f);
- //       ControlChange(0, 64, 127);
+        //       ControlChange(0, 64, 127);
     }
 
     public int LoadSoundFont(string path)

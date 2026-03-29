@@ -1,15 +1,24 @@
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:MyPitch"
-             x:Class="MyPitch.App"
-             RequestedThemeVariant="Dark">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:local="using:MyPitch"
+			 x:Class="MyPitch.App"
+			 RequestedThemeVariant="Dark">
+	<!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
+	<Application.DataTemplates>
+		<local:ViewLocator/>
+	</Application.DataTemplates>
 
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
+	<Application.Styles>
+		<FluentTheme />
+
+		<Style Selector="Button">
+			<Setter Property="Padding" Value="20,5"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderBrush">
+				<SolidColorBrush Color="#FFDE42"/>
+			</Setter>
+			<Setter Property="CornerRadius" Value="5"/>
+		</Style>
+	</Application.Styles>
 </Application>

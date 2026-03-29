@@ -1,6 +1,7 @@
 ﻿using Synthesizer;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
     private FluidSynth _synth;
     public FluidAudioDriver(string soundFont)
     {
-        _synth = new(soundFont);
+        _synth = new(soundFont, Path.Join(AppContext.BaseDirectory, "warm pad.sf2"));
     }
     public void Play(int note)
     {
@@ -57,5 +58,16 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
     public void Release(int note)
     {
         _synth.NoteOff(0, note);
+    }
+
+    public void PlayDrone(int note)
+    {
+        ReleaseDrone();
+        _synth.NoteOn(5, note, 100);
+    }
+
+    public void ReleaseDrone()
+    {
+        _synth.AllNotesOff(5);
     }
 }

@@ -9,10 +9,4 @@
   <ItemGroup>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="default.sf2">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

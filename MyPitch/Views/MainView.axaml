@@ -6,14 +6,17 @@
 			 xmlns:controls="using:MyPitch.Controls"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="MyPitch.Views.MainView"
-			 Background="#000804"
+			 Background="Black"
 			 x:DataType="vm:MainViewModel">
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
 		to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
-	<Grid RowDefinitions="*" x:Name="GradientGrid">
-		<controls:CircleOfFifths  Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"/>
+	<Grid RowDefinitions="*,Auto" x:Name="GradientGrid" Margin="10,0,0,0">
+		<controls:CircleOfFifths  Grid.Row="0"  Margin="10" />
+		<StackPanel Margin="0,10,0,10" Grid.Row="1">
+			<Button Content="{Binding PlayText}" HorizontalAlignment="Center" Command="{Binding TogglePlay}" />
+		</StackPanel>
 	</Grid>
 </UserControl>

@@ -14,8 +14,18 @@ public class WebAudioDriver : IAudioDriver
         Interop.NoteOn(0, note);
     }
 
+    public void PlayDrone(int note)
+    {
+        Interop.NoteOn(5, note);
+    }
+
     public void Release(int note)
     {
         Interop.NoteOff(0,note);
     }
+
+    public void ReleaseDrone()
+    {
+        Interop.AllNotesOff(5);
+      }
 }

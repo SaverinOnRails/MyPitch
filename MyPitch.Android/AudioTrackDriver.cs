@@ -18,12 +18,16 @@ internal class AudioTrackDriver : IAudioDriver
 {
     public static int SAMPLE_RATE = 44100;
     private MeltySynth.Synthesizer _synth;
+    private MeltySynth.Synthesizer _droneSynth;
+    private float[] _temp;
     private AudioTrack _audioTrack;
 
     private float[] _interlaced;
-    public AudioTrackDriver(string soundFont)
+    public AudioTrackDriver(string soundFont, string droneFont)
     {
         _synth = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
+        _droneSynth = new MeltySynth.Synthesizer(droneFont, SAMPLE_RATE);
+
         var minBufferSize = AudioTrack.GetMinBufferSize(
              SAMPLE_RATE,
              ChannelOut.Stereo,
@@ -47,6 +51,7 @@ internal class AudioTrackDriver : IAudioDriver
             .SetBufferSizeInBytes(blocksize)
             .Build();
         _interlaced = new float[blocksize * 2];
+        _temp = new float[blocksize * 2];
         _audioTrack.Play();
         Task.Factory.StartNew(WriteToSink, TaskCreationOptions.LongRunning);
     }
@@ -59,6 +64,11 @@ internal class AudioTrackDriver : IAudioDriver
         while (true)
         {
             _synth.RenderInterleaved(_interlaced);
+            _droneSynth.RenderInterleaved(_temp);
+            for (int i = 0; i < _interlaced.Length; i++)
+            {
+                _interlaced[i] += _temp[i];
+            }
             _audioTrack.Write(_interlaced, 0, _interlaced.Length, WriteMode.Blocking);
         }
     }
@@ -69,5 +79,16 @@ internal class AudioTrackDriver : IAudioDriver
     public void Release(int note)
     {
         _synth.NoteOff(0, note);
+    }
+
+    public void PlayDrone(int note)
+    {
+        ReleaseDrone();
+        _droneSynth.NoteOn(0, note, 100);
+    }
+
+    public void ReleaseDrone()
+    {
+        _droneSynth.NoteOffAll(false);
     }
 }

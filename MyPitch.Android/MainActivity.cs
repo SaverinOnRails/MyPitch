@@ -22,7 +22,7 @@ public class MainActivity : AvaloniaMainActivity<App>
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         var path = System.IO.Path.Combine(FilesDir!.AbsolutePath, "default.sf2");
-
+        var path2 = System.IO.Path.Combine(FilesDir!.AbsolutePath, "warm pad.sf2");
         if (!File.Exists(path))
         {
             var assets = Assets;
@@ -30,9 +30,16 @@ public class MainActivity : AvaloniaMainActivity<App>
             using var fileStream = File.Create(path);
             stream.CopyTo(fileStream);
         }
-        ServiceProvider.AudioDriver = new AudioTrackDriver(path);
+        if (!File.Exists(path2))
+        {
+            var assets = Assets;
+            using var stream = assets!.Open("warm pad.sf2");
+            using var fileStream = File.Create(path2);
+            stream.CopyTo(fileStream);
+        }
+        ServiceProvider.AudioDriver = new AudioTrackDriver(path,path2);
         return base.CustomizeAppBuilder(builder)
             .WithInterFont();
     }
-  
+
 }
