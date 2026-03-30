@@ -27,13 +27,24 @@ internal class CircleOfFifths : Control
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
 
     private Typeface _notoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
-    private Models.Key Tonic
+    public Models.Key Tonic
     {
         get => GetValue(TonicProperty);
-        set { SetValue(TonicProperty, value); InvalidateVisual(); }
+        set { SetValue(TonicProperty, value); }
     }
     private int? _mouseOnIndex = null;
     private int? _clickedIndex = null;
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        if (change.Property == TonicProperty)
+        {
+            Debug.WriteLine("Tonic changed");
+            InvalidateVisual();
+        }
+        base.OnPropertyChanged(change);
+    }
+
     public override void Render(DrawingContext context)
     {
         var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2;

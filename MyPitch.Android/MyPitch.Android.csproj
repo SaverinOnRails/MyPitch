@@ -26,7 +26,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\MyPitch\MyPitch.csproj" />
-		<ProjectReference Include="..\Synthesizer\Synthesizer.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

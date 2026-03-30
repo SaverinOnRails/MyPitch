@@ -3,7 +3,6 @@ using Android.Hardware.Lights;
 using Android.Icu.Util;
 using Android.Media;
 using MeltySynth;
-using Synthesizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -65,6 +64,8 @@ internal class AudioTrackDriver : IAudioDriver
         {
             _synth.RenderInterleaved(_interlaced);
             _droneSynth.RenderInterleaved(_temp);
+
+            //combine 
             for (int i = 0; i < _interlaced.Length; i++)
             {
                 _interlaced[i] += _temp[i];

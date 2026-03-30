@@ -22,8 +22,4 @@
 		</PackageReference>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Synthesizer\Synthesizer.csproj" />
-	</ItemGroup>
 </Project>
