@@ -20,8 +20,7 @@ public partial class MainViewModel : ViewModelBase
         set { SetProperty(ref _tonic, value); ServiceProvider.AudioDriver.ReleaseDrone(); IsPlaying = false; }
     }
 
-    [ObservableProperty]
-    public string _playText = "Play";
+
 
     public bool IsPlaying
     {
@@ -29,14 +28,7 @@ public partial class MainViewModel : ViewModelBase
         set
         {
             SetProperty(ref _isPlaying, value);
-            if (value)
-            {
-                PlayText = "Stop";
-            }
-            else
-            {
-                PlayText = "Play";
-            }
+
         }
     }
 

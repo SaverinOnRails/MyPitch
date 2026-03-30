@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using System;
+using System.Diagnostics;
 
 namespace MyPitch.Views;
 
@@ -20,7 +22,7 @@ public partial class MainView : UserControl
         }
         if (System.OperatingSystem.IsWindows())
         {
-           // Background = Brushes.Transparent; //will fallback to mica
+            // Background = Brushes.Transparent; //will fallback to mica
         }
         base.OnAttachedToVisualTree(e);
     }

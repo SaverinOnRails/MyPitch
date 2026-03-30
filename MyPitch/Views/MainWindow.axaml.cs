@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MyPitch.Views;
 
-public partial class MainWindow : Window
+public partial class MainWindow : ShadUI.Window
 {
     public MainWindow()
     {

@@ -19,10 +19,12 @@ internal class CircleOfFifths : Control
 {
     private readonly String[] _noteGraduations = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6 ", "♭3 ", "♭7 ", "4" };
 
+    private string[] _degreeColors = new string[] { "#00A933", "#79D513", "#FFE400", "#FFBE00", "#FF8000", "#FF3E00", "#FF0000", "#C2003D", "#810081", "#662B99", "#336699", "#198066" };
+
     private const double FIRST_INNER_RADIUS_RATIO = 0.75;
     private const double SECOND_INNER_RADIUS_RATIO = 0.65;
     private const double THIRD_INNER_RADIUS_RATIO = 0.2;
-    private readonly IBrush _accentBrush = new SolidColorBrush(Color.Parse("#FFDE42"));
+    private readonly IBrush _accentBrush = new SolidColorBrush(Color.Parse("#FAEB92"));
 
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
 
@@ -86,7 +88,7 @@ internal class CircleOfFifths : Control
         ctx.ArcTo(p4, new Size(first_inner_radius, first_inner_radius), 0, false, SweepDirection.CounterClockwise);
         ctx.EndFigure(true);
         //draw segment
-        context.DrawGeometry(_clickedIndex == index ? _accentBrush : Brushes.Transparent, new Pen(_accentBrush, 1), geo);
+        context.DrawGeometry(_clickedIndex == index ? new SolidColorBrush(Color.Parse(_degreeColors[index])) : Brushes.Transparent, new Pen(_accentBrush, 1), geo);
 
         //draw segment foot
         var segmentFootGeo = new StreamGeometry();
@@ -118,13 +120,13 @@ internal class CircleOfFifths : Control
             ctx2.ArcTo(p2, new Size(outer_radius, outer_radius), 0, false, SweepDirection.Clockwise);
             ctx2.EndFigure(false);
             //draw arc
-            context.DrawGeometry(Brushes.Transparent, new Pen(_accentBrush, 10), arcThicknessGeo);
+            context.DrawGeometry(Brushes.Transparent, new Pen(new SolidColorBrush(Color.Parse(_degreeColors[index])), 10), arcThicknessGeo);
         }
 
         double midRadius = (outer_radius + first_inner_radius) / 2;
         double midAngle = angle + (Math.PI / 12);
         var textPos = PointOnCircle(center, midAngle, midRadius);
-        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), new SolidColorBrush(_clickedIndex == index ? Colors.White : Colors.Teal));
+        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), new SolidColorBrush(_clickedIndex == index ? Colors.White : Color.Parse(_degreeColors[index])));
         var textOrigin = new Point(textPos.X - ft.Width / 2, textPos.Y - ft.Height / 2);
         context.DrawText(ft, textOrigin);
     }

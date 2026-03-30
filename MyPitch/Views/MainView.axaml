@@ -4,13 +4,16 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:MyPitch.ViewModels"
 			 xmlns:converters="using:MyPitch.Converters"
+			 xmlns:shadui="using:ShadUI"
 			 xmlns:controls="using:MyPitch.Controls"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="MyPitch.Views.MainView"
-			 Background="Black"
+			 Background="#0A0A0A"
 			 x:DataType="vm:MainViewModel">
+
 	<UserControl.Resources>
 		<converters:TonicDisplayConverter x:Key = "TonicDisplayConverter"/>
+		<FontFamily x:Key="NotoSans">avares://MyPitch/Assets/Fonts/#Noto Sans</FontFamily>
 	</UserControl.Resources>
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
@@ -19,15 +22,26 @@
 	</Design.DataContext>
 	<Grid RowDefinitions="*,Auto" x:Name="GradientGrid" Margin="10,0,0,0">
 		<controls:CircleOfFifths  Grid.Row="0"  Margin="10"  Tonic="{Binding Tonic}" />
-		<StackPanel Margin="0,10,0,10" Grid.Row="1">
-			<Button Content="{Binding PlayText}" HorizontalAlignment="Center" Command="{Binding TogglePlay}" />
-			<ComboBox ItemsSource="{Binding Tonics}" SelectedItem="{Binding Tonic}">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding Converter={StaticResource TonicDisplayConverter}}"/>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
-		</StackPanel>
+		<shadui:Card Margin="0,10,5,10" Grid.Row="1" MinWidth="200" MaxWidth="700" HorizontalAlignment="Stretch">
+			<shadui:Card.Header>
+				<StackPanel>
+					<shadui:CardTitle>Customize</shadui:CardTitle>
+				</StackPanel>
+			</shadui:Card.Header>
+			<StackPanel Spacing="16">
+				<ComboBox ItemsSource="{Binding Tonics}" SelectedItem="{Binding Tonic}" shadui:ControlAssist.Label="Select Tonic">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Converter={StaticResource TonicDisplayConverter}}" FontFamily="{StaticResource NotoSans}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+
+				<Button Content="Play" Command="{Binding TogglePlay}" Classes="Primary" IsVisible="{Binding !IsPlaying}">
+				
+				</Button>
+				<Button Content="Stop" Command="{Binding TogglePlay}" Classes="Secondary" IsVisible="{Binding IsPlaying}"/>
+			</StackPanel>
+		</shadui:Card>
 	</Grid>
 </UserControl>
