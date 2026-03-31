@@ -13,6 +13,9 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private string _greeting = "Welcome to Avalonia!";
 
+    [ObservableProperty]
+    private bool _wideLayout;
+
     private Key _tonic = Key.C;
     public Key Tonic
     {
@@ -20,7 +23,7 @@ public partial class MainViewModel : ViewModelBase
         set { SetProperty(ref _tonic, value); ServiceProvider.AudioDriver.ReleaseDrone(); IsPlaying = false; }
     }
 
-
+    public string[] GameModes => new string[] { "Freeplay", "Interactive", "Pocket Mode" };
 
     public bool IsPlaying
     {

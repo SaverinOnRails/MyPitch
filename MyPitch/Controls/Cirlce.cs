@@ -29,6 +29,7 @@ internal class CircleOfFifths : Control
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
 
     private Typeface _notoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
+
     public Models.Key Tonic
     {
         get => GetValue(TonicProperty);
@@ -106,7 +107,7 @@ internal class CircleOfFifths : Control
         var textPos1 = PointOnCircle(center, midAngle1, midRadius1);
         //notes for degree
         var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, index + 1, true);
-        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), _accentBrush);
+        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), new SolidColorBrush(Color.Parse(_degreeColors[index])));
         var textOrigin1 = new Point(textPos1.X - ft1.Width / 2, textPos1.Y - ft1.Height / 2);
         context.DrawText(ft1, textOrigin1);
 
@@ -202,3 +203,27 @@ internal class CircleOfFifths : Control
     }
 }
 
+public class CircleHaloEffect : Control
+{
+    public override void Render(DrawingContext context)
+    {
+
+        base.Render(context);
+        Point center = new(Bounds.Width / 2, Bounds.Height / 2);
+        var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2 + 1;
+        context.DrawEllipse(Brushes.Transparent, new Pen(Brushes.White, 1), center, outer_radius, outer_radius);
+    }
+
+    public CircleHaloEffect()
+    {
+        var blurEffect = new DropShadowEffect
+        {
+            OffsetX = 0,
+            OffsetY = 0,
+            BlurRadius = 20,
+            Color = Colors.White,
+            Opacity = 1
+        };
+        Effect = blurEffect;
+    }
+}
