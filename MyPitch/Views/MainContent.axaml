@@ -15,8 +15,8 @@
 		<FontFamily x:Key="NotoSans">avares://MyPitch/Assets/Fonts/#Noto Sans</FontFamily>
 	</UserControl.Resources>
 	<Grid Margin="10,0,0,0" Container.Name="main"   x:Name="LayoutMain">
-		<controls:CircleHaloEffect Margin="10" x:Name="CircleHaloEffect"/>
-		<controls:CircleOfFifths  Margin="10" Tonic="{Binding Tonic}" x:Name="Circle" />
+<!--		<controls:CircleHaloEffect Margin="10" x:Name="CircleHaloEffect"/>
+-->		<controls:CircleOfFifths  Margin="10" Tonic="{Binding Tonic}" x:Name="Circle" />
 		<shadui:Card Margin="0,10,5,10"  MaxWidth="700" HorizontalAlignment="Stretch" x:Name="Card">
 			<shadui:Card.Header>
 				<StackPanel>

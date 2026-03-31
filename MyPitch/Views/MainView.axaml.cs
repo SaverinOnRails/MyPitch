@@ -13,7 +13,6 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        //TODO: Layout hack, find a good fix
     }
 
 

@@ -20,7 +20,7 @@ public partial class MainContent : UserControl
         {
             Debug.WriteLine("Buidling wide layout");
             LayoutMain.ColumnDefinitions = new("*,Auto");
-            Grid.SetColumn(CircleHaloEffect, 0);
+           // Grid.SetColumn(CircleHaloEffect, 0);
             Grid.SetColumn(Circle, 0);
             Grid.SetColumn(Card, 1);
             Card.MinWidth = 400;
@@ -29,7 +29,7 @@ public partial class MainContent : UserControl
         {
             Debug.WriteLine("bUIDLING ANRROW LAYOUT");
             LayoutMain.RowDefinitions = new("*,Auto");
-            Grid.SetRow(CircleHaloEffect, 0);
+           // Grid.SetRow(CircleHaloEffect, 0);
             Grid.SetRow(Circle, 0);
             Grid.SetRow(Card, 1);
             Card.MinWidth = 250;
