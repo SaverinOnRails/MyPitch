@@ -18,7 +18,6 @@ public partial class MainContent : UserControl
         base.OnAttachedToLogicalTree(e);
         if (Layout == Layout.Wide)
         {
-            Debug.WriteLine("Buidling wide layout");
             LayoutMain.ColumnDefinitions = new("*,Auto");
            // Grid.SetColumn(CircleHaloEffect, 0);
             Grid.SetColumn(Circle, 0);
@@ -27,7 +26,6 @@ public partial class MainContent : UserControl
         }
         else
         {
-            Debug.WriteLine("bUIDLING ANRROW LAYOUT");
             LayoutMain.RowDefinitions = new("*,Auto");
            // Grid.SetRow(CircleHaloEffect, 0);
             Grid.SetRow(Circle, 0);

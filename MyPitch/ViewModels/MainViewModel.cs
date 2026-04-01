@@ -1,6 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MyPitch.Models;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -8,6 +12,7 @@ namespace MyPitch.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
+
     public bool _isPlaying = false;
 
     [ObservableProperty]
@@ -17,13 +22,45 @@ public partial class MainViewModel : ViewModelBase
     private bool _wideLayout;
 
     private Key _tonic = Key.C;
+    private bool _shouldSelectAllDegrees = true;
+
+    public bool ShouldSelectAllDegrees
+    {
+        get => _shouldSelectAllDegrees;
+        set
+        {
+            SetProperty(ref _shouldSelectAllDegrees, value);
+            foreach (var deg in Degrees)
+            {
+                deg.IsSelected = value;
+            }
+
+        }
+    }
+
+    public ObservableCollection<DegreeItem> Degrees { get; } =
+    [
+        new() { Label = "1" },
+        new() { Label = "♭2" },
+        new() { Label = "2" },
+        new() { Label = "♭3" },
+        new() { Label = "3" },
+        new() { Label = "4" },
+        new() { Label = "#4" },
+        new() { Label = "5" },
+        new() { Label = "♭6" },
+        new() { Label = "6" },
+        new() { Label = "♭7" },
+        new() { Label = "7" }
+    ];
     public Key Tonic
     {
+
         get => _tonic;
         set { SetProperty(ref _tonic, value); ServiceProvider.AudioDriver.ReleaseDrone(); IsPlaying = false; }
     }
 
-    public string[] GameModes => new string[] { "Freeplay", "Interactive", "Pocket Mode" };
+    public GameMode[] GameModes => new GameMode[] { GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode };
 
     public bool IsPlaying
     {
@@ -51,3 +88,13 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 }
+public partial class DegreeItem : ObservableObject
+{
+    [ObservableProperty]
+    private string label = "";
+
+
+    [ObservableProperty]
+    private bool isSelected = true;
+}
+

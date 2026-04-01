@@ -4,22 +4,43 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
 using MyPitch.Models;
+using MyPitch.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using static MyPitch.ServiceProvider;
 
 namespace MyPitch.Controls;
 
 internal class CircleOfFifths : Control
 {
-    private readonly String[] _noteGraduations = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6 ", "♭3 ", "♭7 ", "4" };
-
-    private string[] _degreeColors = new string[] { "#00A933", "#79D513", "#FFE400", "#FFBE00", "#FF8000", "#FF3E00", "#FF0000", "#C2003D", "#810081", "#662B99", "#336699", "#198066" };
+    private readonly String[] _noteGraduations = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6", "♭3", "♭7", "4" };
+    public CircleOfFifths()
+    {
+    }
+    private IBrush[] _degreeBrushes = new IBrush[]
+     {
+        new SolidColorBrush(Color.Parse("#00A933")),
+        new SolidColorBrush(Color.Parse("#79D513")),
+        new SolidColorBrush(Color.Parse("#FFE400")),
+        new SolidColorBrush(Color.Parse("#FFBE00")),
+        new SolidColorBrush(Color.Parse("#FF8000")),
+        new SolidColorBrush(Color.Parse("#FF3E00")),
+        new SolidColorBrush(Color.Parse("#FF0000")),
+        new SolidColorBrush(Color.Parse("#C2003D")),
+        new SolidColorBrush(Color.Parse("#810081")),
+        new SolidColorBrush(Color.Parse("#662B99")),
+        new SolidColorBrush(Color.Parse("#336699")),
+        new SolidColorBrush(Color.Parse("#198066"))
+    };
 
     private const double FIRST_INNER_RADIUS_RATIO = 0.75;
     private const double SECOND_INNER_RADIUS_RATIO = 0.65;
@@ -27,6 +48,21 @@ internal class CircleOfFifths : Control
     private readonly IBrush _accentBrush = new SolidColorBrush(Color.Parse("#FAEB92"));
 
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
+    public static readonly StyledProperty<IEnumerable<DegreeItem>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<DegreeItem>>(nameof(IncludedDegrees));
+
+    public IEnumerable<DegreeItem> IncludedDegrees
+    {
+        get => GetValue(IncludedDegreesProperty);
+        set
+        {
+            SetValue(IncludedDegreesProperty, value);
+        }
+    }
+
+    private void IncludedDegreesChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        InvalidateVisual();  //This might cause issues being done to rapidly
+    }
 
     private Typeface _notoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
 
@@ -42,14 +78,23 @@ internal class CircleOfFifths : Control
     {
         if (change.Property == TonicProperty)
         {
-            Debug.WriteLine("Tonic changed");
             InvalidateVisual();
+        }
+        if (change.Property == IncludedDegreesProperty)
+        {
+            if (change.NewValue is null) return;
+            var value = (IEnumerable<DegreeItem>)change.NewValue;
+            foreach (var deg in value)
+            {
+                deg.PropertyChanged += IncludedDegreesChanged;
+            }
         }
         base.OnPropertyChanged(change);
     }
 
     public override void Render(DrawingContext context)
     {
+        var includedDegrees = IncludedDegrees.Where(p => p.IsSelected == true).Select(p => _noteGraduations.IndexOf(p.Label));
         var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2;
         var first_inner_radius = outer_radius * FIRST_INNER_RADIUS_RATIO;
         var second_inner_radius = outer_radius * SECOND_INNER_RADIUS_RATIO;
@@ -59,7 +104,7 @@ internal class CircleOfFifths : Control
         for (var i = 0; i < 12; i++)
         {
             var angle = ((i * 30 + 0) * Math.PI / 180) - (15 * Math.PI / 180); //angle to the vertical
-            DrawSegment(i, angle, outer_radius, first_inner_radius, second_inner_radius, center, context);
+            DrawSegment(i, angle, outer_radius, first_inner_radius, second_inner_radius, center, includedDegrees, context);
         }
 
         //TONIC BUTTON
@@ -70,11 +115,10 @@ internal class CircleOfFifths : Control
         var textOrigin = new Point(center.X - formattedText.Width / 2, center.Y - formattedText.Height / 2);
         context.DrawText(formattedText, textOrigin);
 
-
-
     }
-    private void DrawSegment(int index, double angle, double outer_radius, double first_inner_radius, double second_inner_radius, Point center, DrawingContext context)
+    private void DrawSegment(int index, double angle, double outer_radius, double first_inner_radius, double second_inner_radius, Point center, IEnumerable<int> includedDegrees, DrawingContext context)
     {
+        var grayOut = !includedDegrees.Contains(index);
         var geo = new StreamGeometry();
         var end_angle = angle + (Math.PI / 6);
         using var ctx = geo.Open();
@@ -89,8 +133,8 @@ internal class CircleOfFifths : Control
         ctx.ArcTo(p4, new Size(first_inner_radius, first_inner_radius), 0, false, SweepDirection.CounterClockwise);
         ctx.EndFigure(true);
         //draw segment
-        context.DrawGeometry(_clickedIndex == index ? new SolidColorBrush(Color.Parse(_degreeColors[index])) : Brushes.Transparent, new Pen(_accentBrush, 1), geo);
-
+        IBrush segmentBackground = grayOut ? new SolidColorBrush(Color.Parse("#37353E")) : Brushes.Transparent;
+        context.DrawGeometry(_clickedIndex == index ? _degreeBrushes[index] : segmentBackground, new Pen(_accentBrush, 1), geo);
         //draw segment foot
         var segmentFootGeo = new StreamGeometry();
         var p5 = PointOnCircle(center, end_angle, second_inner_radius);
@@ -107,7 +151,7 @@ internal class CircleOfFifths : Control
         var textPos1 = PointOnCircle(center, midAngle1, midRadius1);
         //notes for degree
         var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, index + 1, true);
-        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), new SolidColorBrush(Color.Parse(_degreeColors[index])));
+        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), _degreeBrushes[index]);
         var textOrigin1 = new Point(textPos1.X - ft1.Width / 2, textPos1.Y - ft1.Height / 2);
         context.DrawText(ft1, textOrigin1);
 
@@ -121,13 +165,13 @@ internal class CircleOfFifths : Control
             ctx2.ArcTo(p2, new Size(outer_radius, outer_radius), 0, false, SweepDirection.Clockwise);
             ctx2.EndFigure(false);
             //draw arc
-            context.DrawGeometry(Brushes.Transparent, new Pen(new SolidColorBrush(Color.Parse(_degreeColors[index])), 10), arcThicknessGeo);
+            context.DrawGeometry(Brushes.Transparent, new Pen(_degreeBrushes[index], 10), arcThicknessGeo);
         }
 
         double midRadius = (outer_radius + first_inner_radius) / 2;
         double midAngle = angle + (Math.PI / 12);
         var textPos = PointOnCircle(center, midAngle, midRadius);
-        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), new SolidColorBrush(_clickedIndex == index ? Colors.White : Color.Parse(_degreeColors[index])));
+        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), _clickedIndex == index ? Brushes.White : _degreeBrushes[index]);
         var textOrigin = new Point(textPos.X - ft.Width / 2, textPos.Y - ft.Height / 2);
         context.DrawText(ft, textOrigin);
     }
@@ -207,7 +251,6 @@ public class CircleHaloEffect : Control
 {
     public override void Render(DrawingContext context)
     {
-
         base.Render(context);
         Point center = new(Bounds.Width / 2, Bounds.Height / 2);
         var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2 + 1;

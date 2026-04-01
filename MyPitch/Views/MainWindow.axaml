@@ -7,7 +7,6 @@
 			   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			   xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
 			   x:Class="MyPitch.Views.MainWindow"
-
 			   Icon="/Assets/avalonia-logo.ico"
 			   Title="MyPitch">
 	<views:MainView />
