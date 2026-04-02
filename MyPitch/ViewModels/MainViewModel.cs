@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using MyPitch.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -14,15 +14,46 @@ public partial class MainViewModel : ViewModelBase
 {
 
     public bool _isPlaying = false;
+    public MainViewModel()
+    {
+        _game.PlayingStatusChanged += _game_PlayingStatusChanged;
+        _game.GameClickedIndexChanged += _game_GameClickedIndexChanged;
+    }
+
+    private void _game_GameClickedIndexChanged(object? sender, System.EventArgs e)
+    {
+        GameClickedIndex = _game.GameClickedIndex;
+    }
+
+    private void _game_PlayingStatusChanged(object? sender, System.EventArgs e)
+    {
+        IsPlaying = _game.IsPlaying;
+    }
 
     [ObservableProperty]
     private string _greeting = "Welcome to Avalonia!";
 
     [ObservableProperty]
+    private int _octave = 4;
+
+    [ObservableProperty]
+    private int? _gameClickedIndex = null;
+
+    [ObservableProperty]
     private bool _wideLayout;
 
+    private GameMode _gameMode = GameMode.Freeplay;
+
+    public GameMode GameMode
+    {
+        get => _gameMode;
+        set { SetProperty(ref _gameMode, value); _game.Mode = value; }
+    }
     private Key _tonic = Key.C;
     private bool _shouldSelectAllDegrees = true;
+    private bool _shouldSelectMajorScale = true;
+
+    private Game _game = new();
 
     public bool ShouldSelectAllDegrees
     {
@@ -37,7 +68,18 @@ public partial class MainViewModel : ViewModelBase
 
         }
     }
-
+    public bool ShouldSelectMajorScale
+    {
+        get => _shouldSelectMajorScale;
+        set
+        {
+            SetProperty(ref _shouldSelectMajorScale, value);
+            foreach (var deg in Degrees)
+            {
+                if (deg.Label.Length == 1) deg.IsSelected = value; //no 'flats' i.e just numbers  means it's a member of the major scale
+            }
+        }
+    }
     public ObservableCollection<DegreeItem> Degrees { get; } =
     [
         new() { Label = "1" },
@@ -57,7 +99,7 @@ public partial class MainViewModel : ViewModelBase
     {
 
         get => _tonic;
-        set { SetProperty(ref _tonic, value); ServiceProvider.AudioDriver.ReleaseDrone(); IsPlaying = false; }
+        set { SetProperty(ref _tonic, value); _game.Tonic = value; }
     }
 
     public GameMode[] GameModes => new GameMode[] { GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode };
@@ -68,7 +110,6 @@ public partial class MainViewModel : ViewModelBase
         set
         {
             SetProperty(ref _isPlaying, value);
-
         }
     }
 
@@ -76,16 +117,8 @@ public partial class MainViewModel : ViewModelBase
     public Key[] Tonics => new Key[] { Key.C, Key.Dflat, Key.D, Key.Eflat, Key.E, Key.F, Key.Gflat, Key.G, Key.Aflat, Key.A, Key.Bflat, Key.B };
     public void TogglePlay()
     {
-        IsPlaying = !IsPlaying;
-        if (IsPlaying)
-        {
-            var note = MusicTheory.ToMidiNote(Tonic.ToString(), Tonic.ToString()); //wtf honestly
-            ServiceProvider.AudioDriver.PlayDrone(note);
-        }
-        else
-        {
-            ServiceProvider.AudioDriver.ReleaseDrone();
-        }
+        _game.TogglePlay();
+
     }
 }
 public partial class DegreeItem : ObservableObject

@@ -19,11 +19,13 @@
 		<converters:TonicDisplayConverter x:Key = "TonicDisplayConverter"/>
 		<FontFamily x:Key="NotoSans">avares://MyPitch/Assets/Fonts/#Noto Sans</FontFamily>
 	</UserControl.Resources>
-	<Grid Margin="10,0,0,0" Container.Name="main"   x:Name="LayoutMain">
+	<Grid Margin="10,0,0,0" Container.Name="main" x:Name="LayoutMain">
 		<!--		<controls:CircleHaloEffect Margin="10" x:Name="CircleHaloEffect"/>
 		-->
-
-		<controls:CircleOfFifths  Margin="10" Tonic="{Binding Tonic}" x:Name="Circle" IncludedDegrees="{Binding Degrees}"/>
+		<Grid RowDefinitions="*,Auto">
+			<controls:CircleOfFifths  Margin="10" Tonic="{Binding Tonic}" x:Name="Circle" IncludedDegrees="{Binding Degrees}" Octave="{Binding Octave}" GameClickedIndex="{Binding GameClickedIndex}"/>
+			<NumericUpDown IsEnabled="True" Width="225" Grid.Row="1" Margin="10" shadui:ControlAssist.Label="Octave" Maximum="5" Minimum="1" Value="{Binding Octave}" FormatString="0"/>
+		</Grid>
 		<shadui:Card Margin="0,10,5,10"  MaxWidth="700" HorizontalAlignment="Stretch" x:Name="Card">
 			<shadui:Card.Header>
 				<StackPanel>
@@ -38,15 +40,19 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<ComboBox ItemsSource="{Binding GameModes}" shadui:ControlAssist.Label="Select Game Mode" SelectedIndex="0" ToolTip.Tip="Select the Gamemode, Freeplay allows you to play around with the degree to obtain their feels, Interactive quizes you on the degrees and Pocket mode allows you to play handsfree on the go."/>
-				<Expander>
+				<ComboBox ItemsSource="{Binding GameModes}" shadui:ControlAssist.Label="Select Game Mode" SelectedValue="{Binding GameMode}" ToolTip.Tip="Select the Gamemode, Freeplay allows you to play around with the degree to obtain their feels, Interactive quizes you on the degrees and Pocket mode allows you to play handsfree on the go."/>
+				<Expander Padding="20">
 					<Expander.Header>
 						<TextBlock FontSize="16">
 							Included Scale Degrees
 						</TextBlock>
 					</Expander.Header>
 					<StackPanel Orientation="Vertical">
-						<CheckBox Content="Select All" IsChecked="{Binding ShouldSelectAllDegrees}"/>
+						<Grid ColumnDefinitions="*,*">
+							<CheckBox Content="Select All" IsChecked="{Binding ShouldSelectAllDegrees}"/>
+							<CheckBox Content="MajorScale" IsChecked="{Binding ShouldSelectMajorScale}" Grid.Column="1"/>
+
+						</Grid>
 						<ItemsControl ItemsSource="{Binding Degrees}" Margin="28,0,0,0">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>

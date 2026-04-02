@@ -18,7 +18,7 @@ public partial class MainContent : UserControl
         base.OnAttachedToLogicalTree(e);
         if (Layout == Layout.Wide)
         {
-            LayoutMain.ColumnDefinitions = new("*,Auto");
+            LayoutMain.ColumnDefinitions = new("*,Auto,Auto");
            // Grid.SetColumn(CircleHaloEffect, 0);
             Grid.SetColumn(Circle, 0);
             Grid.SetColumn(Card, 1);

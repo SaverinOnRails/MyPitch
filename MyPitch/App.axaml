@@ -10,10 +10,13 @@
 		<local:ViewLocator/>
 	</Application.DataTemplates>
 	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</Application.Resources>
 	<Application.Styles>
 		<themes:ShadTheme />
-
 	</Application.Styles>
 
 </Application>

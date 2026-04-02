@@ -22,7 +22,7 @@ namespace MyPitch.Controls;
 
 internal class CircleOfFifths : Control
 {
-    private readonly String[] _noteGraduations = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6", "♭3", "♭7", "4" };
+    private readonly String[] _noteGraduations = MusicTheory.FifthIntervalScaleGraduation;
     public CircleOfFifths()
     {
     }
@@ -49,7 +49,9 @@ internal class CircleOfFifths : Control
 
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
     public static readonly StyledProperty<IEnumerable<DegreeItem>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<DegreeItem>>(nameof(IncludedDegrees));
+    public static readonly StyledProperty<int> OctaveProperty = AvaloniaProperty.Register<CircleOfFifths, int>(nameof(Octave));
 
+    public static readonly StyledProperty<int?> GameClickedIndexProperty = AvaloniaProperty.Register<CircleOfFifths, int?>(nameof(GameClickedIndex), null);
     public IEnumerable<DegreeItem> IncludedDegrees
     {
         get => GetValue(IncludedDegreesProperty);
@@ -58,7 +60,16 @@ internal class CircleOfFifths : Control
             SetValue(IncludedDegreesProperty, value);
         }
     }
-
+    public int Octave
+    {
+        get => GetValue(OctaveProperty);
+        set => SetValue(OctaveProperty, value);
+    }
+    public int? GameClickedIndex
+    {
+        get => GetValue(GameClickedIndexProperty);
+        set => SetValue(GameClickedIndexProperty, value);
+    }
     private void IncludedDegreesChanged(object? sender, PropertyChangedEventArgs e)
     {
         InvalidateVisual();  //This might cause issues being done to rapidly
@@ -72,11 +83,10 @@ internal class CircleOfFifths : Control
         set { SetValue(TonicProperty, value); }
     }
     private int? _mouseOnIndex = null;
-    private int? _clickedIndex = null;
-
+    private int? _humanClickedIndex = null; //The index of the segment currently being clicked by the user
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (change.Property == TonicProperty)
+        if (change.Property == TonicProperty || change.Property == GameClickedIndexProperty)
         {
             InvalidateVisual();
         }
@@ -118,6 +128,7 @@ internal class CircleOfFifths : Control
     }
     private void DrawSegment(int index, double angle, double outer_radius, double first_inner_radius, double second_inner_radius, Point center, IEnumerable<int> includedDegrees, DrawingContext context)
     {
+        var clicked = _humanClickedIndex == index || GameClickedIndex == index;
         var grayOut = !includedDegrees.Contains(index);
         var geo = new StreamGeometry();
         var end_angle = angle + (Math.PI / 6);
@@ -134,7 +145,7 @@ internal class CircleOfFifths : Control
         ctx.EndFigure(true);
         //draw segment
         IBrush segmentBackground = grayOut ? new SolidColorBrush(Color.Parse("#37353E")) : Brushes.Transparent;
-        context.DrawGeometry(_clickedIndex == index ? _degreeBrushes[index] : segmentBackground, new Pen(_accentBrush, 1), geo);
+        context.DrawGeometry(clicked ? _degreeBrushes[index] : segmentBackground, new Pen(_accentBrush, 1), geo);
         //draw segment foot
         var segmentFootGeo = new StreamGeometry();
         var p5 = PointOnCircle(center, end_angle, second_inner_radius);
@@ -171,7 +182,7 @@ internal class CircleOfFifths : Control
         double midRadius = (outer_radius + first_inner_radius) / 2;
         double midAngle = angle + (Math.PI / 12);
         var textPos = PointOnCircle(center, midAngle, midRadius);
-        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), _clickedIndex == index ? Brushes.White : _degreeBrushes[index]);
+        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), clicked ? Brushes.White : _degreeBrushes[index]);
         var textOrigin = new Point(textPos.X - ft.Width / 2, textPos.Y - ft.Height / 2);
         context.DrawText(ft, textOrigin);
     }
@@ -185,6 +196,8 @@ internal class CircleOfFifths : Control
             HitTestSegment(e.GetCurrentPoint(this));
         }
     }
+
+
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
@@ -194,13 +207,13 @@ internal class CircleOfFifths : Control
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
-        if (_clickedIndex is not null)
+        if (_humanClickedIndex is not null)
         {
-            var note = MusicTheory.ToMidiNote(Tonic.ToString(), MusicTheory.NoteAtDegree(Tonic, _clickedIndex.Value + 1, true));
+            var note = MusicTheory.ToMidiNote(Tonic.ToString(), MusicTheory.NoteAtDegree(Tonic, _humanClickedIndex.Value + 1, true), Octave);
             AudioDriver!.Release(note);
         }
 
-        _clickedIndex = null;
+        _humanClickedIndex = null;
         InvalidateVisual();
     }
     protected override void OnPointerExited(PointerEventArgs e)
@@ -231,8 +244,8 @@ internal class CircleOfFifths : Control
         }
         else
         {
-            _clickedIndex = index;
-            var note = MusicTheory.ToMidiNote(Tonic.ToString(), MusicTheory.NoteAtDegree(Tonic, index + 1, true));
+            _humanClickedIndex = index;
+            var note = MusicTheory.ToMidiNote(Tonic.ToString(), MusicTheory.NoteAtDegree(Tonic, index + 1, true), Octave);
             AudioDriver.Play(note);
         }
         InvalidateVisual();

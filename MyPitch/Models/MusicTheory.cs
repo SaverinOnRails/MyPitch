@@ -6,6 +6,7 @@ internal static class MusicTheory
 {
     //TODO: Having string array and Tonic seems stupid
     public static string[] ChromaticScale = new string[] { "C", "Dflat", "D", "Eflat", "E", "F", "Gflat", "G", "Aflat", "A", "Bflat", "B" };
+    public static readonly String[] FifthIntervalScaleGraduation = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6", "♭3", "♭7", "4" };
     public static string NoteAtDegree(Key tonic, int degree, bool correctForFifths = false)
     {
         int tonicIndex = Array.IndexOf(ChromaticScale, tonic.ToString());
@@ -19,7 +20,7 @@ internal static class MusicTheory
         {
             noteIndex = (tonicIndex + 7 * (degree - 1)) % ChromaticScale.Length; //7 semitones for a fifth
         }
-        if (noteIndex < 0) noteIndex += ChromaticScale.Length;
+    //    if (noteIndex < 0) noteIndex += ChromaticScale.Length;
         return ChromaticScale[noteIndex];
     }
 
