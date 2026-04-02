@@ -74,19 +74,29 @@ internal class Game
 
     private async void PlayCadence()
     {
-        await PlayScaleNote(1, false);
-        await PlayScaleNote(4, false);
-        await PlayScaleNote(5, false);
-        await PlayScaleNote(1, false);
+        await PlayScaleNote("1", false);
+        await PlayScaleNote("4", false);
+        await PlayScaleNote("5", false);
+        await PlayScaleNote("1", false);
+
     }
-    private async Task PlayScaleNote(int scaleDegree, bool hidden)
+    private async Task PlayScaleNote(string deg, bool hidden)
     {
-        var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, scaleDegree, false);
-        Debug.WriteLine($"For tonic {Tonic.ToString()}, scale degree {scaleDegree} is {noteAtDeg}");
+        var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1, false);
         var note = MusicTheory.ToMidiNote(Tonic.ToString(), noteAtDeg);
+        if (!hidden)
+        {
+            var fifthSegment = MusicTheory.FifthSegment(Tonic, noteAtDeg);
+            Debug.WriteLine($"Segment for {noteAtDeg} is {fifthSegment} ");
+            GameClickedIndex = fifthSegment;
+        }
         ServiceProvider.AudioDriver.Play(note);
         await Task.Delay(_gameClickTimeout);
         ServiceProvider.AudioDriver.Release(note);
+        if (!hidden)
+        {
+            GameClickedIndex = null;
+        }
     }
     public void Stop()
     {

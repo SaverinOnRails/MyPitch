@@ -6,7 +6,8 @@ internal static class MusicTheory
 {
     //TODO: Having string array and Tonic seems stupid
     public static string[] ChromaticScale = new string[] { "C", "Dflat", "D", "Eflat", "E", "F", "Gflat", "G", "Aflat", "A", "Bflat", "B" };
-    public static readonly String[] FifthIntervalScaleGraduation = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6", "♭3", "♭7", "4" };
+    public static readonly string[] FifthIntervalScaleGraduation = { "1", "5", "2", "6", "3", "7", "#4", "♭2", "♭6", "♭3", "♭7", "4" };
+    public static readonly string[] ChromaticScaleGraduation = { "1", "♭2", "2", "♭3", "3", "4", "#4", "5", "♭6", "6", "♭7", "7" };
     public static string NoteAtDegree(Key tonic, int degree, bool correctForFifths = false)
     {
         int tonicIndex = Array.IndexOf(ChromaticScale, tonic.ToString());
@@ -20,10 +21,27 @@ internal static class MusicTheory
         {
             noteIndex = (tonicIndex + 7 * (degree - 1)) % ChromaticScale.Length; //7 semitones for a fifth
         }
-    //    if (noteIndex < 0) noteIndex += ChromaticScale.Length;
+        if (noteIndex < 0) noteIndex += ChromaticScale.Length;
         return ChromaticScale[noteIndex];
     }
 
+    //zero indexed
+    public static int FifthSegment(Key tonic, string note)
+    {
+        int tonicIndex = Array.IndexOf(ChromaticScale, tonic.ToString());
+        int targetIndex = Array.IndexOf(ChromaticScale, note);
+
+        int current = tonicIndex;
+
+        for (int k = 0; k < 12; k++)
+        {
+            if (current == targetIndex)
+                return k; 
+            current = (current + 7) % 12;
+        }
+
+        return -1; 
+    }
     public static int ToMidiNote(string tonic, string note, int octave = 4)
     {
         int baseMidiC0 = 12;
