@@ -18,6 +18,16 @@ public partial class MainViewModel : ViewModelBase
     {
         _game.PlayingStatusChanged += _game_PlayingStatusChanged;
         _game.GameClickedIndexChanged += _game_GameClickedIndexChanged;
+        _game.AllowDegrees = Degrees;
+        foreach (var deg in Degrees)
+        {
+            deg.PropertyChanged += Deg_PropertyChanged;
+        }
+    }
+
+    private void Deg_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        _game.AllowDegrees = Degrees;
     }
 
     private void _game_GameClickedIndexChanged(object? sender, System.EventArgs e)
@@ -117,7 +127,7 @@ public partial class MainViewModel : ViewModelBase
     public Key[] Tonics => new Key[] { Key.C, Key.Dflat, Key.D, Key.Eflat, Key.E, Key.F, Key.Gflat, Key.G, Key.Aflat, Key.A, Key.Bflat, Key.B };
     public void TogglePlay()
     {
-        _game.TogglePlay();
+        _ = _game.TogglePlay();
 
     }
 }

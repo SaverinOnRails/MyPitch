@@ -25,7 +25,7 @@ public partial class MainView : UserControl
         }
         if (System.OperatingSystem.IsWindows())
         {
-            // Background = Brushes.Transparent; //will fallback to mica
+            //   Background = Brushes.Transparent; //will fallback to mica
         }
         base.OnAttachedToVisualTree(e);
     }
@@ -33,11 +33,11 @@ public partial class MainView : UserControl
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if(change.Property == BoundsProperty)
+        if (change.Property == BoundsProperty)
         {
             var datacontext = DataContext as MainViewModel;
             if (datacontext is null) return;
-            if(Bounds.Width > 600)
+            if (Bounds.Width > 600)
             {
                 datacontext.WideLayout = true;
             }

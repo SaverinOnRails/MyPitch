@@ -1,8 +1,12 @@
-﻿using System;
+﻿using MyPitch.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyPitch.Models;
@@ -12,6 +16,10 @@ internal class Game
     private bool _playDrone = true;
     private bool _playedCadence = false;
     private int _gameClickTimeout = 500; //ms
+    private CancellationTokenSource _gameCancellationTokenSource = new();
+    public IEnumerable<DegreeItem> AllowDegrees = new ObservableCollection<DegreeItem>();
+
+    public List<string> AllowedDegreeStrings => AllowDegrees.Where(p => p.IsSelected == true).Select(p => p.Label).ToList();
     public bool IsPlaying
     {
         get;
@@ -46,53 +54,87 @@ internal class Game
     }
     public GameMode Mode { get; set; }
 
-    public void Start()
+    public async Task Start()
     {
-        if (_playDrone) PlayDrone();
-        IsPlaying = true;
-        if (Mode == GameMode.Freeplay)
+        _gameCancellationTokenSource = new();
+        try
         {
-            //nothing to do here, let the user do whatever
+            if (_playDrone) PlayDrone();
+            IsPlaying = true;
+            if (Mode == GameMode.Freeplay)
+            {
+                //nothing to do here, let the user do whatever
+            }
+            else if (Mode == GameMode.Interactive)
+            {
+                await InteractiveGameLoop();
+            }
+            else //pocketmode
+            {
+                //nothing yet
+            }
         }
-        else if (Mode == GameMode.Interactive)
+        catch (Exception Ex)
         {
-            InteractiveGameLoop();
-        }
-        else //pocketmode
-        {
-            //nothing yet
+            if (Ex is OperationCanceledException e)
+            {
+                Debug.WriteLine("Game cancelled");
+            }
+            Stop(); //No harm in calling stop again
         }
 
     }
-    private void InteractiveGameLoop()
+    private async Task InteractiveGameLoop()
     {
-        if (!_playedCadence)
+        while (true)
         {
-            PlayCadence();
+            _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            if (!_playedCadence)
+            {
+                await PlayCadence();
+            }
+            _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            await Task.Delay(_gameClickTimeout * 2, _gameCancellationTokenSource.Token);
+            await StartQuiz();
         }
     }
+    private async Task StartQuiz()
+    {
+        _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
+        var notes = AllowedDegreeStrings;
+        if (notes.Count == 0) { return; } //TODO: handle this
+        var randomNote = notes[Random.Shared.Next(notes.Count)];
+        await PlayScaleNote(randomNote, false);
+    }
 
-    private async void PlayCadence()
+    private async Task PlayCadence()
     {
         await PlayScaleNote("1", false);
         await PlayScaleNote("4", false);
         await PlayScaleNote("5", false);
         await PlayScaleNote("1", false);
-
+        _playedCadence = true;
     }
     private async Task PlayScaleNote(string deg, bool hidden)
     {
+        _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
         var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1, false);
         var note = MusicTheory.ToMidiNote(Tonic.ToString(), noteAtDeg);
         if (!hidden)
         {
             var fifthSegment = MusicTheory.FifthSegment(Tonic, noteAtDeg);
-            Debug.WriteLine($"Segment for {noteAtDeg} is {fifthSegment} ");
             GameClickedIndex = fifthSegment;
         }
         ServiceProvider.AudioDriver.Play(note);
-        await Task.Delay(_gameClickTimeout);
-        ServiceProvider.AudioDriver.Release(note);
+        try
+        {
+            await Task.Delay(_gameClickTimeout, _gameCancellationTokenSource.Token);
+        }
+        finally
+        {
+            ServiceProvider.AudioDriver.Release(note);
+        }
         if (!hidden)
         {
             GameClickedIndex = null;
@@ -100,9 +142,12 @@ internal class Game
     }
     public void Stop()
     {
+        Debug.WriteLine("Stopping game");
+        _gameCancellationTokenSource.Cancel();
         SuspendDrone();
         IsPlaying = false;
         _playedCadence = false;
+        GameClickedIndex = null;
     }
 
     private void PlayDrone()
@@ -114,12 +159,12 @@ internal class Game
     {
         ServiceProvider.AudioDriver.ReleaseDrone();
     }
-    public void TogglePlay()
+    public async Task TogglePlay()
     {
         if (IsPlaying)
             Stop();
         else
-            Start();
+            await Start();
     }
 
     private void RaisePlayingStatusChanged()
