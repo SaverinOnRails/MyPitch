@@ -18,11 +18,17 @@ public partial class MainViewModel : ViewModelBase
     {
         _game.PlayingStatusChanged += _game_PlayingStatusChanged;
         _game.GameClickedIndexChanged += _game_GameClickedIndexChanged;
+        _game.AnswerStateChanged += _game_AnswerStateChanged;
         _game.AllowDegrees = Degrees;
         foreach (var deg in Degrees)
         {
             deg.PropertyChanged += Deg_PropertyChanged;
         }
+    }
+
+    private void _game_AnswerStateChanged(object? sender, System.EventArgs e)
+    {
+        AnswerState = _game.AnswerState;
     }
 
     private void Deg_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -50,6 +56,9 @@ public partial class MainViewModel : ViewModelBase
     private int? _gameClickedIndex = null;
 
     [ObservableProperty]
+    private AnswerState _answerState;
+
+    [ObservableProperty]
     private bool _wideLayout;
 
     private GameMode _gameMode = GameMode.Freeplay;
@@ -62,7 +71,7 @@ public partial class MainViewModel : ViewModelBase
     private Key _tonic = Key.C;
     private bool _shouldSelectAllDegrees = true;
     private bool _shouldSelectMajorScale = true;
-
+    private int? _userClickedIndex = null;
     private Game _game = new();
 
     public bool ShouldSelectAllDegrees
@@ -73,9 +82,25 @@ public partial class MainViewModel : ViewModelBase
             SetProperty(ref _shouldSelectAllDegrees, value);
             foreach (var deg in Degrees)
             {
-                deg.IsSelected = value;
+                if (deg.Label.Length == 1 && _shouldSelectMajorScale == true)
+                {
+                    deg.IsSelected = true;
+                }
+                else
+                {
+                    deg.IsSelected = value;
+                }
             }
 
+        }
+    }
+    public int? UserClickedIndex
+    {
+        get => _userClickedIndex;
+        set
+        {
+            SetProperty(ref _userClickedIndex, value);
+            _game.UserClickedIndex = value;
         }
     }
     public bool ShouldSelectMajorScale
@@ -112,7 +137,7 @@ public partial class MainViewModel : ViewModelBase
         set { SetProperty(ref _tonic, value); _game.Tonic = value; }
     }
 
-    public GameMode[] GameModes => new GameMode[] { GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode };
+    public GameMode[] GameModes => new GameMode[] { GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Freelisten };
 
     public bool IsPlaying
     {

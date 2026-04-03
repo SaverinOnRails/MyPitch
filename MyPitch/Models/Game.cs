@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +15,7 @@ internal class Game
     private int _gameClickTimeout = 500; //ms
     private CancellationTokenSource _gameCancellationTokenSource = new();
     public IEnumerable<DegreeItem> AllowDegrees = new ObservableCollection<DegreeItem>();
-
+    private TaskCompletionSource<int>? _userClickTcs;
     public List<string> AllowedDegreeStrings => AllowDegrees.Where(p => p.IsSelected == true).Select(p => p.Label).ToList();
     public bool IsPlaying
     {
@@ -38,7 +35,27 @@ internal class Game
             RaiseGameClickedIndexChanged();
         }
     }
-
+    public AnswerState AnswerState
+    {
+        get;
+        private set
+        {
+            field = value;
+            RaiseAnswerStateChanged();
+        }
+    }
+    public int? UserClickedIndex
+    {
+        get;
+        set
+        {
+            field = value;
+            if (value is not null)
+            {
+                _userClickTcs?.TrySetResult(value.Value);
+            }
+        }
+    }
     public Key Tonic
     {
         get; set
@@ -69,43 +86,84 @@ internal class Game
             {
                 await InteractiveGameLoop();
             }
+            else if (Mode == GameMode.Freelisten)
+            {
+                await FreeListenGameLoop();
+            }
             else //pocketmode
             {
                 //nothing yet
             }
         }
-        catch (Exception Ex)
+        catch
         {
-            if (Ex is OperationCanceledException e)
-            {
-                Debug.WriteLine("Game cancelled");
-            }
+            //if (Ex is OperationCanceledException e)
+            //{
+            //    Debug.WriteLine("Game cancelled");
+            //}
             Stop(); //No harm in calling stop again
         }
 
     }
+
     private async Task InteractiveGameLoop()
     {
         while (true)
         {
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
-
             if (!_playedCadence)
             {
                 await PlayCadence();
             }
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             await Task.Delay(_gameClickTimeout * 2, _gameCancellationTokenSource.Token);
-            await StartQuiz();
+            AnswerState = AnswerState.Neutral;
+            var quizDeg = await PlayQuizNote();
+            var quizNoteIndex = MusicTheory.FifthSegment(Tonic, MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
+            //await user response
+            _userClickTcs = new TaskCompletionSource<int>();
+            var userResponse = await _userClickTcs.Task;
+            if (userResponse == quizNoteIndex)
+            {
+                AnswerState = AnswerState.Correct;
+            }
+            else
+            {
+                AnswerState = AnswerState.Incorrect;
+                for (var i = 0; i < 10; i++)
+                {
+                    GameClickedIndex = quizNoteIndex;
+                    await Task.Delay(200);
+                    GameClickedIndex = null;
+                    await Task.Delay(50);
+
+                }
+            }
         }
     }
-    private async Task StartQuiz()
+
+    private async Task FreeListenGameLoop()
+    {
+        while (true)
+        {
+            _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            if (!_playedCadence)
+            {
+                await PlayCadence();
+            }
+            _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            await Task.Delay(_gameClickTimeout * 2, _gameCancellationTokenSource.Token);
+            await PlayQuizNote();
+        }
+    }
+    private async Task<string> PlayQuizNote()
     {
         _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
-        var notes = AllowedDegreeStrings;
-        if (notes.Count == 0) { return; } //TODO: handle this
-        var randomNote = notes[Random.Shared.Next(notes.Count)];
+        var degrees = AllowedDegreeStrings;
+        if (degrees.Count == 0) { return ""; } //TODO: handle this
+        var randomNote = degrees[Random.Shared.Next(degrees.Count)];
         await PlayScaleNote(randomNote, false);
+        return randomNote;
     }
 
     private async Task PlayCadence()
@@ -142,10 +200,10 @@ internal class Game
     }
     public void Stop()
     {
-        Debug.WriteLine("Stopping game");
         _gameCancellationTokenSource.Cancel();
         SuspendDrone();
         IsPlaying = false;
+        AnswerState = AnswerState.Neutral;
         _playedCadence = false;
         GameClickedIndex = null;
     }
@@ -175,15 +233,26 @@ internal class Game
     {
         GameClickedIndexChanged?.Invoke(this, new());
     }
-
+    private void RaiseAnswerStateChanged()
+    {
+        AnswerStateChanged?.Invoke(this, new());
+    }
     public event EventHandler? PlayingStatusChanged;
     public event EventHandler? GameClickedIndexChanged;
+    public event EventHandler? AnswerStateChanged;
 }
 
 public enum GameMode
 {
     Freeplay,
     Pocketmode,
-    Interactive
+    Interactive,
+    Freelisten
 }
 
+public enum AnswerState
+{
+    Correct,
+    Neutral,
+    Incorrect
+}
