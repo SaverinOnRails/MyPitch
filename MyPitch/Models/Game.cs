@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ internal class Game
 {
     private bool _playDrone = true;
     private bool _playedCadence = false;
+    public bool RandomTonic = false;
     private int _gameClickTimeout = 500; //ms
     private CancellationTokenSource _gameCancellationTokenSource = new();
     public IEnumerable<DegreeItem> AllowDegrees = new ObservableCollection<DegreeItem>();
@@ -67,6 +69,7 @@ internal class Game
                 SuspendDrone();
                 PlayDrone();
             }
+            RaiseTonicChanged();
         }
     }
     public GameMode Mode { get; set; }
@@ -111,6 +114,10 @@ internal class Game
         while (true)
         {
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            if (RandomTonic)
+            {
+                Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
+            }
             if (!_playedCadence)
             {
                 await PlayCadence();
@@ -118,7 +125,7 @@ internal class Game
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             await Task.Delay(_gameClickTimeout * 2, _gameCancellationTokenSource.Token);
             AnswerState = AnswerState.Neutral;
-            var quizDeg = await PlayQuizNote();
+            var quizDeg = await PlayQuizNote(true);
             var quizNoteIndex = MusicTheory.FifthSegment(Tonic, MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
             //await user response
             _userClickTcs = new TaskCompletionSource<int>();
@@ -126,6 +133,9 @@ internal class Game
             if (userResponse == quizNoteIndex)
             {
                 AnswerState = AnswerState.Correct;
+                GameClickedIndex = quizNoteIndex;
+                await Task.Delay(1000, _gameCancellationTokenSource.Token);
+                GameClickedIndex = null;
             }
             else
             {
@@ -133,9 +143,9 @@ internal class Game
                 for (var i = 0; i < 10; i++)
                 {
                     GameClickedIndex = quizNoteIndex;
-                    await Task.Delay(200);
+                    await Task.Delay(200, _gameCancellationTokenSource.Token);
                     GameClickedIndex = null;
-                    await Task.Delay(50);
+                    await Task.Delay(50, _gameCancellationTokenSource.Token);
 
                 }
             }
@@ -147,22 +157,26 @@ internal class Game
         while (true)
         {
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            if (RandomTonic)
+            {
+                Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
+            }
             if (!_playedCadence)
             {
                 await PlayCadence();
             }
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             await Task.Delay(_gameClickTimeout * 2, _gameCancellationTokenSource.Token);
-            await PlayQuizNote();
+            await PlayQuizNote(false);
         }
     }
-    private async Task<string> PlayQuizNote()
+    private async Task<string> PlayQuizNote(bool hidden)
     {
         _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
         var degrees = AllowedDegreeStrings;
         if (degrees.Count == 0) { return ""; } //TODO: handle this
         var randomNote = degrees[Random.Shared.Next(degrees.Count)];
-        await PlayScaleNote(randomNote, false);
+        await PlayScaleNote(randomNote, hidden);
         return randomNote;
     }
 
@@ -237,9 +251,14 @@ internal class Game
     {
         AnswerStateChanged?.Invoke(this, new());
     }
+    public void RaiseTonicChanged()
+    {
+        TonicChanged?.Invoke(this, new());
+    }
     public event EventHandler? PlayingStatusChanged;
     public event EventHandler? GameClickedIndexChanged;
     public event EventHandler? AnswerStateChanged;
+    public event EventHandler? TonicChanged;
 }
 
 public enum GameMode

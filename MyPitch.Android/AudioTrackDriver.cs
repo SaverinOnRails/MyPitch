@@ -47,7 +47,7 @@ internal class AudioTrackDriver : IAudioDriver
             .SetAudioAttributes(audioAttributes)
             .SetAudioFormat(audioFormat)
             .SetTransferMode(AudioTrackMode.Stream)
-            .SetBufferSizeInBytes(blocksize)
+            .SetBufferSizeInBytes(blocksize * 2)
             .Build();
         _interlaced = new float[blocksize * 2];
         _temp = new float[blocksize * 2];

@@ -26,7 +26,7 @@ internal class CircleOfFifths : Control
     public CircleOfFifths()
     {
     }
-    private IBrush[] _degreeBrushes = new IBrush[]
+    private SolidColorBrush[] _degreeBrushes = new SolidColorBrush[]
      {
         new SolidColorBrush(Color.Parse("#00A933")),
         new SolidColorBrush(Color.Parse("#79D513")),
@@ -45,7 +45,7 @@ internal class CircleOfFifths : Control
     private const double FIRST_INNER_RADIUS_RATIO = 0.75;
     private const double SECOND_INNER_RADIUS_RATIO = 0.65;
     private const double THIRD_INNER_RADIUS_RATIO = 0.2;
-    private IBrush _accentBrush = new SolidColorBrush(Color.Parse("#E4FF30"));
+    private SolidColorBrush _accentBrush = new SolidColorBrush(Color.Parse("#E4FF30"));
 
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
     public static readonly StyledProperty<IEnumerable<DegreeItem>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<DegreeItem>>(nameof(IncludedDegrees));
@@ -179,7 +179,7 @@ internal class CircleOfFifths : Control
         ctx.ArcTo(p4, new Size(first_inner_radius, first_inner_radius), 0, false, SweepDirection.CounterClockwise);
         ctx.EndFigure(true);
         //draw segment
-        IBrush segmentBackground = grayOut ? new SolidColorBrush(Color.Parse("#37353E")) : Brushes.Transparent;
+        IBrush segmentBackground = new SolidColorBrush(Colors.Transparent, 0.5);
         context.DrawGeometry(clicked ? _degreeBrushes[index] : segmentBackground, new Pen(_accentBrush, 1), geo);
         //draw segment foot
         var segmentFootGeo = new StreamGeometry();
@@ -191,7 +191,7 @@ internal class CircleOfFifths : Control
         ctx3.ArcTo(p6, new Size(second_inner_radius, second_inner_radius), 0, false, SweepDirection.CounterClockwise);
         ctx3.LineTo(p4);
         ctx3.EndFigure(false);
-        context.DrawGeometry(Brushes.Transparent, new Pen(_accentBrush), segmentFootGeo);
+        context.DrawGeometry(Brushes.Transparent, new Pen(new SolidColorBrush(_accentBrush.Color, grayOut ? 0.3 : 1)), segmentFootGeo);
         double midRadius1 = (first_inner_radius + second_inner_radius) / 2;
         double midAngle1 = angle + (Math.PI / 12);
         var textPos1 = PointOnCircle(center, midAngle1, midRadius1);
@@ -217,7 +217,7 @@ internal class CircleOfFifths : Control
         double midRadius = (outer_radius + first_inner_radius) / 2;
         double midAngle = angle + (Math.PI / 12);
         var textPos = PointOnCircle(center, midAngle, midRadius);
-        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), clicked ? Brushes.White : _degreeBrushes[index]);
+        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), clicked ? Brushes.White : new SolidColorBrush(_degreeBrushes[index].Color, grayOut ? 0.2 : 1));
         var textOrigin = new Point(textPos.X - ft.Width / 2, textPos.Y - ft.Height / 2);
         context.DrawText(ft, textOrigin);
     }
