@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\**" />
+		<EmbeddedResource Include="SpeechSamples\*.wav" />
 	</ItemGroup>
 
 	<ItemGroup>

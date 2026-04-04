@@ -90,12 +90,34 @@ public partial class Game : ObservableObject
             {
                 GameMode.Interactive => InteractiveGameLoop(),
                 GameMode.Freelisten => FreeListenGameLoop(),
-                _ => Task.CompletedTask   // Freeplay / Pocketmode
+                GameMode.Pocketmode => PocketModeGameLoop(),
+                _ => Task.CompletedTask   // Freeplay 
             });
         }
-        catch
+        catch (Exception ex)
         {
+          //  throw ex;
+            Debug.WriteLine(ex.Message);
             Stop();
+        }
+    }
+
+    private async Task PocketModeGameLoop()
+    {
+        while (true)
+        {
+            _cts.Token.ThrowIfCancellationRequested();
+
+            await MaybeChangeTonic();
+            await MaybePlayCadence();
+
+            _cts.Token.ThrowIfCancellationRequested();
+            await Task.Delay(GameClickTimeout * 2, _cts.Token);
+
+            var quizDeg = await PlayQuizNote(hidden: false);
+            await Task.Delay(1000, _cts.Token);
+            PlatformServiceProvider.AudioDriver.PlaySpeechSample(quizDeg); //exception here
+            await Task.Delay(1000, _cts.Token);
         }
     }
 

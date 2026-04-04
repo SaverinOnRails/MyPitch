@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MyPitch.ViewModels;
 
@@ -84,7 +85,7 @@ public partial class MainViewModel : ViewModelBase
         set => Game.UserClickedIndex = value;
     }
 
-   
+
     public bool IsPlaying => Game.IsPlaying;
     public int? GameClickedIndex => Game.GameClickedIndex;
     public AnswerState AnswerState => Game.AnswerState;
@@ -121,9 +122,7 @@ public partial class MainViewModel : ViewModelBase
                 deg.IsSelected = value;
     }
 
-
-    public void TogglePlay() => _ = Game.TogglePlay();
-
+    public async Task TogglePlay() => await Game.TogglePlay();
 
     private void PushSettings() =>
         Game.ApplySettings(new GameSettings(_gameMode, _useRandomTonic, _useRandomOctave, _playCadenceOnKeyChange));

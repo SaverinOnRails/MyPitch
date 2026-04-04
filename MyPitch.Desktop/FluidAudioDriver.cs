@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFML.Audio;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -68,5 +69,29 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
     public void ReleaseDrone()
     {
         _synth.AllNotesOff(5);
+    }
+
+    public void PlaySpeechSample(string sample)
+    {
+        //We can probably use sfml and melty instead of fluidsynth while we're at it but fluid works really well.
+        var stream = EmbeddedResources.Get(sample);
+        if (stream is null)
+        {
+            return;
+        }
+        // Copy the stream into a byte array
+        byte[] wavData;
+        using (var ms = new MemoryStream())
+        {
+            stream.CopyTo(ms);
+            wavData = ms.ToArray();
+        }
+        SoundBuffer buffer;
+        using (var ms = new MemoryStream(wavData))
+        {
+            buffer = new SoundBuffer(ms); // SFML can read WAV from a Stream
+        }
+        var sound = new Sound(buffer);
+        sound.Play();
     }
 }
