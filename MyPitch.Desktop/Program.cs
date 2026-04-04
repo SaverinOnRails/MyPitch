@@ -15,10 +15,10 @@ sealed class Program
     public static void Main(string[] args)
     {
         NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), DllImportResolver);
-        ServiceProvider.AudioDriver = new FluidAudioDriver(Path.Join(AppContext.BaseDirectory, "default.sf2"));
+        PlatformServiceProvider.AudioDriver = new FluidAudioDriver(Path.Join(AppContext.BaseDirectory, "default.sf2"));
         BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);
-        if (ServiceProvider.AudioDriver is IDisposable d) d.Dispose();
+        if (PlatformServiceProvider.AudioDriver is IDisposable d) d.Dispose();
     }
 
     private static nint DllImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)

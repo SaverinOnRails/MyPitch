@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyPitch;
 
-public static class ServiceProvider
+public static class PlatformServiceProvider
 {
     public static IAudioDriver AudioDriver;
 }

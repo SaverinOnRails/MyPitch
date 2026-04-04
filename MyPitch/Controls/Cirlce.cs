@@ -16,7 +16,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using static MyPitch.ServiceProvider;
+using static MyPitch.PlatformServiceProvider;
 
 namespace MyPitch.Controls;
 

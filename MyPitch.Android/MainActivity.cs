@@ -37,7 +37,7 @@ public class MainActivity : AvaloniaMainActivity<App>
             using var fileStream = File.Create(path2);
             stream.CopyTo(fileStream);
         }
-        ServiceProvider.AudioDriver = new AudioTrackDriver(path,path2);
+        PlatformServiceProvider.AudioDriver = new AudioTrackDriver(path,path2);
         return base.CustomizeAppBuilder(builder)
             .WithInterFont();
     }

@@ -32,8 +32,6 @@ public partial class Game : ObservableObject
         Settings = settings;
     }
 
-
-
     public IEnumerable<DegreeItem> AllowDegrees { get; set; } = new ObservableCollection<DegreeItem>();
 
     private List<string> AllowedDegreeStrings =>
@@ -215,14 +213,14 @@ public partial class Game : ObservableObject
         if (!hidden)
             GameClickedIndex = MusicTheory.FifthSegment(Tonic, noteAtDeg);
 
-        ServiceProvider.AudioDriver.Play(note);
+        PlatformServiceProvider.AudioDriver.Play(note);
         try
         {
             await Task.Delay(GameClickTimeout, _cts.Token);
         }
         finally
         {
-            ServiceProvider.AudioDriver.Release(note);
+            PlatformServiceProvider.AudioDriver.Release(note);
             if (!hidden) GameClickedIndex = null;
         }
     }
@@ -230,10 +228,10 @@ public partial class Game : ObservableObject
     private void PlayDrone()
     {
         var note = MusicTheory.ToMidiNote(Tonic.ToString(), Tonic.ToString());
-        ServiceProvider.AudioDriver.PlayDrone(note);
+        PlatformServiceProvider.AudioDriver.PlayDrone(note);
     }
 
-    private void SuspendDrone() => ServiceProvider.AudioDriver.ReleaseDrone();
+    private void SuspendDrone() => PlatformServiceProvider.AudioDriver.ReleaseDrone();
 }
 
 public record GameSettings(

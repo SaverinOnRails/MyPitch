@@ -9,7 +9,7 @@ internal sealed partial class Program
     private static async Task Main(string[] args)
     {
         await JSHost.ImportAsync("Interop", "../js/synth.js");
-        ServiceProvider.AudioDriver = new WebAudioDriver();
+        PlatformServiceProvider.AudioDriver = new WebAudioDriver();
         await BuildAvaloniaApp()
             .WithInterFont()
             .StartBrowserAppAsync("out");

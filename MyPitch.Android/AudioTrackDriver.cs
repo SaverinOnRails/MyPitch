@@ -22,9 +22,9 @@ internal class AudioTrackDriver : IAudioDriver
     private AudioTrack _audioTrack;
 
     private float[] _interlaced;
-    public AudioTrackDriver(string soundFont, string droneFont)
+     public AudioTrackDriver(string soundFont, string droneFont)
     {
-        _synth = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
+       _synth = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
         _droneSynth = new MeltySynth.Synthesizer(droneFont, SAMPLE_RATE);
 
         var minBufferSize = AudioTrack.GetMinBufferSize(
@@ -42,12 +42,13 @@ internal class AudioTrackDriver : IAudioDriver
             .SetChannelMask(ChannelOut.Stereo)
             .Build()!;
         int blocksize = 512;
+        int bufferSize = Math.Max(minBufferSize, blocksize * 2 * sizeof(float));
         Debug.WriteLine($"Min buffer size of {minBufferSize}");
         _audioTrack = new AudioTrack.Builder()
             .SetAudioAttributes(audioAttributes)
             .SetAudioFormat(audioFormat)
             .SetTransferMode(AudioTrackMode.Stream)
-            .SetBufferSizeInBytes(blocksize * 2)
+            .SetBufferSizeInBytes(bufferSize * 2)
             .Build();
         _interlaced = new float[blocksize * 2];
         _temp = new float[blocksize * 2];
