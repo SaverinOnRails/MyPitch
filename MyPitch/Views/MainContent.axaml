@@ -45,8 +45,8 @@
 				</Grid>
 				<ToggleSwitch Grid.Column="1" Margin="10,0,0,0" OnContent="Play Cadence On Key Change" OffContent="Play Cadence On Key Change" IsChecked="{Binding PlayCadenceOnKeyChange}"/>
 				<Grid ColumnDefinitions="*,Auto">
-					<NumericUpDown IsEnabled="True" shadui:ControlAssist.Label="Octave" Maximum="5" Minimum="1" Value="{Binding Octave}" FormatString="0"/>
-					<ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random"/>
+					<NumericUpDown IsEnabled="{Binding !UseRandomOctave}" shadui:ControlAssist.Label="Octave" Maximum="5" Minimum="1" Value="{Binding Octave}" FormatString="0"/>
+					<ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomOctave}"/>
 				</Grid>
 				<ComboBox ItemsSource="{Binding GameModes}" shadui:ControlAssist.Label="Select Game Mode" SelectedValue="{Binding GameMode}" ToolTip.Tip="Select the Gamemode, Freeplay allows you to play around with the degree to obtain their feels, Interactive quizes you on the degrees and Pocket mode allows you to play handsfree on the go."/>
 				<Expander Padding="20">

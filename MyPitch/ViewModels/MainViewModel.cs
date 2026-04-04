@@ -21,7 +21,10 @@ public partial class MainViewModel : ViewModelBase
         _game.GameClickedIndexChanged += _game_GameClickedIndexChanged;
         _game.AnswerStateChanged += _game_AnswerStateChanged;
         _game.TonicChanged += _game_TonicChanged;
+        _game.OctaveChanged += _game_OctaveChanged;
         _game.AllowDegrees = Degrees;
+        _game.Octave = Octave;
+        _game.PlayCadenceOnKeyChange = PlayCadenceOnKeyChange;
         foreach (var deg in Degrees)
         {
             deg.PropertyChanged += Deg_PropertyChanged;
@@ -35,7 +38,12 @@ public partial class MainViewModel : ViewModelBase
 
         Tonic = _game.Tonic;
     }
-
+    private void _game_OctaveChanged(object? sender, EventArgs e)
+    {
+        if (Octave == _game.Octave)
+            return;
+        Octave = _game.Octave;
+    }
     private void _game_AnswerStateChanged(object? sender, System.EventArgs e)
     {
         AnswerState = _game.AnswerState;
@@ -59,7 +67,6 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private string _greeting = "Welcome to Avalonia!";
 
-    [ObservableProperty]
     private int _octave = 4;
 
     [ObservableProperty]
@@ -74,7 +81,8 @@ public partial class MainViewModel : ViewModelBase
     private GameMode _gameMode = GameMode.Freeplay;
 
     private bool _useRandomTonic = false;
-    private bool _playCadenceOnKeyChange = false;
+    private bool _useRandomOctave = false;
+    private bool _playCadenceOnKeyChange = true;
     public GameMode GameMode
     {
         get => _gameMode;
@@ -97,6 +105,20 @@ public partial class MainViewModel : ViewModelBase
                 Tonic = Tonics[Random.Shared.Next(Tonics.Length)];
             }
             _game.RandomTonic = value;
+        }
+    }
+    public bool UseRandomOctave
+    {
+        get => _useRandomOctave;
+        set
+        {
+            SetProperty(ref _useRandomOctave, value);
+            if (value)
+            {
+                var octaveRange = new int[] { 3, 4, 5 };
+                Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
+            }
+            _game.RandomOctave = value;
         }
     }
     public bool PlayCadenceOnKeyChange
@@ -176,7 +198,16 @@ public partial class MainViewModel : ViewModelBase
             _game.Tonic = value;
         }
     }
-
+    public int Octave
+    {
+        get => _octave;
+        set
+        {
+            if (_octave == value) return;
+            SetProperty(ref _octave, value);
+            _game.Octave = value;
+        }
+    }
     public GameMode[] GameModes => new GameMode[] { GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Freelisten };
 
     public bool IsPlaying

@@ -14,7 +14,8 @@ internal class Game
     private bool _playDrone = true;
     private bool _playedCadence = false;
     public bool RandomTonic = false;
-    public bool PlayCadenceOnKeyChange = false;
+    public bool RandomOctave = false;
+    public bool PlayCadenceOnKeyChange;
     private Key _oldTonic;
     private int _gameClickTimeout = 500; //ms
     private CancellationTokenSource _gameCancellationTokenSource = new();
@@ -74,6 +75,14 @@ internal class Game
             RaiseTonicChanged();
         }
     }
+    public int Octave
+    {
+        get; set
+        {
+            field = value;
+            RaiseOctaveChanged();
+        }
+    }
     public GameMode Mode { get; set; }
 
     public async Task Start()
@@ -115,11 +124,17 @@ internal class Game
     {
         while (true)
         {
+            AnswerState = AnswerState.Neutral;
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             _oldTonic = Tonic;
             if (RandomTonic)
             {
                 Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
+            }
+            if (RandomOctave)
+            {
+                var octaveRange = new int[] { 3, 4, 5 };
+                Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
             }
             if (!_playedCadence || (PlayCadenceOnKeyChange && _oldTonic != Tonic))
             {
@@ -127,7 +142,6 @@ internal class Game
             }
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             await Task.Delay(_gameClickTimeout * 2, _gameCancellationTokenSource.Token);
-            AnswerState = AnswerState.Neutral;
             var quizDeg = await PlayQuizNote(true);
             var quizNoteIndex = MusicTheory.FifthSegment(Tonic, MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
             //await user response
@@ -159,12 +173,18 @@ internal class Game
     {
         while (true)
         {
+            _oldTonic = Tonic;
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             if (RandomTonic)
             {
                 Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
             }
-            if (!_playedCadence)
+            if (RandomOctave)
+            {
+                var octaveRange = new int[] { 3, 4, 5 };
+                Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
+            }
+            if (!_playedCadence || (PlayCadenceOnKeyChange && _oldTonic != Tonic))
             {
                 await PlayCadence();
             }
@@ -195,7 +215,7 @@ internal class Game
     {
         _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
         var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1, false);
-        var note = MusicTheory.ToMidiNote(Tonic.ToString(), noteAtDeg);
+        var note = MusicTheory.ToMidiNote(Tonic.ToString(), noteAtDeg, Octave);
         if (!hidden)
         {
             var fifthSegment = MusicTheory.FifthSegment(Tonic, noteAtDeg);
@@ -254,14 +274,19 @@ internal class Game
     {
         AnswerStateChanged?.Invoke(this, new());
     }
-    public void RaiseTonicChanged()
+    private void RaiseTonicChanged()
     {
         TonicChanged?.Invoke(this, new());
+    }
+    private void RaiseOctaveChanged()
+    {
+        OctaveChanged?.Invoke(this, new());
     }
     public event EventHandler? PlayingStatusChanged;
     public event EventHandler? GameClickedIndexChanged;
     public event EventHandler? AnswerStateChanged;
     public event EventHandler? TonicChanged;
+    public event EventHandler? OctaveChanged;
 }
 
 public enum GameMode
