@@ -2,7 +2,7 @@
 var startedLoadingSynth;
 var synthReady = false;
 export function startSynth() {
-    //hack for browser autoplay rules
+    //hack for browser autoplay rules, will improve later
     document.body.onclick = function () {
         if (startedLoadingSynth) return;
         startedLoadingSynth = true;

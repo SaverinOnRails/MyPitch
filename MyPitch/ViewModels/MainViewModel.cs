@@ -74,7 +74,7 @@ public partial class MainViewModel : ViewModelBase
     private GameMode _gameMode = GameMode.Freeplay;
 
     private bool _useRandomTonic = false;
-
+    private bool _playCadenceOnKeyChange = false;
     public GameMode GameMode
     {
         get => _gameMode;
@@ -97,6 +97,15 @@ public partial class MainViewModel : ViewModelBase
                 Tonic = Tonics[Random.Shared.Next(Tonics.Length)];
             }
             _game.RandomTonic = value;
+        }
+    }
+    public bool PlayCadenceOnKeyChange
+    {
+        get => _playCadenceOnKeyChange;
+        set
+        {
+            SetProperty(ref _playCadenceOnKeyChange, value);
+            _game.PlayCadenceOnKeyChange = value;
         }
     }
     public bool ShouldSelectAllDegrees

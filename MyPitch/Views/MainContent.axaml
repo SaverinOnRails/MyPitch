@@ -43,6 +43,7 @@
 					</ComboBox>
 					<ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomTonic}"/>
 				</Grid>
+				<ToggleSwitch Grid.Column="1" Margin="10,0,0,0" OnContent="Play Cadence On Key Change" OffContent="Play Cadence On Key Change" IsChecked="{Binding PlayCadenceOnKeyChange}"/>
 				<Grid ColumnDefinitions="*,Auto">
 					<NumericUpDown IsEnabled="True" shadui:ControlAssist.Label="Octave" Maximum="5" Minimum="1" Value="{Binding Octave}" FormatString="0"/>
 					<ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random"/>

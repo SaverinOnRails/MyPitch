@@ -14,6 +14,8 @@ internal class Game
     private bool _playDrone = true;
     private bool _playedCadence = false;
     public bool RandomTonic = false;
+    public bool PlayCadenceOnKeyChange = false;
+    private Key _oldTonic;
     private int _gameClickTimeout = 500; //ms
     private CancellationTokenSource _gameCancellationTokenSource = new();
     public IEnumerable<DegreeItem> AllowDegrees = new ObservableCollection<DegreeItem>();
@@ -114,11 +116,12 @@ internal class Game
         while (true)
         {
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            _oldTonic = Tonic;
             if (RandomTonic)
             {
                 Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
             }
-            if (!_playedCadence)
+            if (!_playedCadence || (PlayCadenceOnKeyChange && _oldTonic != Tonic))
             {
                 await PlayCadence();
             }
