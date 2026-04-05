@@ -31,5 +31,8 @@ internal static partial class Interop
 
     [JSImport("allNotesOff", "Interop")]
     public static partial void AllNotesOff(int channel);
+
+    [JSImport("playSpeechSample", "Interop")]
+    public static partial void PlaySpeechSample(byte[] sample);
 }
 

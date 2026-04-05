@@ -44,10 +44,23 @@
 					<ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomTonic}"/>
 				</Grid>
 				<ToggleSwitch Grid.Column="1" Margin="10,0,0,0" OnContent="Play Cadence On Key Change" OffContent="Play Cadence On Key Change" IsChecked="{Binding PlayCadenceOnKeyChange}"/>
-				<Grid ColumnDefinitions="*,Auto">
-					<NumericUpDown IsEnabled="{Binding !UseRandomOctave}" shadui:ControlAssist.Label="Octave" Maximum="5" Minimum="1" Value="{Binding Octave}" FormatString="0"/>
-					<ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomOctave}"/>
-				</Grid>
+				<StackPanel>
+					<TextBlock Text="{Binding Octave, StringFormat='Octave({0})'}" FontSize="15" FontWeight="DemiBold"/>
+					<Grid ColumnDefinitions="*,Auto">
+						<Slider
+						IsSnapToTickEnabled="True"
+						Maximum="5"
+						IsEnabled="{Binding !UseRandomOctave}"
+						Minimum="1"
+						TickFrequency="1"
+						shadui:ControlAssist.Label="Octave"
+						TickPlacement="BottomRight"
+						Value="{Binding Octave}"
+						/>
+						<ToggleSwitch Grid.Column="1" Margin="20,0,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomOctave}"/>
+					</Grid>
+				</StackPanel>
+
 				<ComboBox ItemsSource="{Binding GameModes}" shadui:ControlAssist.Label="Select Game Mode" SelectedValue="{Binding GameMode}" ToolTip.Tip="Select the Gamemode, Freeplay allows you to play around with the degree to obtain their feels, Interactive quizes you on the degrees and Pocket mode allows you to play handsfree on the go."/>
 				<Expander Padding="20">
 					<Expander.Header>
@@ -56,15 +69,20 @@
 						</TextBlock>
 					</Expander.Header>
 					<StackPanel Orientation="Vertical">
+						<StackPanel.Styles>
+							<Style Selector="CheckBox">
+								<Setter Property="FontSize" Value="20"/>
+							</Style>
+						</StackPanel.Styles>
 						<Grid ColumnDefinitions="*,*">
 							<CheckBox Content="Select All" IsChecked="{Binding ShouldSelectAllDegrees}"/>
-							<CheckBox Content="MajorScale" IsChecked="{Binding ShouldSelectMajorScale}" Grid.Column="1"/>
+							<CheckBox Content="Major Scale" IsChecked="{Binding ShouldSelectMajorScale}" Grid.Column="1"/>
 
 						</Grid>
 						<ItemsControl ItemsSource="{Binding Degrees}" Margin="28,0,0,0">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
-									<UniformGrid  />
+									<UniformGrid  ColumnSpacing="20"/>
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
 							<ItemsControl.ItemTemplate>

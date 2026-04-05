@@ -19,21 +19,22 @@ public partial class MainContent : UserControl
         if (Layout == Layout.Wide)
         {
             LayoutMain.ColumnDefinitions = new("*,Auto,Auto");
-           // Grid.SetColumn(CircleHaloEffect, 0);
+            // Grid.SetColumn(CircleHaloEffect, 0);
             Grid.SetColumn(Circle, 0);
             Grid.SetColumn(Card, 1);
             Card.MinWidth = 400;
         }
         else
         {
-            LayoutMain.RowDefinitions = new("*,Auto");
-           // Grid.SetRow(CircleHaloEffect, 0);
+            LayoutMain.RowDefinitions = new("*,*");
+            // Grid.SetRow(CircleHaloEffect, 0);
             Grid.SetRow(Circle, 0);
             Grid.SetRow(Card, 1);
             Card.MinWidth = 250;
         }
     }
     public Layout Layout { get; set; }
+
 }
 
 public enum Layout

@@ -96,8 +96,8 @@ public partial class Game : ObservableObject
         }
         catch (Exception ex)
         {
-          //  throw ex;
             Debug.WriteLine(ex.Message);
+            // throw ex;
             Stop();
         }
     }
@@ -114,7 +114,7 @@ public partial class Game : ObservableObject
             _cts.Token.ThrowIfCancellationRequested();
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
 
-            var quizDeg = await PlayQuizNote(hidden: false);
+            var quizDeg = await PlayQuizNote(hidden: true);
             await Task.Delay(1000, _cts.Token);
             PlatformServiceProvider.AudioDriver.PlaySpeechSample(quizDeg); //exception here
             await Task.Delay(1000, _cts.Token);

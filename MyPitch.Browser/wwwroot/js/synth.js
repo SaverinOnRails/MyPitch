@@ -1,19 +1,21 @@
 ﻿var synth;
 var startedLoadingSynth;
+var context;
 var synthReady = false;
 export function startSynth() {
-    //hack for browser autoplay rules, will improve later
+    JSSynth.waitForReady().then(loadSynth);
     document.body.onclick = function () {
-        if (startedLoadingSynth) return;
-        startedLoadingSynth = true;
-        JSSynth.waitForReady().then(loadSynth);
+        if (context.state == 'suspended') {
+            console.log("suspended, resuming");
+            context.resume();
+        }
     }
 }
+
 async function loadSynth() {
-    var context = new AudioContext();
+    context = new AudioContext();
     synth = new JSSynth.Synthesizer();
     synth.init(context.sampleRate);
-
     // Create AudioNode (ScriptProcessorNode) to output audio data
     var node = synth.createAudioNode(context, 8192); // 8192 is the frame count of buffer
     node.connect(context.destination);
@@ -51,4 +53,12 @@ export function allNotesOff(channel) {
 }
 function synthNotReady() {
     alert("Browser Synth is not ready yet, Please try again.");
+}
+export async function playSpeechSample(sample) {
+    const audioBuffer = await context.decodeAudioData(new Uint8Array(sample).buffer);
+    const source = context.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(context.destination);
+    source.start();
+
 }

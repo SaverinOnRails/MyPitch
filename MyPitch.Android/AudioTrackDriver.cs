@@ -2,15 +2,17 @@
 using Android.Hardware.Lights;
 using Android.Icu.Util;
 using Android.Media;
+using Android.Renderscripts;
 using MeltySynth;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AndroidOS = Android.OS;
 using AndroidMedia = Android.Media;
+using AndroidOS = Android.OS;
 namespace MyPitch.Droid;
 
 internal class AudioTrackDriver : IAudioDriver
@@ -20,11 +22,13 @@ internal class AudioTrackDriver : IAudioDriver
     private MeltySynth.Synthesizer _droneSynth;
     private float[] _temp;
     private AudioTrack _audioTrack;
-
+    private List<string> _speechSamples = new();
     private float[] _interlaced;
-     public AudioTrackDriver(string soundFont, string droneFont)
+    private MediaPlayer _player;
+
+    public AudioTrackDriver(string soundFont, string droneFont)
     {
-       _synth = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
+        _synth = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
         _droneSynth = new MeltySynth.Synthesizer(droneFont, SAMPLE_RATE);
 
         var minBufferSize = AudioTrack.GetMinBufferSize(
@@ -54,12 +58,33 @@ internal class AudioTrackDriver : IAudioDriver
         _temp = new float[blocksize * 2];
         _audioTrack.Play();
         Task.Factory.StartNew(WriteToSink, TaskCreationOptions.LongRunning);
+
+        //Can probably convert these too PCMs and play directly with AudioTrack for more performance but honestly who cares
+        var names = new string[] { "1", "2", "3", "4", "5", "6", "7", "flat-2", "flat-3", "flat-6", "flat-7", "sharp-4" };
+        foreach (var name in names)
+        {
+            var stream = EmbeddedResources.Get(name);
+            if (stream is null)
+            {
+                continue;
+            }
+            // Copy the stream into a byte array
+            byte[] wavData;
+            using (var ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                wavData = ms.ToArray();
+            }
+            var tempFile = Path.Combine(Path.GetTempPath(), $"{name}.wav");
+            File.WriteAllBytes(tempFile, wavData);
+            _speechSamples.Add(tempFile);
+        }
     }
     public void Play(int note)
     {
         _synth.NoteOn(0, note, 127);
     }
-    public void WriteToSink()
+    private void WriteToSink()
     {
         while (true)
         {
@@ -74,10 +99,7 @@ internal class AudioTrackDriver : IAudioDriver
             _audioTrack.Write(_interlaced, 0, _interlaced.Length, WriteMode.Blocking);
         }
     }
-    public void Stop()
-    {
 
-    }
     public void Release(int note)
     {
         _synth.NoteOff(0, note);
@@ -92,5 +114,14 @@ internal class AudioTrackDriver : IAudioDriver
     public void ReleaseDrone()
     {
         _droneSynth.NoteOffAll(false);
+    }
+
+    public void PlaySpeechSample(string sample)
+    {
+        _player.Reset();
+        var path = Path.Combine(Path.GetTempPath(), $"{sample}.wav".Replace("♭", "flat-").Replace("#", "sharp-"));
+        _player.SetDataSource(path);
+        _player.Prepare();
+        _player.Start();
     }
 }
