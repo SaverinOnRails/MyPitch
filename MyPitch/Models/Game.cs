@@ -18,7 +18,6 @@ public partial class Game : ObservableObject
     [ObservableProperty] private Key _tonic = Key.C;
     [ObservableProperty] private int _octave = 4;
 
-    private readonly bool _playDrone = true;
     private bool _playedCadence;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
@@ -30,6 +29,14 @@ public partial class Game : ObservableObject
     public void ApplySettings(GameSettings settings)
     {
         Settings = settings;
+        if (Settings.PlayDrone && _dronePlaying == false && IsPlaying)
+        {
+            PlayDrone();
+        }
+        if (!Settings.PlayDrone)
+        {
+            SuspendDrone();
+        }
     }
 
     public IEnumerable<DegreeItem> AllowDegrees { get; set; } = new ObservableCollection<DegreeItem>();
@@ -39,6 +46,8 @@ public partial class Game : ObservableObject
 
 
     private int? _userClickedIndex;
+    private bool _dronePlaying;
+
     public int? UserClickedIndex
     {
         get => _userClickedIndex;
@@ -53,7 +62,7 @@ public partial class Game : ObservableObject
 
     partial void OnTonicChanged(Key value)
     {
-        if (_playDrone && IsPlaying)
+        if (Settings.PlayDrone && IsPlaying)
         {
             SuspendDrone();
             PlayDrone();
@@ -83,7 +92,7 @@ public partial class Game : ObservableObject
         _cts = new CancellationTokenSource();
         try
         {
-            if (_playDrone) PlayDrone();
+            if (Settings.PlayDrone) PlayDrone();
             IsPlaying = true;
 
             await (Settings.Mode switch
@@ -191,6 +200,7 @@ public partial class Game : ObservableObject
             int[] octaveRange = [3, 4, 5];
             Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
         }
+
         if (Settings.PlayCadenceOnKeyChange && oldTonic != Tonic)
             _playedCadence = false;
     }
@@ -249,18 +259,24 @@ public partial class Game : ObservableObject
 
     private void PlayDrone()
     {
+        _dronePlaying = true;
         var note = MusicTheory.ToMidiNote(Tonic.ToString(), Tonic.ToString());
         PlatformServiceProvider.AudioDriver.PlayDrone(note);
     }
 
-    private void SuspendDrone() => PlatformServiceProvider.AudioDriver.ReleaseDrone();
+    private void SuspendDrone()
+    {
+        _dronePlaying = false;
+        PlatformServiceProvider.AudioDriver.ReleaseDrone();
+    }
 }
 
 public record GameSettings(
     GameMode Mode = GameMode.Freeplay,
     bool RandomTonic = false,
     bool RandomOctave = false,
-    bool PlayCadenceOnKeyChange = true
+    bool PlayCadenceOnKeyChange = true,
+    bool PlayDrone = true
 );
 
 public enum GameMode { Freeplay, Pocketmode, Interactive, Freelisten }

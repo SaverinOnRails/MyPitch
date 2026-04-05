@@ -41,7 +41,9 @@ public partial class MainViewModel : ViewModelBase
     private bool _useRandomTonic;
     private bool _useRandomOctave;
     private bool _playCadenceOnKeyChange = true;
+    private bool _playDrone = true;
 
+    public bool IsWasm => OperatingSystem.IsBrowser();
     public GameMode GameMode
     {
         get => _gameMode;
@@ -59,7 +61,11 @@ public partial class MainViewModel : ViewModelBase
         get => _useRandomOctave;
         set { SetProperty(ref _useRandomOctave, value); PushSettings(); }
     }
-
+    public bool PlayDrone
+    {
+        get => _playDrone;
+        set { SetProperty(ref _playDrone, value); PushSettings(); }
+    }
     public bool PlayCadenceOnKeyChange
     {
         get => _playCadenceOnKeyChange;
@@ -125,7 +131,7 @@ public partial class MainViewModel : ViewModelBase
     public async Task TogglePlay() => await Game.TogglePlay();
 
     private void PushSettings() =>
-        Game.ApplySettings(new GameSettings(_gameMode, _useRandomTonic, _useRandomOctave, _playCadenceOnKeyChange));
+        Game.ApplySettings(new GameSettings(_gameMode, _useRandomTonic, _useRandomOctave, _playCadenceOnKeyChange, _playDrone));
 
     private void SyncDegrees() =>
         Game.AllowDegrees = Degrees;

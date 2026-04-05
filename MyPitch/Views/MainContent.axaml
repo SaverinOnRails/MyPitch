@@ -43,6 +43,7 @@
 					</ComboBox>
 					<ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomTonic}"/>
 				</Grid>
+				<ToggleSwitch Grid.Column="1" Margin="10,0,0,0" OnContent="Play Drone" OffContent="Play Drone" IsChecked="{Binding PlayDrone}"/>
 				<ToggleSwitch Grid.Column="1" Margin="10,0,0,0" OnContent="Play Cadence On Key Change" OffContent="Play Cadence On Key Change" IsChecked="{Binding PlayCadenceOnKeyChange}"/>
 				<StackPanel>
 					<TextBlock Text="{Binding Octave, StringFormat='Octave({0})'}" FontSize="15" FontWeight="DemiBold"/>
@@ -98,10 +99,12 @@
 					</StackPanel>
 				</Expander>
 
-
 				<Button Content="Play" Command="{Binding TogglePlay}" Classes="Primary" IsVisible="{Binding !IsPlaying}">
 				</Button>
 				<Button Content="Stop" Command="{Binding TogglePlay}" Classes="Secondary" IsVisible="{Binding IsPlaying}"/>
+				<Border>
+					<TextBlock Text="Enjoy superior performance on the desktop or mobile app" IsVisible="{Binding IsWasm}"/>
+				</Border>
 			</StackPanel>
 		</shadui:Card>
 	</Grid>
