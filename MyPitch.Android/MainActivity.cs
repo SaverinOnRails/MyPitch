@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 namespace MyPitch.Droid;
 
 [Activity(
-    Label = "MyPitch.Android",
+    Label = "MyPitch",
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,

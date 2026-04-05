@@ -10,11 +10,18 @@
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="logo.png" />
+	</ItemGroup>
 
 	<ItemGroup>
-		<AndroidResource Include="Icon.png">
+		<AndroidResource Include="logo.png">
 			<Link>Resources\drawable\Icon.png</Link>
 		</AndroidResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AvaloniaResource Include="logo.png" />
 	</ItemGroup>
 
 	<ItemGroup>
