@@ -10,6 +10,7 @@
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 	</PropertyGroup>
+	
 	<ItemGroup>
 	  <None Remove="logo.png" />
 	</ItemGroup>
