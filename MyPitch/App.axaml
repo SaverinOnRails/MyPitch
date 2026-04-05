@@ -9,14 +9,13 @@
 	<Application.DataTemplates>
 		<local:ViewLocator/>
 	</Application.DataTemplates>
-	<Application.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</Application.Resources>
+
 	<Application.Styles>
 		<themes:ShadTheme />
 	</Application.Styles>
-
+	<Application.Resources>
+		<ResourceDictionary>
+			<Color x:Key="PrimaryColor">#E4FF30</Color>
+		</ResourceDictionary>
+	</Application.Resources>
 </Application>

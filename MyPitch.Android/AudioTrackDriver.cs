@@ -24,7 +24,7 @@ internal class AudioTrackDriver : IAudioDriver
     private AudioTrack _audioTrack;
     private List<string> _speechSamples = new();
     private float[] _interlaced;
-    private MediaPlayer _player;
+    private MediaPlayer _player = new();
 
     public AudioTrackDriver(string soundFont, string droneFont)
     {
