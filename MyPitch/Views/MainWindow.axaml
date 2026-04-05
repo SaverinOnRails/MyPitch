@@ -8,7 +8,7 @@
 			   xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
 			   x:Class="MyPitch.Views.MainWindow"
 			   Icon="/Assets/logo.ico"
-			   Title="MyPitch">
+			   Title="MyPitch - Simple Functional Ear Trainer">
 	<views:MainView />
 
 </shadui:Window>

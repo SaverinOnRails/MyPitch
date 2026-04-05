@@ -20,8 +20,8 @@ async function loadSynth() {
     var node = synth.createAudioNode(context, 8192); // 8192 is the frame count of buffer
     node.connect(context.destination);
 
-    var sfontBuffer1 = await loadArrayBuffer("/SoundFonts/default.sf2");
-    var sfontBuffer2 = await loadArrayBuffer("/SoundFonts/warm pad.sf2");
+    var sfontBuffer1 = await loadArrayBuffer("/Soundfonts/default.sf2");
+    var sfontBuffer2 = await loadArrayBuffer("/Soundfonts/warm pad.sf2");
 
     synth.loadSFont(sfontBuffer1).then(function (sf1) {
         //  synth.midiNoteOn(0, 60, 127)
