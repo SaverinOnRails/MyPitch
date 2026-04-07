@@ -53,13 +53,23 @@ public partial class MainViewModel : ViewModelBase
     public bool UseRandomTonic
     {
         get => _useRandomTonic;
-        set { SetProperty(ref _useRandomTonic, value); PushSettings(); }
+        set { SetProperty(ref _useRandomTonic, value); PushSettings(); if(value) SetRandomTonicManual(); }
     }
 
+    //THESE ONLY RUN WHEN THE USER MANUALLY TRIGGERS THEM IN THE UI
+    private void SetRandomTonicManual()
+    {
+        Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
+    }
+    private void SetRandomOctaveManual()
+    {
+        int[] octaveRange = [3, 4, 5];
+        Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
+    }
     public bool UseRandomOctave
     {
         get => _useRandomOctave;
-        set { SetProperty(ref _useRandomOctave, value); PushSettings(); }
+        set { SetProperty(ref _useRandomOctave, value); PushSettings(); if(value) SetRandomOctaveManual(); }
     }
     public bool PlayDrone
     {
