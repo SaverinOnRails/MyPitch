@@ -22,7 +22,7 @@ public partial class Game : ObservableObject
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
     private TaskCompletionSource<int>? _userClickTcs;
-
+    private Models.Key _oldTonic;
 
     public GameSettings Settings { get; private set; } = new();
 
@@ -190,8 +190,6 @@ public partial class Game : ObservableObject
 
     private async Task MaybeChangeTonic()
     {
-        var oldTonic = Tonic;
-
         if (Settings.RandomTonic)
             Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
 
@@ -201,8 +199,11 @@ public partial class Game : ObservableObject
             Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
         }
 
-        if (Settings.PlayCadenceOnKeyChange && oldTonic != Tonic)
+        if (Settings.PlayCadenceOnKeyChange && _oldTonic != Tonic)
+        {
             _playedCadence = false;
+        }
+        _oldTonic = Tonic;
     }
 
     private async Task MaybePlayCadence()
