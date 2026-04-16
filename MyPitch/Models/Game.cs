@@ -18,6 +18,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private Key _tonic = Key.C;
     [ObservableProperty] private int _octave = 4;
 
+    private int _cycleIndex = 0;
     private bool _playedCadence;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
@@ -80,6 +81,7 @@ public partial class Game : ObservableObject
         _cts.Cancel();
         SuspendDrone();
         IsPlaying = false;
+        _cycleIndex = 0;
         AnswerState = AnswerState.Neutral;
         _playedCadence = false;
         GameClickedIndex = null;
@@ -100,6 +102,7 @@ public partial class Game : ObservableObject
                 GameMode.Interactive => InteractiveGameLoop(),
                 GameMode.Freelisten => FreeListenGameLoop(),
                 GameMode.Pocketmode => PocketModeGameLoop(),
+                GameMode.Cycle => CycleModeGameLoop(),
                 _ => Task.CompletedTask   // Freeplay 
             });
         }
@@ -108,6 +111,28 @@ public partial class Game : ObservableObject
             Debug.WriteLine(ex.Message);
             // throw ex;
             Stop();
+        }
+    }
+
+    private async Task CycleModeGameLoop()
+    {
+        while (true)
+        {
+            int length = MusicTheory.ChromaticScaleGraduation.Length;
+            _cts.Token.ThrowIfCancellationRequested();
+            await MaybeChangeTonic();
+            await MaybePlayCadence();
+
+            while (!AllowedDegreeStrings.Contains(MusicTheory.ChromaticScaleGraduation[_cycleIndex]))
+            {
+                if (AllowedDegreeStrings.Count() == 0) break;
+                _cts.Token.ThrowIfCancellationRequested();
+                _cycleIndex = (_cycleIndex + 1) % length;
+            }
+            string degAtCycleIndex = MusicTheory.ChromaticScaleGraduation[_cycleIndex];
+            await PlayScaleNote(degAtCycleIndex, hidden: false, duration:2000);
+            _cycleIndex = (_cycleIndex + 1) % length; 
+            await Task.Delay(1000, _cts.Token);
         }
     }
 
@@ -185,6 +210,8 @@ public partial class Game : ObservableObject
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
 
             await PlayQuizNote(hidden: false);
+            await Task.Delay(1000, _cts.Token);
+
         }
     }
 
@@ -232,7 +259,7 @@ public partial class Game : ObservableObject
         _playedCadence = true;
     }
 
-    private async Task PlayScaleNote(string deg, bool hidden)
+    private async Task PlayScaleNote(string deg, bool hidden , int duration = 500)
     {
         _cts.Token.ThrowIfCancellationRequested();
 
@@ -249,7 +276,7 @@ public partial class Game : ObservableObject
         PlatformServiceProvider.AudioDriver.Play(note);
         try
         {
-            await Task.Delay(GameClickTimeout, _cts.Token);
+            await Task.Delay(duration, _cts.Token);
         }
         finally
         {
@@ -280,5 +307,5 @@ public record GameSettings(
     bool PlayDrone = true
 );
 
-public enum GameMode { Freeplay, Pocketmode, Interactive, Freelisten }
+public enum GameMode { Freeplay, Pocketmode, Interactive, Freelisten, Cycle }
 public enum AnswerState { Correct, Neutral, Incorrect }

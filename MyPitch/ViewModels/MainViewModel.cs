@@ -107,7 +107,7 @@ public partial class MainViewModel : ViewModelBase
     public AnswerState AnswerState => Game.AnswerState;
 
     public Key[] Tonics => MusicTheory.Keys;
-    public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Freelisten];
+    public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Freelisten , GameMode.Cycle];
 
     public MainViewModel()
     {
