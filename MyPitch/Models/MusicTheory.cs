@@ -2,7 +2,7 @@
 
 namespace MyPitch.Models;
 
-internal static class MusicTheory
+public static class MusicTheory
 {
     //TODO: Having string array and Tonic seems stupid
     public static string[] ChromaticScale = new string[] { "C", "Dflat", "D", "Eflat", "E", "F", "Gflat", "G", "Aflat", "A", "Bflat", "B" };
