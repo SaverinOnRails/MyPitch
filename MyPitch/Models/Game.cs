@@ -43,7 +43,7 @@ public partial class Game : ObservableObject
     public IEnumerable<DegreeItem> AllowDegrees { get; set; } = new ObservableCollection<DegreeItem>();
 
     private List<string> AllowedDegreeStrings =>
-        AllowDegrees.Where(d => d.IsSelected).Select(d => d.Label).ToList();
+AllowDegrees.Where(d => d.IsSelected).Select(d => d.Label).ToList();
 
 
     private int? _userClickedIndex;
@@ -101,7 +101,7 @@ public partial class Game : ObservableObject
                 GameMode.Freelisten => FreeListenGameLoop(),
                 GameMode.Pocketmode => PocketModeGameLoop(),
                 GameMode.Cycle => CycleModeGameLoop(),
-                _ => Task.CompletedTask   // Freeplay 
+                _ => Task.CompletedTask   // Freeplay
             });
         }
         catch (Exception ex)
@@ -168,8 +168,8 @@ public partial class Game : ObservableObject
 
             var quizDeg = await PlayQuizNote(hidden: true);
             var quizNoteIndex = MusicTheory.FifthSegment(
-                Tonic,
-                MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
+            Tonic,
+            MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
 
             _userClickTcs = new TaskCompletionSource<int>();
             var userResponse = await _userClickTcs.Task;
@@ -260,9 +260,9 @@ public partial class Game : ObservableObject
         _cts.Token.ThrowIfCancellationRequested();
 
         var noteAtDeg = MusicTheory.NoteAtDegree(
-            Tonic,
-            MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1,
-            false);
+        Tonic,
+        MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1,
+        false);
 
         var note = MusicTheory.ToMidiNote(Tonic.ToString(), noteAtDeg, Octave);
 
@@ -296,12 +296,12 @@ public partial class Game : ObservableObject
 }
 
 public record GameSettings(
-    GameMode Mode = GameMode.Freeplay,
-    bool RandomTonic = false,
-    bool RandomOctave = false,
-    bool PlayCadenceOnKeyChange = true,
-    bool PlayDrone = true
+GameMode Mode = GameMode.Freeplay,
+bool RandomTonic = false,
+bool RandomOctave = false,
+bool PlayCadenceOnKeyChange = true,
+bool PlayDrone = true
 );
 
-public enum GameMode { Freeplay, Pocketmode, Interactive, Freelisten, Cycle }
+public enum GameMode { Freeplay, Pocketmode, Interactive, Freelisten, Cycle, Melody }
 public enum AnswerState { Correct, Neutral, Incorrect }

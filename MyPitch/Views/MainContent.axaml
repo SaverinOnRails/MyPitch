@@ -1,111 +1,139 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:converters="using:MyPitch.Converters"
-			 xmlns:shadui="using:ShadUI"
-			 xmlns:vm="using:MyPitch.ViewModels"
-			 xmlns:controls="using:MyPitch.Controls"
-			 x:DataType="vm:MainViewModel"
-			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 x:Class="MyPitch.Views.MainContent">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="using:MyPitch.Converters"
+             xmlns:shadui="using:ShadUI"
+             xmlns:vm="using:MyPitch.ViewModels"
+             xmlns:controls="using:MyPitch.Controls"
+             x:DataType="vm:MainViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MyPitch.Views.MainContent">
 
-	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-		to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:MainViewModel />
-	</Design.DataContext>
-	<UserControl.Resources>
-		<converters:TonicDisplayConverter x:Key = "TonicDisplayConverter"/>
-		<FontFamily x:Key="NotoSans">avares://MyPitch/Assets/Fonts/#Noto Sans</FontFamily>
-	</UserControl.Resources>
-	<Grid Margin="10,0,0,0" Container.Name="main" x:Name="LayoutMain">
-		<!--		<controls:CircleHaloEffect Margin="10" x:Name="CircleHaloEffect"/>
-		-->
-		<Grid RowDefinitions="*,Auto">
-			<controls:CircleOfFifths  Margin="10" Tonic="{Binding Tonic}" x:Name="Circle" IncludedDegrees="{Binding Degrees}" Octave="{Binding Octave}" GameClickedIndex="{Binding GameClickedIndex}" UserClickedIndex="{Binding UserClickedIndex, Mode=TwoWay}" AnswerState="{Binding AnswerState}"/>
-		</Grid>
-		<shadui:Card Margin="0,10,5,10"  MaxWidth="700" HorizontalAlignment="Stretch" x:Name="Card">
-			<shadui:Card.Header>
-				<StackPanel>
-					<shadui:CardTitle>Customize</shadui:CardTitle>
-				</StackPanel>
-			</shadui:Card.Header>
-			<StackPanel Spacing="15">
-				<Grid ColumnDefinitions="*,Auto">
-					<ComboBox ItemsSource="{Binding Tonics}" SelectedItem="{Binding Tonic}" shadui:ControlAssist.Label="Select Tonic"
-							  IsEnabled="{Binding !UseRandomTonic}" ToolTip.Tip="Select the Tonic or Key for use in all Game modes">
-						<ComboBox.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding Converter={StaticResource TonicDisplayConverter}}" FontFamily="{StaticResource NotoSans}" />
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
-					<ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomTonic}"/>
-				</Grid>
-				<ToggleSwitch Grid.Column="1" Margin="10,0,0,0" OnContent="Play Drone" OffContent="Play Drone" IsChecked="{Binding PlayDrone}"/>
-				<ToggleSwitch Grid.Column="1" Margin="10,0,0,0" OnContent="Play Cadence On Key Change" OffContent="Play Cadence On Key Change" IsChecked="{Binding PlayCadenceOnKeyChange}"/>
-				<StackPanel>
-					<TextBlock Text="{Binding Octave, StringFormat='Octave({0})'}" FontSize="15" FontWeight="DemiBold"/>
-					<Grid ColumnDefinitions="*,Auto">
-						<Slider
-						IsSnapToTickEnabled="True"
-						Maximum="5"
-						IsEnabled="{Binding !UseRandomOctave}"
-						Minimum="1"
-						TickFrequency="1"
-						shadui:ControlAssist.Label="Octave"
-						TickPlacement="BottomRight"
-						Value="{Binding Octave}"
-						/>
-						<ToggleSwitch Grid.Column="1" Margin="20,0,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomOctave}"/>
-					</Grid>
-				</StackPanel>
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+        to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+        <converters:TonicDisplayConverter x:Key = "TonicDisplayConverter"/>
+        <FontFamily x:Key="NotoSans">avares://MyPitch/Assets/Fonts/#Noto Sans</FontFamily>
+    </UserControl.Resources>
+    <Grid Margin="10,0,0,0" Container.Name="main" x:Name="LayoutMain">
+        <Grid RowDefinitions="Auto,*" x:Name="CircleDisplay">
+            <controls:MelodyBar  Classes.collapsed="{Binding !IsMelodyMode}" NoteCount="{Binding MelodyNoteCount}">
+                <controls:MelodyBar.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Height" Duration="0:0:0.05"/>
+                    </Transitions>
+                </controls:MelodyBar.Transitions>
+                <controls:MelodyBar.Styles>
+                    <Style Selector="controls|MelodyBar">
+                        <Setter Property="Height" Value="50"/>
+                    </Style>
+                    <Style Selector="controls|MelodyBar.collapsed">
+                        <Setter Property="Height" Value="0"/>
+                    </Style>
+                </controls:MelodyBar.Styles>
+            </controls:MelodyBar>
+            <controls:CircleOfFifths Grid.Row="1"  Margin="10" Tonic="{Binding Tonic}" x:Name="Circle" IncludedDegrees="{Binding Degrees}" Octave="{Binding Octave}" GameClickedIndex="{Binding GameClickedIndex}" UserClickedIndex="{Binding UserClickedIndex, Mode=TwoWay}" AnswerState="{Binding AnswerState}"/>
+        </Grid>
+        <shadui:Card Margin="0,10,5,10"  MaxWidth="700" HorizontalAlignment="Stretch" x:Name="Card">
+            <shadui:Card.Header>
+                <StackPanel>
+                    <shadui:CardTitle>Customize</shadui:CardTitle>
+                </StackPanel>
+            </shadui:Card.Header>
+            <StackPanel Spacing="15">
+                <Grid ColumnDefinitions="*,Auto">
+                    <ComboBox ItemsSource="{Binding Tonics}" SelectedItem="{Binding Tonic}" shadui:ControlAssist.Label="Select Tonic"
+                              IsEnabled="{Binding !UseRandomTonic}" ToolTip.Tip="Select the Tonic or Key for use in all Game modes">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource TonicDisplayConverter}}" FontFamily="{StaticResource NotoSans}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ToggleSwitch Grid.Column="1" Margin="10,30,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomTonic}"/>
+                </Grid>
+                <ToggleSwitch Grid.Column="1" Margin="4,0,0,0" OnContent="Play Drone" OffContent="Play Drone" IsChecked="{Binding PlayDrone}"/>
+                <ToggleSwitch Grid.Column="1" Margin="10,0,0,0" OnContent="Play Cadence On Key Change" OffContent="Play Cadence On Key Change" IsChecked="{Binding PlayCadenceOnKeyChange}"/>
+                <StackPanel>
+                    <TextBlock Text="{Binding Octave, StringFormat='Octave : {0}'}" FontSize="15" FontWeight="DemiBold"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Slider
+                            IsSnapToTickEnabled="True"
+                            Maximum="5"
+                            IsEnabled="{Binding !UseRandomOctave}"
+                            Minimum="1"
+                            TickFrequency="1"
+                            shadui:ControlAssist.Label="Octave"
+                            TickPlacement="BottomRight"
+                            Value="{Binding Octave}"
+                            />
+                        <ToggleSwitch Grid.Column="1" Margin="20,0,10,0" OnContent="Random" OffContent="Random" IsChecked="{Binding UseRandomOctave}"/>
+                    </Grid>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="{Binding MelodyNoteCount, StringFormat='Notes in melody : {0}'}" FontSize="15" FontWeight="DemiBold"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Slider
+                            IsSnapToTickEnabled="True"
+                            Maximum="5"
+                            IsEnabled="{Binding IsMelodyMode}"
+                            Minimum="2"
+                            TickFrequency="1"
+                            shadui:ControlAssist.Label="Notes in melody"
+                            TickPlacement="BottomRight"
+                            Value="{Binding MelodyNoteCount}"
+                            />
+                    </Grid>
+                </StackPanel>
 
-				<ComboBox ItemsSource="{Binding GameModes}" shadui:ControlAssist.Label="Select Game Mode" SelectedValue="{Binding GameMode}" ToolTip.Tip="Select the Gamemode, Freeplay allows you to play around with the degree to obtain their feels, Interactive quizes you on the degrees and Pocket mode allows you to play handsfree on the go."/>
-				<Expander Padding="20">
-					<Expander.Header>
-						<TextBlock FontSize="16">
-							Included Scale Degrees
-						</TextBlock>
-					</Expander.Header>
-					<StackPanel Orientation="Vertical">
-						<StackPanel.Styles>
-							<Style Selector="CheckBox">
-								<Setter Property="FontSize" Value="20"/>
-							</Style>
-						</StackPanel.Styles>
-						<Grid ColumnDefinitions="*,*">
-							<CheckBox Content="Select All" IsChecked="{Binding ShouldSelectAllDegrees}"/>
-							<CheckBox Content="Major Scale" IsChecked="{Binding ShouldSelectMajorScale}" Grid.Column="1"/>
+                <ComboBox ItemsSource="{Binding GameModes}" shadui:ControlAssist.Label="Select Game Mode" SelectedValue="{Binding GameMode}" ToolTip.Tip="Select the Gamemode, Freeplay allows you to play around with the degree to obtain their feels, Interactive quizes you on the degrees and Pocket mode allows you to play handsfree on the go."/>
+                <Expander Padding="20">
+                    <Expander.Header>
+                        <TextBlock FontSize="16">
+                            Included Scale Degrees
+                        </TextBlock>
+                    </Expander.Header>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel.Styles>
+                            <Style Selector="CheckBox">
+                                <Setter Property="FontSize" Value="20"/>
+                            </Style>
+                        </StackPanel.Styles>
+                        <Grid ColumnDefinitions="*,*">
+                            <CheckBox Content="Select All" IsChecked="{Binding ShouldSelectAllDegrees}"/>
+                            <CheckBox Content="Major Scale" IsChecked="{Binding ShouldSelectMajorScale}" Grid.Column="1"/>
 
-						</Grid>
-						<ItemsControl ItemsSource="{Binding Degrees}" Margin="28,0,0,0">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<UniformGrid  ColumnSpacing="20"/>
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<CheckBox
-									Content="{Binding Label}"
-									IsChecked="{Binding IsSelected}"
-									FontFamily="{StaticResource NotoSans}"
-									Margin="0,2"/>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
-					</StackPanel>
-				</Expander>
+                        </Grid>
+                        <ItemsControl ItemsSource="{Binding Degrees}" Margin="28,0,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid  ColumnSpacing="20"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        Content="{Binding Label}"
+                                        IsChecked="{Binding IsSelected}"
+                                        FontFamily="{StaticResource NotoSans}"
+                                        Margin="0,2"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
 
-				<Button Content="Play" Command="{Binding TogglePlay}" Classes="Primary" IsVisible="{Binding !IsPlaying}">
-				</Button>
-				<Button Content="Stop" Command="{Binding TogglePlay}" Classes="Secondary" IsVisible="{Binding IsPlaying}"/>
-				<Border>
-					<TextBlock Text="Enjoy superior performance on the desktop or mobile app" IsVisible="{Binding IsWasm}"/>
-				</Border>
-			</StackPanel>
-		</shadui:Card>
-	</Grid>
+                <Button Content="Play" Command="{Binding TogglePlay}" Classes="Primary" IsVisible="{Binding !IsPlaying}">
+                </Button>
+                <Button Content="Stop" Command="{Binding TogglePlay}" Classes="Secondary" IsVisible="{Binding IsPlaying}"/>
+                <Border>
+                    <TextBlock Text="Enjoy superior performance on the desktop or mobile app" IsVisible="{Binding IsWasm}"/>
+                </Border>
+            </StackPanel>
+        </shadui:Card>
+    </Grid>
 </UserControl>

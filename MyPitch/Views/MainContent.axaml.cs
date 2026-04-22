@@ -20,7 +20,7 @@ public partial class MainContent : UserControl
         {
             LayoutMain.ColumnDefinitions = new("*,Auto");
             // Grid.SetColumn(CircleHaloEffect, 0);
-            Grid.SetColumn(Circle, 0);
+            Grid.SetColumn(CircleDisplay, 0);
             Grid.SetColumn(Card, 1);
             Card.MinWidth = 400;
         }
@@ -28,7 +28,7 @@ public partial class MainContent : UserControl
         {
             LayoutMain.RowDefinitions = new("*,*");
             // Grid.SetRow(CircleHaloEffect, 0);
-            Grid.SetRow(Circle, 0);
+            Grid.SetRow(CircleDisplay, 0);
             Grid.SetRow(Card, 1);
             Card.MinWidth = 250;
         }

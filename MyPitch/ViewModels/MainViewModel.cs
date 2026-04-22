@@ -36,24 +36,24 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] private bool _wideLayout;
     [ObservableProperty] private bool _shouldSelectAllDegrees = true;
     [ObservableProperty] private bool _shouldSelectMajorScale = true;
+    [ObservableProperty] private int _melodyNoteCount = 2;
 
     private GameMode _gameMode = GameMode.Freeplay;
     private bool _useRandomTonic;
     private bool _useRandomOctave;
     private bool _playCadenceOnKeyChange = true;
     private bool _playDrone = true;
-
     public bool IsWasm => OperatingSystem.IsBrowser();
     public GameMode GameMode
     {
         get => _gameMode;
-        set { SetProperty(ref _gameMode, value); PushSettings(); }
+        set { SetProperty(ref _gameMode, value); PushSettings(); OnPropertyChanged(nameof(IsMelodyMode)); }
     }
 
     public bool UseRandomTonic
     {
         get => _useRandomTonic;
-        set { SetProperty(ref _useRandomTonic, value); PushSettings(); if(value) SetRandomTonicManual(); }
+        set { SetProperty(ref _useRandomTonic, value); PushSettings(); if (value) SetRandomTonicManual(); }
     }
 
     //THESE ONLY RUN WHEN THE USER MANUALLY TRIGGERS THEM IN THE UI
@@ -69,7 +69,7 @@ public partial class MainViewModel : ViewModelBase
     public bool UseRandomOctave
     {
         get => _useRandomOctave;
-        set { SetProperty(ref _useRandomOctave, value); PushSettings(); if(value) SetRandomOctaveManual(); }
+        set { SetProperty(ref _useRandomOctave, value); PushSettings(); if (value) SetRandomOctaveManual(); }
     }
     public bool PlayDrone
     {
@@ -81,7 +81,7 @@ public partial class MainViewModel : ViewModelBase
         get => _playCadenceOnKeyChange;
         set { SetProperty(ref _playCadenceOnKeyChange, value); PushSettings(); }
     }
-
+    public bool IsMelodyMode => GameMode == GameMode.Melody;
 
     public Key Tonic
     {
@@ -107,7 +107,7 @@ public partial class MainViewModel : ViewModelBase
     public AnswerState AnswerState => Game.AnswerState;
 
     public Key[] Tonics => MusicTheory.Keys;
-    public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Freelisten , GameMode.Cycle];
+    public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Melody, GameMode.Cycle];
 
     public MainViewModel()
     {
