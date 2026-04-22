@@ -87,8 +87,6 @@ public partial class Game : ObservableObject
         GameClickedIndex = null;
     }
 
-
-
     private async Task Start()
     {
         _cts = new CancellationTokenSource();
@@ -130,8 +128,8 @@ public partial class Game : ObservableObject
                 _cycleIndex = (_cycleIndex + 1) % length;
             }
             string degAtCycleIndex = MusicTheory.ChromaticScaleGraduation[_cycleIndex];
-            await PlayScaleNote(degAtCycleIndex, hidden: false, duration:2000);
-            _cycleIndex = (_cycleIndex + 1) % length; 
+            await PlayScaleNote(degAtCycleIndex, hidden: false, duration: 2000);
+            _cycleIndex = (_cycleIndex + 1) % length;
             await Task.Delay(1000, _cts.Token);
         }
     }
@@ -186,11 +184,9 @@ public partial class Game : ObservableObject
             else
             {
                 AnswerState = AnswerState.Incorrect;
-                for (var i = 0; i < 10; i++)
+                for (var i = 0; i < 5; i++)
                 {
-                    GameClickedIndex = quizNoteIndex;
-                    await Task.Delay(200, _cts.Token);
-                    GameClickedIndex = null;
+                    await PlayScaleNote(quizDeg, hidden: false, duration: 200);
                     await Task.Delay(50, _cts.Token);
                 }
             }
@@ -259,7 +255,7 @@ public partial class Game : ObservableObject
         _playedCadence = true;
     }
 
-    private async Task PlayScaleNote(string deg, bool hidden , int duration = 500)
+    private async Task PlayScaleNote(string deg, bool hidden, int duration = 500)
     {
         _cts.Token.ThrowIfCancellationRequested();
 
