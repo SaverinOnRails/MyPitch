@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -35,10 +36,10 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty] private bool _wideLayout;
     [ObservableProperty] private bool _shouldSelectAllDegrees = true;
-    [ObservableProperty] private bool _shouldSelectMajorScale = true;
-    [ObservableProperty] private int _melodyNoteCount = 2;
+    [ObservableProperty] private int _melodyNoteCount = 3;
 
     private GameMode _gameMode = GameMode.Freeplay;
+    private ScaleMode _scaleMode;
     private bool _useRandomTonic;
     private bool _useRandomOctave;
     private bool _playCadenceOnKeyChange = true;
@@ -47,7 +48,27 @@ public partial class MainViewModel : ViewModelBase
     public GameMode GameMode
     {
         get => _gameMode;
-        set { SetProperty(ref _gameMode, value); PushSettings(); OnPropertyChanged(nameof(IsMelodyMode)); }
+        set { SetProperty(ref _gameMode, value); PushSettings(); OnPropertyChanged(nameof(IsMelodyMode));  if (value == GameMode.Melody) ConfigureMelodyMode(); }
+    }
+
+    private void ConfigureMelodyMode()
+    {
+        ScaleMode = ScaleMode.Ionian;
+    }
+
+    public ScaleMode ScaleMode
+    {
+        get => _scaleMode;
+        set { SetProperty(ref _scaleMode, value); SetScaleMode(value); }
+    }
+
+    private void SetScaleMode(ScaleMode value)
+    {
+        var degs = MusicTheory.DegsForScaleMode(value);
+        foreach (var x in Degrees)
+        {
+            x.IsSelected = degs.Contains(x.Label);
+        }
     }
 
     public bool UseRandomTonic
@@ -108,7 +129,7 @@ public partial class MainViewModel : ViewModelBase
 
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Melody, GameMode.Cycle];
-
+    public ScaleMode[] ScaleModes => [ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
     public MainViewModel()
     {
         Game.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
@@ -124,18 +145,8 @@ public partial class MainViewModel : ViewModelBase
     {
         foreach (var deg in Degrees)
         {
-            if (_shouldSelectMajorScale && IsMajorScaleDegree(deg))
-                deg.IsSelected = true;
-            else
-                deg.IsSelected = value;
+            deg.IsSelected = value;
         }
-    }
-
-    partial void OnShouldSelectMajorScaleChanged(bool value)
-    {
-        foreach (var deg in Degrees)
-            if (IsMajorScaleDegree(deg))
-                deg.IsSelected = value;
     }
 
     public async Task TogglePlay() => await Game.TogglePlay();

@@ -15,7 +15,7 @@
     </Application.Styles>
     <Application.Resources>
         <ResourceDictionary>
-            <Color x:Key="PrimaryColor">#E4FF30</Color>
+            <Color x:Key="PrimaryColor">#FBEF76</Color>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

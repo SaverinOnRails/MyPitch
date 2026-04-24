@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Rendering.Composition;
 using Avalonia.Threading;
 using MyPitch.Models;
 using MyPitch.ViewModels;
@@ -26,9 +27,10 @@ internal class CircleOfFifths : Control
             Interval = TimeSpan.FromMilliseconds(16)
         };
         _animationTimer.Tick += OnAnimationTick;
+        _compositor = ElementComposition.GetElementVisual(this)!.Compositor;
+       
     }
-    private static double EaseInOutCubic(double t)
-    => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
+    private static double EaseInOutCubic(double t) => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
     private void OnAnimationTick(object? sender, EventArgs e)
     {
         _animationElapsedMs += 16.0;
@@ -42,7 +44,7 @@ internal class CircleOfFifths : Control
         {
             _animationRotationAngle = _animationRotationAngleTarget;
             _animationRotationAngleTarget = 0;
-            _animationElapsedMs = 0; 
+            _animationElapsedMs = 0;
             _animationTimer.Stop();
             _displayTonic = Tonic;
             _animationRotationAngle = 0;
@@ -52,30 +54,34 @@ internal class CircleOfFifths : Control
         InvalidateVisual();
     }
 
-    private SolidColorBrush[] _degreeBrushes = new SolidColorBrush[]
-    {
-        new SolidColorBrush(Color.Parse("#00A933")),
-        new SolidColorBrush(Color.Parse("#79D513")),
-        new SolidColorBrush(Color.Parse("#FFE400")),
-        new SolidColorBrush(Color.Parse("#FFBE00")),
-        new SolidColorBrush(Color.Parse("#FF8000")),
-        new SolidColorBrush(Color.Parse("#FF3E00")),
-        new SolidColorBrush(Color.Parse("#FF0000")),
-        new SolidColorBrush(Color.Parse("#C2003D")),
-        new SolidColorBrush(Color.Parse("#810081")),
-        new SolidColorBrush(Color.Parse("#662B99")),
-        new SolidColorBrush(Color.Parse("#336699")),
-        new SolidColorBrush(Color.Parse("#198066"))
-    };
+    private SolidColorBrush[] _degreeBrushes = new SolidColorBrush[] {
+    new SolidColorBrush(Color.Parse("#00A933")),
+      new SolidColorBrush(Color.Parse("#79D513")),
+      new SolidColorBrush(Color.Parse("#FFE400")),
+      new SolidColorBrush(Color.Parse("#FFBE00")),
+      new SolidColorBrush(Color.Parse("#FF8000")),
+      new SolidColorBrush(Color.Parse("#FF3E00")),
+      new SolidColorBrush(Color.Parse("#FF0000")),
+      new SolidColorBrush(Color.Parse("#C2003D")),
+      new SolidColorBrush(Color.Parse("#810081")),
+      new SolidColorBrush(Color.Parse("#662B99")),
+      new SolidColorBrush(Color.Parse("#336699")),
+      new SolidColorBrush(Color.Parse("#198066"))
+  };
 
-    private const double FIRST_INNER_RADIUS_RATIO = 0.75;
-    private const double SECOND_INNER_RADIUS_RATIO = 0.65;
-    private const double THIRD_INNER_RADIUS_RATIO = 0.2;
-    private const double THIRTY_DEG_RAD = 30 * Math.PI / 180;
-    private SolidColorBrush _accentBrush = new SolidColorBrush(Color.Parse("#E4FF30"));
+    private
+    const double FIRST_INNER_RADIUS_RATIO = 0.75;
+    private
+    const double SECOND_INNER_RADIUS_RATIO = 0.65;
+    private
+    const double THIRD_INNER_RADIUS_RATIO = 0.2;
+    private
+    const double THIRTY_DEG_RAD = 30 * Math.PI / 180;
+    private SolidColorBrush _accentBrush =
+        new SolidColorBrush((Color)Application.Current!.Resources["PrimaryColor"]!);
 
     private DispatcherTimer _animationTimer;
-    private double _animationDurationMs; 
+    private double _animationDurationMs;
     private double _animationRotationAngleTarget;
     private double _animationRotationAngle;
     private double _animationElapsedMs;
@@ -120,7 +126,7 @@ internal class CircleOfFifths : Control
     }
     private void IncludedDegreesChanged(object? sender, PropertyChangedEventArgs e)
     {
-        InvalidateVisual();  //This might cause issues being done to rapidly
+        InvalidateVisual(); //This might cause issues being done to rapidly
     }
 
     private Typeface _notoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
@@ -129,12 +135,17 @@ internal class CircleOfFifths : Control
     public Models.Key Tonic
     {
         get => GetValue(TonicProperty);
-        set { SetValue(TonicProperty, value); }
+        set
+        {
+            SetValue(TonicProperty, value);
+        }
     }
     private int? _mouseOnIndex = null;
+    private Compositor _compositor;
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (change.Property == TonicProperty || change.Property == GameClickedIndexProperty)
+        if (change.Property == GameClickedIndexProperty)
         {
             InvalidateVisual();
         }
@@ -153,18 +164,24 @@ internal class CircleOfFifths : Control
         }
         if (change.Property == TonicProperty)
         {
+            //disable animation on WASM for now
+            if (System.OperatingSystem.IsBrowser())
+            {
+                _displayTonic = Tonic;
+                InvalidateVisual();
+                return;
+            }
             var oldTonic = (Models.Key?)change.OldValue;
             var newTonic = Tonic;
             if (oldTonic is null || oldTonic == newTonic) return;
             int oldSegment = MusicTheory.FifthSegment(oldTonic.Value, newTonic.ToString());
             var diff = 12 - oldSegment; //number of segments between them when moving clockwise
-            if(diff > 6)
+            if (diff > 6)
             {
                 diff = diff - 12;
             }
             _animationRotationAngleTarget = diff * THIRTY_DEG_RAD;
-            Debug.WriteLine(_animationRotationAngleTarget);
-            _animationDurationMs = Math.Clamp(Math.Abs(diff * 300 ), 300 , 1000);
+            _animationDurationMs = Math.Clamp(Math.Abs(diff * 300), 300, 1000);
             _animationTimer.Start();
         }
         base.OnPropertyChanged(change);
@@ -182,7 +199,7 @@ internal class CircleOfFifths : Control
         }
         else
         {
-            _accentBrush = new SolidColorBrush(Color.Parse("#E4FF30"));
+            _accentBrush = new SolidColorBrush((Color)Application.Current!.Resources["PrimaryColor"]!); //is it costly to keep calling this?
         }
         InvalidateVisual();
     }
@@ -217,7 +234,8 @@ internal class CircleOfFifths : Control
         var grayOut = !includedDegrees.Contains(index);
         var geo = new StreamGeometry();
         var end_angle = angle + THIRTY_DEG_RAD;
-        using var ctx = geo.Open();
+        using
+        var ctx = geo.Open();
         var p1 = PointOnCircle(center, angle, outer_radius);
         var p2 = PointOnCircle(center, end_angle, outer_radius);
         var p3 = PointOnCircle(center, end_angle, first_inner_radius);
@@ -234,7 +252,8 @@ internal class CircleOfFifths : Control
         var segmentFootGeo = new StreamGeometry();
         var p5 = PointOnCircle(center, end_angle + _animationRotationAngle, second_inner_radius);
         var p6 = PointOnCircle(center, angle + _animationRotationAngle, second_inner_radius);
-        using var ctx3 = segmentFootGeo.Open();
+        using
+        var ctx3 = segmentFootGeo.Open();
         var p3prime = PointOnCircle(center, end_angle + _animationRotationAngle, first_inner_radius);
         var p4prime = PointOnCircle(center, angle + _animationRotationAngle, first_inner_radius);
         ctx3.BeginFigure(p3prime, true);
@@ -242,13 +261,13 @@ internal class CircleOfFifths : Control
         ctx3.ArcTo(p6, new Size(second_inner_radius, second_inner_radius), 0, false, SweepDirection.CounterClockwise);
         ctx3.LineTo(p4prime);
         ctx3.EndFigure(false);
-        context.DrawGeometry(Brushes.Transparent, new Pen(new SolidColorBrush(_accentBrush.Color, grayOut ? 0.3 : 1)), segmentFootGeo);
+        context.DrawGeometry(Brushes.Transparent, new Pen(new SolidColorBrush(_accentBrush.Color)), segmentFootGeo);
         double midRadius1 = (first_inner_radius + second_inner_radius) / 2;
         double midAngle1 = angle + (THIRTY_DEG_RAD / 2);
         var textPos1 = PointOnCircle(center, midAngle1 + _animationRotationAngle, midRadius1);
         //notes for degree
-        var noteAtDeg = MusicTheory.NoteAtDegree(_displayTonic, index + 1, true);
-        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), _degreeBrushes[index]);
+        var noteAtDeg = MusicTheory.NoteAtDegree(_displayTonic, index + 1, correctForFifths:true);
+        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), new SolidColorBrush(Color.Parse("#76D2DB"), grayOut ? 0.1 : 1));
         var textOrigin1 = new Point(textPos1.X - ft1.Width / 2, textPos1.Y - ft1.Height / 2);
         context.DrawText(ft1, textOrigin1);
 
@@ -257,7 +276,8 @@ internal class CircleOfFifths : Control
         {
             //arc thickness but i do not want to draw the arc seperately. So we just draw another one
             var arcThicknessGeo = new StreamGeometry();
-            using var ctx2 = arcThicknessGeo.Open();
+            using
+            var ctx2 = arcThicknessGeo.Open();
             ctx2.BeginFigure(p1, true);
             ctx2.ArcTo(p2, new Size(outer_radius, outer_radius), 0, false, SweepDirection.Clockwise);
             ctx2.EndFigure(false);
@@ -268,7 +288,7 @@ internal class CircleOfFifths : Control
         double midRadius = (outer_radius + first_inner_radius) / 2;
         double midAngle = angle + (THIRTY_DEG_RAD / 2);
         var textPos = PointOnCircle(center, midAngle, midRadius);
-        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), clicked ? Brushes.White : new SolidColorBrush(_degreeBrushes[index].Color, grayOut ? 0.2 : 1));
+        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), clicked ? Brushes.White : new SolidColorBrush(_degreeBrushes[index].Color, grayOut ? 0.1 : 1));
         var textOrigin = new Point(textPos.X - ft.Width / 2, textPos.Y - ft.Height / 2);
         context.DrawText(ft, textOrigin);
     }
@@ -282,7 +302,6 @@ internal class CircleOfFifths : Control
             HitTestSegment(e.GetCurrentPoint(this));
         }
     }
-
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
@@ -340,8 +359,8 @@ internal class CircleOfFifths : Control
     private static Point PointOnCircle(Point center, double angle, double distance)
     {
         return new(
-        center.X + distance * Math.Sin(angle),
-        center.Y - distance * Math.Cos(angle)
+          center.X + distance * Math.Sin(angle),
+          center.Y - distance * Math.Cos(angle)
         );
     }
 }

@@ -130,7 +130,7 @@ AllowDegrees.Where(d => d.IsSelected).Select(d => d.Label).ToList();
             string degAtCycleIndex = MusicTheory.ChromaticScaleGraduation[_cycleIndex];
             await PlayScaleNote(degAtCycleIndex, hidden: false, duration: 2000);
             _cycleIndex = (_cycleIndex + 1) % length;
-            await Task.Delay(1000, _cts.Token);
+            await Task.Delay(200, _cts.Token);
         }
     }
 
