@@ -10,7 +10,6 @@ using MyPitch.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using static MyPitch.PlatformServiceProvider;
@@ -22,38 +21,34 @@ internal class CircleOfFifths : Control
     private readonly String[] _noteGraduations = MusicTheory.FifthIntervalScaleGraduation;
     public CircleOfFifths()
     {
-        _animationTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(16)
-        };
-        _animationTimer.Tick += OnAnimationTick;
-        _compositor = ElementComposition.GetElementVisual(this)!.Compositor;
-       
+        
     }
-    private static double EaseInOutCubic(double t) => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
-    private void OnAnimationTick(object? sender, EventArgs e)
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        _animationElapsedMs += 16.0;
+        base.OnAttachedToVisualTree(e);
+        _toplevel = TopLevel.GetTopLevel(this)!;
+    }
 
-        double t = Math.Clamp(_animationElapsedMs / _animationDurationMs, 0.0, 1.0);
+    private static double EaseInOutCubic(double t) => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
+  
+    private void OnToplevelRenderFrame(TimeSpan span)
+    {
+        var ellapsedMs = (DateTime.Now - _animationStartTime).TotalMilliseconds;
+        double t = Math.Clamp(ellapsedMs / _animationDurationMs, 0.0, 1.0);
         double eased = EaseInOutCubic(t);
-
         _animationRotationAngle = eased * _animationRotationAngleTarget;
-
+        InvalidateVisual();
         if (t >= 1.0)
         {
             _animationRotationAngle = _animationRotationAngleTarget;
             _animationRotationAngleTarget = 0;
-            _animationElapsedMs = 0;
-            _animationTimer.Stop();
             _displayTonic = Tonic;
             _animationRotationAngle = 0;
-
+            return;
         }
+        _toplevel.RequestAnimationFrame(OnToplevelRenderFrame);
 
-        InvalidateVisual();
     }
-
     private SolidColorBrush[] _degreeBrushes = new SolidColorBrush[] {
     new SolidColorBrush(Color.Parse("#00A933")),
       new SolidColorBrush(Color.Parse("#79D513")),
@@ -80,11 +75,10 @@ internal class CircleOfFifths : Control
     private SolidColorBrush _accentBrush =
         new SolidColorBrush((Color)Application.Current!.Resources["PrimaryColor"]!);
 
-    private DispatcherTimer _animationTimer;
     private double _animationDurationMs;
+    private DateTime _animationStartTime;
     private double _animationRotationAngleTarget;
     private double _animationRotationAngle;
-    private double _animationElapsedMs;
 
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
     public static readonly StyledProperty<IEnumerable<DegreeItem>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<DegreeItem>>(nameof(IncludedDegrees));
@@ -141,7 +135,7 @@ internal class CircleOfFifths : Control
         }
     }
     private int? _mouseOnIndex = null;
-    private Compositor _compositor;
+    private TopLevel _toplevel;
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -164,13 +158,6 @@ internal class CircleOfFifths : Control
         }
         if (change.Property == TonicProperty)
         {
-            //disable animation on WASM for now
-            if (System.OperatingSystem.IsBrowser())
-            {
-                _displayTonic = Tonic;
-                InvalidateVisual();
-                return;
-            }
             var oldTonic = (Models.Key?)change.OldValue;
             var newTonic = Tonic;
             if (oldTonic is null || oldTonic == newTonic) return;
@@ -182,10 +169,13 @@ internal class CircleOfFifths : Control
             }
             _animationRotationAngleTarget = diff * THIRTY_DEG_RAD;
             _animationDurationMs = Math.Clamp(Math.Abs(diff * 300), 300, 1000);
-            _animationTimer.Start();
+            _animationStartTime = DateTime.Now;
+            _toplevel.RequestAnimationFrame(OnToplevelRenderFrame);
         }
         base.OnPropertyChanged(change);
     }
+
+   
 
     private void HandleAnswerStateChange()
     {
@@ -266,7 +256,7 @@ internal class CircleOfFifths : Control
         double midAngle1 = angle + (THIRTY_DEG_RAD / 2);
         var textPos1 = PointOnCircle(center, midAngle1 + _animationRotationAngle, midRadius1);
         //notes for degree
-        var noteAtDeg = MusicTheory.NoteAtDegree(_displayTonic, index + 1, correctForFifths:true);
+        var noteAtDeg = MusicTheory.NoteAtDegree(_displayTonic, index + 1, correctForFifths: true);
         var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), new SolidColorBrush(Color.Parse("#76D2DB"), grayOut ? 0.1 : 1));
         var textOrigin1 = new Point(textPos1.X - ft1.Width / 2, textPos1.Y - ft1.Height / 2);
         context.DrawText(ft1, textOrigin1);
