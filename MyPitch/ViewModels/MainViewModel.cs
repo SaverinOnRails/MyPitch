@@ -1,14 +1,7 @@
-﻿
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MyPitch.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MyPitch.ViewModels;
@@ -32,7 +25,6 @@ public partial class MainViewModel : ViewModelBase
     new() { Label = "♭7" },
     new() { Label = "7"  },
     ];
-
 
     [ObservableProperty] private bool _wideLayout;
     [ObservableProperty] private bool _shouldSelectAllDegrees = true;
@@ -91,7 +83,6 @@ public partial class MainViewModel : ViewModelBase
 
     partial void OnPlayDroneChanged(bool value) => PushSettings();
 
-
     partial void OnPlayCadenceOnKeyChangeChanged(bool value) => PushSettings();
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
@@ -113,7 +104,6 @@ public partial class MainViewModel : ViewModelBase
         get => Game.UserClickedIndex;
         set => Game.UserClickedIndex = value;
     }
-
 
     public bool IsPlaying => Game.IsPlaying;
     public int? GameClickedIndex => Game.GameClickedIndex;
@@ -144,16 +134,13 @@ public partial class MainViewModel : ViewModelBase
 
     public async Task TogglePlay() => await Game.TogglePlay();
 
-    private void PushSettings() =>
-                                                                                                Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone));
+    private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone));
 
-    private void SyncDegrees() =>
-                                                                                                    Game.AllowDegrees = Degrees;
+    private void SyncDegrees() => Game.AllowDegrees = Degrees;
 
     private void WireDegree(DegreeItem deg) =>
     deg.PropertyChanged += (_, _) => SyncDegrees();
 
-    private static bool IsMajorScaleDegree(DegreeItem deg) => deg.Label.Length == 1;
 }
 
 public partial class DegreeItem : ObservableObject

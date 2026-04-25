@@ -61,7 +61,6 @@ public partial class Game : ObservableObject
         }
     }
 
-
     partial void OnTonicChanged(Key value)
     {
         if (Settings.PlayDrone && IsPlaying)
@@ -88,7 +87,6 @@ public partial class Game : ObservableObject
         _playedCadence = false;
         GameClickedIndex = null;
     }
-
     private async Task Start()
     {
         _cts = new CancellationTokenSource();
@@ -114,7 +112,6 @@ public partial class Game : ObservableObject
             Stop();
         }
     }
-
     private async Task MelodyGameModeLoop()
     {
         while (true)

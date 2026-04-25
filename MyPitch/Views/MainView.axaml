@@ -22,12 +22,5 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <!--CHEAP , INEFFICIENT HACK, WILL FIX LATER -->
-    <Panel>
-        <!--WIDE LAYOUT-->
-        <views:MainContent Layout="Wide" IsVisible="{Binding WideLayout}"/>
-
-        <!--NARROW LAYOUT-->
-        <views:MainContent Layout="Narrow" IsVisible="{Binding !WideLayout}"/>
-    </Panel>
+    <Panel x:Name="MainPanel"/>
 </UserControl>

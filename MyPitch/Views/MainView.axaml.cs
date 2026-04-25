@@ -14,8 +14,7 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
     }
-
-
+    private bool _configuredLayout = false;
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         var insetsmanager = TopLevel.GetTopLevel(this)?.InsetsManager;
@@ -23,28 +22,29 @@ public partial class MainView : UserControl
         {
             insetsmanager.DisplayEdgeToEdgePreference = true;
         }
-        if (System.OperatingSystem.IsWindows())
-        {
-            //   Background = Brushes.Transparent; //will fallback to mica
-        }
         base.OnAttachedToVisualTree(e);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == BoundsProperty)
+        if (!_configuredLayout)
         {
-            var datacontext = DataContext as MainViewModel;
-            if (datacontext is null) return;
-            if (Bounds.Width > 600)
+            if (change.Property == BoundsProperty)
             {
-                datacontext.WideLayout = true;
-            }
-            else
-            {
-                datacontext.WideLayout = false;
+                var datacontext = DataContext as MainViewModel;
+                if (datacontext is null) return;
+                if (Bounds.Width > 600)
+                {
+                    MainPanel.Children.Add(new MainContent() { Layout = Layout.Wide });
+                }
+                else
+                {
+                    MainPanel.Children.Add(new MainContent() { Layout = Layout.Narrow });
+                }
+                _configuredLayout = true;
             }
         }
+
     }
 }

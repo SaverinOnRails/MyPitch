@@ -22,7 +22,7 @@ internal class CircleOfFifths : Control
     private readonly String[] _noteGraduations = MusicTheory.FifthIntervalScaleGraduation;
     public CircleOfFifths()
     {
-        
+
     }
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -31,7 +31,7 @@ internal class CircleOfFifths : Control
     }
 
     private static double EaseInOutCubic(double t) => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
-  
+
     private void OnToplevelRenderFrame(TimeSpan span)
     {
         var ellapsedMs = (DateTime.Now - _animationStartTime).TotalMilliseconds;
@@ -172,12 +172,12 @@ internal class CircleOfFifths : Control
             _animationRotationAngleTarget = diff * THIRTY_DEG_RAD;
             _animationDurationMs = Math.Clamp(Math.Abs(diff * 300), 300, 1000);
             _animationStartTime = DateTime.Now;
-            _toplevel?.RequestAnimationFrame(OnToplevelRenderFrame); //Because of the stupid hack we did for the layout, this may be null for one of the two circles we are rendering
+            _toplevel.RequestAnimationFrame(OnToplevelRenderFrame); 
         }
         base.OnPropertyChanged(change);
     }
 
-   
+
 
     private void HandleAnswerStateChange()
     {
@@ -259,7 +259,7 @@ internal class CircleOfFifths : Control
         var textPos1 = PointOnCircle(center, midAngle1 + _animationRotationAngle, midRadius1);
         //notes for degree
         var noteAtDeg = MusicTheory.NoteAtDegree(_displayTonic, index + 1, correctForFifths: true);
-        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), new SolidColorBrush(Color.Parse("#76D2DB"), grayOut ? 0.1 : 1));
+        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), new SolidColorBrush(Color.Parse("#76D2DB")));
         var textOrigin1 = new Point(textPos1.X - ft1.Width / 2, textPos1.Y - ft1.Height / 2);
         context.DrawText(ft1, textOrigin1);
 
