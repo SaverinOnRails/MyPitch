@@ -1,33 +1,33 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:vm="using:MyPitch.ViewModels"
-			 xmlns:shadui="using:ShadUI"
-			 xmlns:controls="using:MyPitch.Controls"
-			 xmlns:views="using:MyPitch.Views"
-			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 x:Class="MyPitch.Views.MainView"
-			 Background="#0A0A0A"
-			 x:DataType="vm:MainViewModel">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MyPitch.ViewModels"
+             xmlns:shadui="using:ShadUI"
+             xmlns:controls="using:MyPitch.Controls"
+             xmlns:views="using:MyPitch.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MyPitch.Views.MainView"
+             Background="#0A0A0A"
+             x:DataType="vm:MainViewModel">
 
 
-	<UserControl.Styles>
+    <UserControl.Styles>
 
-	</UserControl.Styles>
+    </UserControl.Styles>
 
-	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-		to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:MainViewModel />
-	</Design.DataContext>
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+        to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainViewModel />
+    </Design.DataContext>
 
-	<!--CHEAP , INEFFICIENT HACK, WILL FIX LATER -->
-	<Panel>
-		<!--WIDE LAYOUT-->
-		<views:MainContent Layout="Wide" IsVisible="{Binding WideLayout}"/>
+    <!--CHEAP , INEFFICIENT HACK, WILL FIX LATER -->
+    <Panel>
+        <!--WIDE LAYOUT-->
+        <views:MainContent Layout="Wide" IsVisible="{Binding WideLayout}"/>
 
-		<!--NARROW LAYOUT-->
-		<views:MainContent Layout="Narrow" IsVisible="{Binding !WideLayout}"/>
-	</Panel>
+        <!--NARROW LAYOUT-->
+        <views:MainContent Layout="Narrow" IsVisible="{Binding !WideLayout}"/>
+    </Panel>
 </UserControl>

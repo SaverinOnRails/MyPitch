@@ -15,11 +15,11 @@ namespace MyPitch.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-private Game Game { get; } = new();
+    private Game Game { get; } = new();
 
-public ObservableCollection<DegreeItem> Degrees { get; } =
-    [
-    new() { Label = "1"  },
+    public ObservableCollection<DegreeItem> Degrees { get; } =
+        [
+        new() { Label = "1"  },
     new() { Label = "♭2" },
     new() { Label = "2"  },
     new() { Label = "♭3" },
@@ -43,121 +43,121 @@ public ObservableCollection<DegreeItem> Degrees { get; } =
     [ObservableProperty] private bool _useRandomOctave;
     [ObservableProperty] private bool _playCadenceOnKeyChange = true;
     [ObservableProperty] private bool _playDrone = true;
-public bool IsWasm => OperatingSystem.IsBrowser();
+    public bool IsWasm => OperatingSystem.IsBrowser();
 
-        partial void OnGameModeChanged(GameMode oldValue, GameMode newValue)
-        {
+    partial void OnGameModeChanged(GameMode oldValue, GameMode newValue)
+    {
         PushSettings(); OnPropertyChanged(nameof(IsMelodyMode)); if (newValue == GameMode.Melody) ConfigureMelodyMode();
+    }
+    partial void OnMelodyNoteCountChanged(int oldValue, int newValue) => PushSettings();
+
+    private void ConfigureMelodyMode()
+    {
+        ScaleMode = ScaleMode.Ionian;
+        SetScaleMode(ScaleMode);
+    }
+
+    partial void OnScaleModeChanged(ScaleMode value) => SetScaleMode(value);
+
+    private void SetScaleMode(ScaleMode value)
+    {
+        var degs = MusicTheory.DegsForScaleMode(value);
+        foreach (var x in Degrees)
+        {
+            x.IsSelected = degs.Contains(x.Label);
         }
-partial void OnMelodyNoteCountChanged(int oldValue, int newValue) => PushSettings();
+    }
 
-            private void ConfigureMelodyMode()
-            {
-            ScaleMode = ScaleMode.Ionian;
-            SetScaleMode(ScaleMode);
-            }
+    partial void OnUseRandomTonicChanged(bool value)
+    {
+        PushSettings(); if (value) SetRandomTonicManual();
+    }
 
-partial void OnScaleModeChanged(ScaleMode value) => SetScaleMode(value);
+    //THESE ONLY RUN WHEN THE USER MANUALLY TRIGGERS THEM IN THE UI
+    private void SetRandomTonicManual()
+    {
+        Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
+    }
+    private void SetRandomOctaveManual()
+    {
+        int[] octaveRange = [3, 4, 5];
+        Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
+    }
 
-                private void SetScaleMode(ScaleMode value)
-                {
-                var degs = MusicTheory.DegsForScaleMode(value);
-                foreach (var x in Degrees)
-                {
-                x.IsSelected = degs.Contains(x.Label);
-                }
-                }
+    partial void OnUseRandomOctaveChanged(bool value)
+    {
+        PushSettings(); if (value) SetRandomOctaveManual();
+    }
 
-                partial void OnUseRandomTonicChanged(bool value)
-                {
-                PushSettings(); if (value) SetRandomTonicManual();
-                }
-
-                //THESE ONLY RUN WHEN THE USER MANUALLY TRIGGERS THEM IN THE UI
-                private void SetRandomTonicManual()
-                {
-                Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
-                }
-                private void SetRandomOctaveManual()
-                {
-                int[] octaveRange = [3, 4, 5];
-                Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
-                }
-
-                partial void OnUseRandomOctaveChanged(bool value)
-                {
-                PushSettings(); if (value) SetRandomOctaveManual();
-                }
-
-partial void OnPlayDroneChanged(bool value) => PushSettings();
+    partial void OnPlayDroneChanged(bool value) => PushSettings();
 
 
-partial void OnPlayCadenceOnKeyChangeChanged(bool value) => PushSettings();
+    partial void OnPlayCadenceOnKeyChangeChanged(bool value) => PushSettings();
 
-public bool IsMelodyMode => GameMode == GameMode.Melody;
+    public bool IsMelodyMode => GameMode == GameMode.Melody;
 
-                            public Key Tonic
-                            {
-get => Game.Tonic;
-set => Game.Tonic = value;
-                                    }
+    public Key Tonic
+    {
+        get => Game.Tonic;
+        set => Game.Tonic = value;
+    }
 
-                                    public int Octave
-                                    {
-get => Game.Octave;
-set => Game.Octave = value;
-                                            }
+    public int Octave
+    {
+        get => Game.Octave;
+        set => Game.Octave = value;
+    }
 
-                                            public int? UserClickedIndex
-                                            {
-get => Game.UserClickedIndex;
-set => Game.UserClickedIndex = value;
-                                                    }
+    public int? UserClickedIndex
+    {
+        get => Game.UserClickedIndex;
+        set => Game.UserClickedIndex = value;
+    }
 
 
-public bool IsPlaying => Game.IsPlaying;
-public int? GameClickedIndex => Game.GameClickedIndex;
-public MelodyBarState MelodyBarState => Game.MelodyBarState;
-public AnswerState AnswerState => Game.AnswerState;
+    public bool IsPlaying => Game.IsPlaying;
+    public int? GameClickedIndex => Game.GameClickedIndex;
+    public MelodyBarState MelodyBarState => Game.MelodyBarState;
+    public AnswerState AnswerState => Game.AnswerState;
 
-public Key[] Tonics => MusicTheory.Keys;
-public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Melody, GameMode.Cycle];
-public ScaleMode[] ScaleModes => [ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
-                                                                                public MainViewModel()
-                                                                                {
-Game.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
+    public Key[] Tonics => MusicTheory.Keys;
+    public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Melody, GameMode.Cycle];
+    public ScaleMode[] ScaleModes => [ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
+    public MainViewModel()
+    {
+        Game.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
 
-                                                                                    foreach (var deg in Degrees)
-                                                                                    WireDegree(deg);
+        foreach (var deg in Degrees)
+            WireDegree(deg);
 
-                                                                                    PushSettings();
-                                                                                    SyncDegrees();
-                                                                                    }
+        PushSettings();
+        SyncDegrees();
+    }
 
-                                                                                    partial void OnShouldSelectAllDegreesChanged(bool value)
-                                                                                    {
-                                                                                    foreach (var deg in Degrees)
-                                                                                    {
-                                                                                    deg.IsSelected = value;
-                                                                                    }
-                                                                                    }
+    partial void OnShouldSelectAllDegreesChanged(bool value)
+    {
+        foreach (var deg in Degrees)
+        {
+            deg.IsSelected = value;
+        }
+    }
 
-public async Task TogglePlay() => await Game.TogglePlay();
+    public async Task TogglePlay() => await Game.TogglePlay();
 
-private void PushSettings() =>
-                                                                                            Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone));
+    private void PushSettings() =>
+                                                                                                Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone));
 
-private void SyncDegrees() =>
-                                                                                                Game.AllowDegrees = Degrees;
+    private void SyncDegrees() =>
+                                                                                                    Game.AllowDegrees = Degrees;
 
-private void WireDegree(DegreeItem deg) =>
-deg.PropertyChanged += (_, _) => SyncDegrees();
+    private void WireDegree(DegreeItem deg) =>
+    deg.PropertyChanged += (_, _) => SyncDegrees();
 
-private static bool IsMajorScaleDegree(DegreeItem deg) => deg.Label.Length == 1;
-                                                                                                            }
+    private static bool IsMajorScaleDegree(DegreeItem deg) => deg.Label.Length == 1;
+}
 
-                                                                                                            public partial class DegreeItem : ObservableObject
-                                                                                                            {
-                                                                                                            [ObservableProperty] private string _label = "";
-                                                                                                            [ObservableProperty] private bool _isSelected = true;
-                                                                                                            }
+public partial class DegreeItem : ObservableObject
+{
+    [ObservableProperty] private string _label = "";
+    [ObservableProperty] private bool _isSelected = true;
+}

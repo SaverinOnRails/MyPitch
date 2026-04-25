@@ -68,7 +68,7 @@ internal class MelodyBar : ContentControl
                     Foreground = new SolidColorBrush(Color.Parse("#76D2DB")),
                 };
                 //Canvas.SetTop(text, 15);
-                Canvas.SetLeft(text, deg.Length == 1 ? size * 0.333 : size * 0.167);
+                Canvas.SetLeft(text, deg.Length == 1 ? size * 0.313 : size * 0.147);
                 canvas.Children.Add(text);
             }
             root.Children.Add(canvas);
