@@ -22,7 +22,7 @@
     </UserControl.Resources>
     <Grid Margin="10,0,0,0" Container.Name="main" x:Name="LayoutMain">
         <Grid RowDefinitions="Auto,*" x:Name="CircleDisplay">
-            <controls:MelodyBar  Classes.collapsed="{Binding !IsMelodyMode}" NoteCount="{Binding MelodyNoteCount}">
+            <controls:MelodyBar  Classes.collapsed="{Binding !IsMelodyMode}" NoteCount="{Binding MelodyNoteCount}" BarState="{Binding MelodyBarState}">
                 <controls:MelodyBar.Transitions>
                     <Transitions>
                         <DoubleTransition Property="Height" Duration="0:0:0.05"/>

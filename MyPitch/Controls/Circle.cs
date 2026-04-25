@@ -19,10 +19,7 @@ namespace MyPitch.Controls;
 internal class CircleOfFifths : Control
 {
     private readonly String[] _noteGraduations = MusicTheory.FifthIntervalScaleGraduation;
-    public CircleOfFifths()
-    {
-        
-    }
+ 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
@@ -31,7 +28,7 @@ internal class CircleOfFifths : Control
 
     private static double EaseInOutCubic(double t) => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
   
-    private void OnToplevelRenderFrame(TimeSpan span)
+    private void OnToplevelRequestFrame(TimeSpan span)
     {
         var ellapsedMs = (DateTime.Now - _animationStartTime).TotalMilliseconds;
         double t = Math.Clamp(ellapsedMs / _animationDurationMs, 0.0, 1.0);
@@ -46,7 +43,7 @@ internal class CircleOfFifths : Control
             _animationRotationAngle = 0;
             return;
         }
-        _toplevel.RequestAnimationFrame(OnToplevelRenderFrame);
+        _toplevel.RequestAnimationFrame(OnToplevelRequestFrame);
 
     }
     private SolidColorBrush[] _degreeBrushes = new SolidColorBrush[] {
@@ -170,7 +167,7 @@ internal class CircleOfFifths : Control
             _animationRotationAngleTarget = diff * THIRTY_DEG_RAD;
             _animationDurationMs = Math.Clamp(Math.Abs(diff * 300), 300, 1000);
             _animationStartTime = DateTime.Now;
-            _toplevel.RequestAnimationFrame(OnToplevelRenderFrame);
+            (TopLevel.GetTopLevel(this)!).RequestAnimationFrame(OnToplevelRequestFrame);
         }
         base.OnPropertyChanged(change);
     }
