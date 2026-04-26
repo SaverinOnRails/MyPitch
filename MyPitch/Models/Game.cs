@@ -128,7 +128,7 @@ public partial class Game : ObservableObject
             var melody = MusicTheory.GenMelody(degrees, melodyNoteCount);
             foreach (var note in melody)
             {
-                await PlayScaleNote(note, hidden: true, 700);
+                await PlayScaleNote(note, hidden: true, 1000);
             }
             //await user responses
             List<string> userResponses = new();
@@ -164,7 +164,7 @@ public partial class Game : ObservableObject
                 await Task.Delay(300, _cts.Token);
                 for (var i = 0; i < melodyNoteCount; i++)
                 {
-                    await PlayScaleNote(melody[i], hidden: false, duration: 200);
+                    await PlayScaleNote(melody[i], hidden: false, duration: 1000);
                     var dict = MelodyBarState.UserChoices;
                     dict[i] = melody[i];
                     MelodyBarState = new(dict, incorrectDegs);

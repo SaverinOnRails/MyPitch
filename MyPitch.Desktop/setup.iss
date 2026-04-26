@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "MyPitch"
-#define MyAppVersion "0.11"
+#define MyAppVersion "0.12"
 #define MyAppPublisher "Saverin"
 #define MyAppURL "https://www.github.com/saverinonrails/mypitch"
 #define MyAppExeName "MyPitch.Desktop.exe"

@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<ApplicationId>com.CompanyName.MyPitch</ApplicationId>
 		<ApplicationVersion>1</ApplicationVersion>
-		<ApplicationDisplayVersion>0.11</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>0.12</ApplicationDisplayVersion>
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 	</PropertyGroup>

@@ -97,7 +97,6 @@ public static class MusicTheory
         return tonicMidi + semitoneOffset;
     }
 
-    //Turns out mashing random notes in the scale can actually sound good
     public static List<string> GenMelody(List<string> degs, int noteCount)
     {
         var result = new List<string>();
