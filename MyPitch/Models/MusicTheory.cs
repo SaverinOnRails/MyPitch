@@ -123,12 +123,12 @@ public static class MusicTheory
             note = prevNote;
             Debug.WriteLine($"Repeating {note}");
         }
-        if (roll < 50)
+        if (roll < 60)
         {
             note = Step(prevNote, scale);
             Debug.WriteLine($"Stepping to {prevNote} from {note}");
         }
-        else if (roll < 90)
+        else if (roll < 80)
         {
             note = Leap(prevNote, scale);
             Debug.WriteLine($"Leaping to {prevNote} from {note}");
