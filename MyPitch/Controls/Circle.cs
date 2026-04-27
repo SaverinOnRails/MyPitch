@@ -306,7 +306,7 @@ internal class CircleOfFifths : Control
         base.OnPointerReleased(e);
         if (UserClickedIndex is not null)
         {
-            var note = MusicTheory.ToMidiNote(Tonic.ToString(), MusicTheory.NoteAtDegree(Tonic, UserClickedIndex.Value + 1, true), Octave);
+            var note = MusicTheory.ToMidiNote(Tonic, MusicTheory.NoteAtDegree(Tonic, UserClickedIndex.Value + 1, true), Octave);
             AudioDriver!.Release(note);
         }
 
@@ -342,7 +342,7 @@ internal class CircleOfFifths : Control
         else
         {
             UserClickedIndex = index;
-            var note = MusicTheory.ToMidiNote(Tonic.ToString(), MusicTheory.NoteAtDegree(Tonic, index + 1, true), Octave);
+            var note = MusicTheory.ToMidiNote(Tonic, MusicTheory.NoteAtDegree(Tonic, index + 1, true), Octave);
             AudioDriver.Play(note);
         }
         InvalidateVisual();
