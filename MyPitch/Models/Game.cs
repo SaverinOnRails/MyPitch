@@ -130,7 +130,7 @@ public partial class Game : ObservableObject
             for (int i = 0; i < melodyNoteCount; i++)
             {
                 _userClickTcs = new TaskCompletionSource<int>();
-                var userResponse = await _userClickTcs.Task;
+                var userResponse = await _userClickTcs.Task.WaitAsync(_cts.Token);
                 var dict = MelodyBarState.UserChoices;
                 var deg = MusicTheory.FifthIntervalScaleGraduation[userResponse];
                 dict[i] = deg;
@@ -162,7 +162,7 @@ public partial class Game : ObservableObject
                     var dict = MelodyBarState.UserChoices;
                     dict[i] = melody[i];
                     MelodyBarState = new(dict, incorrectDegs);
-                    await PlayScaleNote(melody[i], hidden: false, duration: 1000);                
+                    await PlayScaleNote(melody[i], hidden: false, duration: 1000);
                     await Task.Delay(500, _cts.Token);
                 }
             }
@@ -216,7 +216,7 @@ public partial class Game : ObservableObject
             var quizDeg = await PlayQuizNote(hidden: true);
             var quizNoteIndex = MusicTheory.FifthSegment(Tonic, MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
             _userClickTcs = new TaskCompletionSource<int>();
-            var userResponse = await _userClickTcs.Task;
+            var userResponse = await _userClickTcs.Task.WaitAsync(_cts.Token);
             if (userResponse == quizNoteIndex)
             {
                 AnswerState = AnswerState.Correct;
