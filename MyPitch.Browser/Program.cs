@@ -24,7 +24,7 @@ internal static partial class Interop
     public static partial void StartSynth();
 
     [JSImport("noteOn", "Interop")]
-    public static partial void NoteOn(int channel, int note);
+    public static partial void NoteOn(int channel, int note , int velocity = 127);
 
     [JSImport("noteOff", "Interop")]
     public static partial void NoteOff(int channel, int note);

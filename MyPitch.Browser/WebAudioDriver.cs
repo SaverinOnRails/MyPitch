@@ -14,9 +14,9 @@ public class WebAudioDriver : IAudioDriver
         Interop.NoteOn(0, note);
     }
 
-    public void PlayDrone(int note)
+    public void PlayDrone(int note , int velocity)
     {
-        Interop.NoteOn(5, note);
+        Interop.NoteOn(5, note, velocity);
     }
 
     public unsafe void PlaySpeechSample(string sample)

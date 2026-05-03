@@ -1,14 +1,17 @@
-<shadui:Window xmlns="https://github.com/avaloniaui"
-			   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			   xmlns:vm="using:MyPitch.ViewModels"
-			   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			   xmlns:views="using:MyPitch.Views"
-			   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			   xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
-			   x:Class="MyPitch.Views.MainWindow"
-			   Icon="/Assets/logo.ico"
-			   Title="MyPitch - Simple Functional Ear Trainer">
-	<views:MainView />
+<shadui:Window
+    x:Class="MyPitch.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
+    xmlns:views="using:MyPitch.Views"
+    xmlns:vm="using:MyPitch.ViewModels"
+    Title="MyPitch - Simple Functional Ear Trainer"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Icon="/Assets/logo.ico"
+    mc:Ignorable="d">
+    <views:MainView />
 
 </shadui:Window>

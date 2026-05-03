@@ -16,11 +16,11 @@ public partial class Game : ObservableObject
     [ObservableProperty] private AnswerState _answerState;
     [ObservableProperty] private Key _tonic = Key.C;
     [ObservableProperty] private int _octave = 4;
+    [ObservableProperty] private int _droneVolume = 100;
     [ObservableProperty] private MelodyBarState _melodyBarState = new(); // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
     private int _cycleIndex = 0;
     private bool _playedCadence;
-    private
-    const int GameClickTimeout = 500; // ms
+    private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
     private TaskCompletionSource<int>? _userClickTcs;
     private Models.Key _oldTonic;
@@ -61,6 +61,14 @@ public partial class Game : ObservableObject
     partial void OnTonicChanged(Key value)
     {
         if (Settings.PlayDrone && IsPlaying)
+        {
+            SuspendDrone();
+            PlayDrone();
+        }
+    }
+    partial void OnDroneVolumeChanged(int value)
+    {
+        if (_dronePlaying)
         {
             SuspendDrone();
             PlayDrone();
@@ -309,7 +317,7 @@ public partial class Game : ObservableObject
     {
         _dronePlaying = true;
         var note = MusicTheory.ToMidiNote(Tonic, Tonic.ToString());
-        PlatformServiceProvider.AudioDriver.PlayDrone(note);
+        PlatformServiceProvider.AudioDriver.PlayDrone(note, DroneVolume);
     }
     private void SuspendDrone()
     {

@@ -60,10 +60,10 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
         _synth.NoteOff(0, note);
     }
 
-    public void PlayDrone(int note)
+    public void PlayDrone(int note , int velocity)
     {
         ReleaseDrone();
-        _synth.NoteOn(5, note, 100);
+        _synth.NoteOn(5, note, velocity);
     }
 
     public void ReleaseDrone()

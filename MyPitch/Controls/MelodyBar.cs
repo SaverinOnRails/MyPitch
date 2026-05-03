@@ -75,9 +75,6 @@ internal class MelodyBar : ContentControl
         }
         Content = root;
     }
-    private void setTextAtEllipse(int index, string text)
-    {
-    }
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);

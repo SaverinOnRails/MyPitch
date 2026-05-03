@@ -169,10 +169,12 @@ internal class CircleOfFifths : Control
             {
                 diff = diff - 12;
             }
+
             _animationRotationAngleTarget = diff * THIRTY_DEG_RAD;
             _animationDurationMs = Math.Clamp(Math.Abs(diff * 300), 300, 1000);
             _animationStartTime = DateTime.Now;
-            _toplevel.RequestAnimationFrame(OnToplevelRenderFrame); 
+            _toplevel.RequestAnimationFrame(OnToplevelRenderFrame);
+
         }
         base.OnPropertyChanged(change);
     }

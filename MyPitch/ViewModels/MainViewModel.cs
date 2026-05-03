@@ -81,6 +81,8 @@ public partial class MainViewModel : ViewModelBase
         PushSettings(); if (value) SetRandomOctaveManual();
     }
 
+    // partial void OnDroneVolumeChanged(int value) => PushSettings();
+
     partial void OnPlayDroneChanged(bool value) => PushSettings();
 
     partial void OnPlayCadenceOnKeyChangeChanged(bool value) => PushSettings();
@@ -93,6 +95,11 @@ public partial class MainViewModel : ViewModelBase
         set => Game.Tonic = value;
     }
 
+    public int DroneVolume
+    {
+        get => Game.DroneVolume;
+        set => Game.DroneVolume = value;
+    }
     public int Octave
     {
         get => Game.Octave;
@@ -116,7 +123,6 @@ public partial class MainViewModel : ViewModelBase
     public MainViewModel()
     {
         Game.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
-
         foreach (var deg in Degrees)
             WireDegree(deg);
 

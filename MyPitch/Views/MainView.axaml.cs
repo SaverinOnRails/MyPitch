@@ -5,7 +5,6 @@ using MyPitch.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-
 namespace MyPitch.Views;
 
 public partial class MainView : UserControl

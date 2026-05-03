@@ -118,7 +118,7 @@ public static class MusicTheory
         var roll = Random.Shared.Next(100);
         Debug.WriteLine(roll);
         string note;
-        if(roll < 20)
+        if (roll < 20)
         {
             note = prevNote;
             Debug.WriteLine($"Repeating {note}");

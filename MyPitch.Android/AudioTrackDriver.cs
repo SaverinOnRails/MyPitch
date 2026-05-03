@@ -105,10 +105,10 @@ internal class AudioTrackDriver : IAudioDriver
         _synth.NoteOff(0, note);
     }
 
-    public void PlayDrone(int note)
+    public void PlayDrone(int note , int velocity)
     {
         ReleaseDrone();
-        _droneSynth.NoteOn(0, note, 100);
+        _droneSynth.NoteOn(0, note, velocity);
     }
 
     public void ReleaseDrone()

@@ -40,8 +40,8 @@ async function loadArrayBuffer(url) {
     return await response.arrayBuffer();
 }
 
-export function noteOn(channel, note) {
-    synth.midiNoteOn(channel, note, 127);
+export function noteOn(channel, note , velocity) {
+    synth.midiNoteOn(channel, note, velocity);
 }
 export function noteOff(channel, note) {
     if (!synthReady) { synthNotReady(); return; }
