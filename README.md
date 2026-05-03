@@ -18,3 +18,5 @@ MyPitch is still early in dev so bugs can be expected.
 - Tonic Drone for anchoring to the key.
 - Melody quiz to drill decoding melodies within a key context in various scale modes.
 
+# How To Use
+Max Konyi has great videos on the concept this program is based on on youtube. Check him out: https://www.youtube.com/watch?v=AARDtj6wL3U
