@@ -216,13 +216,14 @@ public partial class Game : ObservableObject
         while (true)
         {
             AnswerState = AnswerState.Neutral;
+            var tonic = Tonic;
             _cts.Token.ThrowIfCancellationRequested();
             await MaybeChangeTonic();
             await MaybePlayCadence();
             _cts.Token.ThrowIfCancellationRequested();
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
             var quizDeg = await PlayQuizNote(hidden: true);
-            var quizNoteIndex = MusicTheory.FifthSegment(Tonic, MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
+            var quizNoteIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
             _userClickTcs = new TaskCompletionSource<int>();
             var userResponse = await _userClickTcs.Task.WaitAsync(_cts.Token);
             if (userResponse == quizNoteIndex)
@@ -230,6 +231,12 @@ public partial class Game : ObservableObject
                 AnswerState = AnswerState.Correct;
                 GameClickedIndex = quizNoteIndex;
                 await Task.Delay(1000, _cts.Token);
+                if (MusicTheory.SimpleResolutionMap.ContainsKey(quizDeg))
+                {
+                    var resolution = MusicTheory.SimpleResolutionMap[quizDeg];
+                    var resolutionIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(resolution) + 1, false));
+                    await PlayScaleNote(resolution, hidden: false, duration: 500);
+                }
                 GameClickedIndex = null;
             }
             else

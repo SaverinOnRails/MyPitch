@@ -36,6 +36,12 @@ public static class MusicTheory
         "♭7",
         "4"
     };
+    public static readonly Dictionary<string, string> SimpleResolutionMap = new() {
+        {"2","1"},
+        {"7","1"},
+        {"4","3"},
+        {"6","5"}
+    };
     public static readonly string[] ChromaticScaleGraduation = {
         "1",
         "♭2",
