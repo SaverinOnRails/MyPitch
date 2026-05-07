@@ -1,16 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Rendering.Composition;
-using Avalonia.Threading;
 using MyPitch.Models;
 using MyPitch.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using static MyPitch.PlatformServiceProvider;
@@ -20,10 +16,6 @@ namespace MyPitch.Controls;
 internal class CircleOfFifths : Control
 {
     private readonly String[] _noteGraduations = MusicTheory.FifthIntervalScaleGraduation;
-    public CircleOfFifths()
-    {
-
-    }
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
@@ -137,7 +129,7 @@ internal class CircleOfFifths : Control
         }
     }
     private int? _mouseOnIndex = null;
-    private TopLevel _toplevel;
+    private TopLevel? _toplevel;
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -173,14 +165,11 @@ internal class CircleOfFifths : Control
             _animationRotationAngleTarget = diff * THIRTY_DEG_RAD;
             _animationDurationMs = Math.Clamp(Math.Abs(diff * 300), 300, 1000);
             _animationStartTime = DateTime.Now;
-            _toplevel.RequestAnimationFrame(OnToplevelRenderFrame);
+            _toplevel?.RequestAnimationFrame(OnToplevelRenderFrame);
 
         }
         base.OnPropertyChanged(change);
     }
-
-
-
     private void HandleAnswerStateChange()
     {
         if (AnswerState == AnswerState.Correct)
@@ -200,91 +189,192 @@ internal class CircleOfFifths : Control
 
     public override void Render(DrawingContext context)
     {
-        var includedDegrees = IncludedDegrees.Where(p => p.IsSelected == true).Select(p => _noteGraduations.IndexOf(p.Label));
         var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2;
-        var first_inner_radius = outer_radius * FIRST_INNER_RADIUS_RATIO;
-        var second_inner_radius = outer_radius * SECOND_INNER_RADIUS_RATIO;
-        var third_inner_radius = outer_radius * THIRD_INNER_RADIUS_RATIO;
-        Point center = new(Bounds.Width / 2, Bounds.Height / 2);
+        var center = new Point(Bounds.Width / 2, Bounds.Height / 2);
 
-        for (var i = 0; i < 12; i++)
+        var selectedDegreeIndices = IncludedDegrees
+            .Where(p => p.IsSelected)
+            .Select(p => _noteGraduations.IndexOf(p.Label));
+
+        for (int i = 0; i < 12; i++)
         {
-            var angle = (i * THIRTY_DEG_RAD) - (THIRTY_DEG_RAD / 2); //angle to the vertical
-            DrawSegment(i, angle, outer_radius, first_inner_radius, second_inner_radius, center, includedDegrees, context);
+            double angle = i * THIRTY_DEG_RAD - THIRTY_DEG_RAD / 2;
+            DrawSegment(i, angle, outer_radius, center, selectedDegreeIndices, context);
         }
 
-        //TONIC BUTTON
-        context.DrawEllipse(Brushes.Transparent, new Pen(_accentBrush), center, third_inner_radius, third_inner_radius);
+        DrawTonicIndicator(center, outer_radius, context);
+    }
+
+    private void DrawTonicIndicator(Point center, double outerRadius, DrawingContext context)
+    {
+        double radius = outerRadius * THIRD_INNER_RADIUS_RATIO;
+
+        context.DrawEllipse(Brushes.Transparent, new Pen(_accentBrush), center, radius, radius);
+
         string tonicString = Tonic.ToString();
         string tonicText = tonicString.Length > 1 ? tonicString[0] + "♭" : tonicString;
-        var formattedText = new FormattedText(tonicText.Trim(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, third_inner_radius), _accentBrush);
-        var textOrigin = new Point(center.X - formattedText.Width / 2, center.Y - formattedText.Height / 2);
-        context.DrawText(formattedText, textOrigin);
 
+        var text = new FormattedText(
+            tonicText.Trim(),
+            CultureInfo.CurrentCulture,
+            FlowDirection.LeftToRight,
+            _notoSansTypeface,
+            emSize: Math.Max(10, radius),
+            _accentBrush);
+
+        var origin = new Point(center.X - text.Width / 2, center.Y - text.Height / 2);
+        context.DrawText(text, origin);
     }
-    private void DrawSegment(int index, double angle, double outer_radius, double first_inner_radius, double second_inner_radius, Point center, IEnumerable<int> includedDegrees, DrawingContext context)
-    {
-        var clicked = UserClickedIndex == index || GameClickedIndex == index;
-        var grayOut = !includedDegrees.Contains(index);
-        var geo = new StreamGeometry();
-        var end_angle = angle + THIRTY_DEG_RAD;
-        using
-        var ctx = geo.Open();
-        var p1 = PointOnCircle(center, angle, outer_radius);
-        var p2 = PointOnCircle(center, end_angle, outer_radius);
-        var p3 = PointOnCircle(center, end_angle, first_inner_radius);
-        var p4 = PointOnCircle(center, angle, first_inner_radius);
-        ctx.BeginFigure(p1, true);
-        ctx.ArcTo(p2, new Size(outer_radius, outer_radius), 0, false, SweepDirection.Clockwise);
-        ctx.LineTo(p3);
-        ctx.ArcTo(p4, new Size(first_inner_radius, first_inner_radius), 0, false, SweepDirection.CounterClockwise);
-        ctx.EndFigure(true);
-        //draw segment
-        IBrush segmentBackground = new SolidColorBrush(Colors.Transparent, 0.5);
-        context.DrawGeometry(clicked ? _degreeBrushes[index] : segmentBackground, new Pen(_accentBrush, 1), geo);
-        //draw segment foot
-        var segmentFootGeo = new StreamGeometry();
-        var p5 = PointOnCircle(center, end_angle + _animationRotationAngle, second_inner_radius);
-        var p6 = PointOnCircle(center, angle + _animationRotationAngle, second_inner_radius);
-        using
-        var ctx3 = segmentFootGeo.Open();
-        var p3prime = PointOnCircle(center, end_angle + _animationRotationAngle, first_inner_radius);
-        var p4prime = PointOnCircle(center, angle + _animationRotationAngle, first_inner_radius);
-        ctx3.BeginFigure(p3prime, true);
-        ctx3.LineTo(p5);
-        ctx3.ArcTo(p6, new Size(second_inner_radius, second_inner_radius), 0, false, SweepDirection.CounterClockwise);
-        ctx3.LineTo(p4prime);
-        ctx3.EndFigure(false);
-        context.DrawGeometry(Brushes.Transparent, new Pen(new SolidColorBrush(_accentBrush.Color)), segmentFootGeo);
-        double midRadius1 = (first_inner_radius + second_inner_radius) / 2;
-        double midAngle1 = angle + (THIRTY_DEG_RAD / 2);
-        var textPos1 = PointOnCircle(center, midAngle1 + _animationRotationAngle, midRadius1);
-        //notes for degree
-        var noteAtDeg = MusicTheory.NoteAtDegree(_displayTonic, index + 1, correctForFifths: true);
-        var ft1 = new FormattedText(noteAtDeg.Length > 1 ? noteAtDeg[0] + "♭" : noteAtDeg, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(15, (first_inner_radius - second_inner_radius) / 2), new SolidColorBrush(Color.Parse("#76D2DB")));
-        var textOrigin1 = new Point(textPos1.X - ft1.Width / 2, textPos1.Y - ft1.Height / 2);
-        context.DrawText(ft1, textOrigin1);
 
-        //For Hover
-        if (_mouseOnIndex == index)
+    private void DrawSegment(
+        int index,
+        double startAngle,
+        double outerRadius,
+        Point center,
+        IEnumerable<int> selectedDegreeIndices,
+        DrawingContext context)
+    {
+        double firstInnerRadius = outerRadius * FIRST_INNER_RADIUS_RATIO;
+        double secondInnerRadius = outerRadius * SECOND_INNER_RADIUS_RATIO;
+        double endAngle = startAngle + THIRTY_DEG_RAD;
+        double midAngle = startAngle + THIRTY_DEG_RAD / 2;
+
+        bool isClicked = UserClickedIndex == index || GameClickedIndex == index;
+        bool isHovered = _mouseOnIndex == index;
+        bool isGrayedOut = !selectedDegreeIndices.Contains(index);
+
+        DrawSegmentBody(index, startAngle, endAngle, outerRadius, firstInnerRadius, center, isClicked, isHovered, context);
+        DrawSegmentFoot(startAngle, endAngle, firstInnerRadius, secondInnerRadius, center, context);
+        DrawNoteLabel(index, midAngle, firstInnerRadius, secondInnerRadius, center, context);
+        DrawDegreeLabel(index, midAngle, outerRadius, firstInnerRadius, center, isClicked, isGrayedOut, context);
+    }
+
+    private void DrawSegmentBody(
+        int index,
+        double startAngle,
+        double endAngle,
+        double outerRadius,
+        double innerRadius,
+        Point center,
+        bool isClicked,
+        bool isHovered,
+        DrawingContext context)
+    {
+        var outerStart = PointOnCircle(center, startAngle, outerRadius);
+        var outerEnd = PointOnCircle(center, endAngle, outerRadius);
+        var innerEnd = PointOnCircle(center, endAngle, innerRadius);
+        var innerStart = PointOnCircle(center, startAngle, innerRadius);
+
+        var geo = new StreamGeometry();
+        using (var ctx = geo.Open())
         {
-            //arc thickness but i do not want to draw the arc seperately. So we just draw another one
-            var arcThicknessGeo = new StreamGeometry();
-            using
-            var ctx2 = arcThicknessGeo.Open();
-            ctx2.BeginFigure(p1, true);
-            ctx2.ArcTo(p2, new Size(outer_radius, outer_radius), 0, false, SweepDirection.Clockwise);
-            ctx2.EndFigure(false);
-            //draw arc
-            context.DrawGeometry(Brushes.Transparent, new Pen(_degreeBrushes[index], 10), arcThicknessGeo);
+            ctx.BeginFigure(outerStart, isFilled: true);
+            ctx.ArcTo(outerEnd, new Size(outerRadius, outerRadius), rotationAngle: 0, isLargeArc: false, SweepDirection.Clockwise);
+            ctx.LineTo(innerEnd);
+            ctx.ArcTo(innerStart, new Size(innerRadius, innerRadius), rotationAngle: 0, isLargeArc: false, SweepDirection.CounterClockwise);
+            ctx.EndFigure(isClosed: true);
         }
 
-        double midRadius = (outer_radius + first_inner_radius) / 2;
-        double midAngle = angle + (THIRTY_DEG_RAD / 2);
-        var textPos = PointOnCircle(center, midAngle, midRadius);
-        var ft = new FormattedText(_noteGraduations[index], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _notoSansTypeface, Math.Max(10, (outer_radius - first_inner_radius) / 2), clicked ? Brushes.White : new SolidColorBrush(_degreeBrushes[index].Color, grayOut ? 0.1 : 1));
-        var textOrigin = new Point(textPos.X - ft.Width / 2, textPos.Y - ft.Height / 2);
-        context.DrawText(ft, textOrigin);
+        IBrush fill = isClicked
+            ? _degreeBrushes[index]
+            : new SolidColorBrush(Colors.Transparent, 0.5);
+
+        context.DrawGeometry(fill, new Pen(_accentBrush, 1), geo);
+
+        if (isHovered)
+            DrawHoverArc(outerStart, outerEnd, outerRadius, index, context);
+    }
+
+    private void DrawHoverArc(Point arcStart, Point arcEnd, double radius, int index, DrawingContext context)
+    {
+        var geo = new StreamGeometry();
+        using (var ctx = geo.Open())
+        {
+            ctx.BeginFigure(arcStart, isFilled: true);
+            ctx.ArcTo(arcEnd, new Size(radius, radius), rotationAngle: 0, isLargeArc: false, SweepDirection.Clockwise);
+            ctx.EndFigure(isClosed: false);
+        }
+
+        context.DrawGeometry(Brushes.Transparent, new Pen(_degreeBrushes[index], 10), geo);
+    }
+
+    private void DrawSegmentFoot(
+        double startAngle,
+        double endAngle,
+        double outerRadius,
+        double innerRadius,
+        Point center,
+        DrawingContext context)
+    {
+        double rotatedStart = startAngle + _animationRotationAngle;
+        double rotatedEnd = endAngle + _animationRotationAngle;
+
+        var outerStart = PointOnCircle(center, rotatedStart, outerRadius);
+        var outerEnd = PointOnCircle(center, rotatedEnd, outerRadius);
+        var innerStart = PointOnCircle(center, rotatedStart, innerRadius);
+        var innerEnd = PointOnCircle(center, rotatedEnd, innerRadius);
+
+        var geo = new StreamGeometry();
+        using (var ctx = geo.Open())
+        {
+            ctx.BeginFigure(outerEnd, isFilled: true);
+            ctx.LineTo(innerEnd);
+            ctx.ArcTo(innerStart, new Size(innerRadius, innerRadius), rotationAngle: 0, isLargeArc: false, SweepDirection.CounterClockwise);
+            ctx.LineTo(outerStart);
+            ctx.EndFigure(isClosed: false);
+        }
+        context.DrawGeometry(Brushes.Transparent, new Pen(new SolidColorBrush(_accentBrush.Color)), geo);
+    }
+
+    private void DrawNoteLabel(
+        int index,
+        double midAngle,
+        double outerRadius,
+        double innerRadius,
+        Point center,
+        DrawingContext context)
+    {
+        double midRadius = (outerRadius + innerRadius) / 2;
+        double fontSize = Math.Max(15, (outerRadius - innerRadius) / 2);
+        string note = MusicTheory.NoteAtDegree(_displayTonic, index + 1, correctForFifths: true);
+        string noteDisplay = note.Length > 1 ? note[0] + "♭" : note;
+        var brush = new SolidColorBrush(Color.Parse("#76D2DB"));
+
+        DrawLabel(noteDisplay, PointOnCircle(center, midAngle + _animationRotationAngle, midRadius), fontSize, brush, context);
+    }
+
+    private void DrawDegreeLabel(
+        int index,
+        double midAngle,
+        double outerRadius,
+        double innerRadius,
+        Point center,
+        bool isClicked,
+        bool isGrayedOut,
+        DrawingContext context)
+    {
+        double midRadius = (outerRadius + innerRadius) / 2;
+        double fontSize = Math.Max(10, (outerRadius - innerRadius) / 2);
+
+        IBrush brush = isClicked
+            ? Brushes.White
+            : new SolidColorBrush(_degreeBrushes[index].Color, isGrayedOut ? 0.1 : 1.0);
+
+        DrawLabel(_noteGraduations[index], PointOnCircle(center, midAngle, midRadius), fontSize, brush, context);
+    }
+
+    private void DrawLabel(string text, Point position, double fontSize, IBrush brush, DrawingContext context)
+    {
+        var formatted = new FormattedText(
+            text,
+            CultureInfo.CurrentCulture,
+            FlowDirection.LeftToRight,
+            _notoSansTypeface,
+            fontSize,
+            brush);
+
+        var origin = new Point(position.X - formatted.Width / 2, position.Y - formatted.Height / 2);
+        context.DrawText(formatted, origin);
     }
     protected override void OnPointerMoved(PointerEventArgs e)
     {
@@ -359,26 +449,3 @@ internal class CircleOfFifths : Control
     }
 }
 
-public class CircleHaloEffect : Control
-{
-    public override void Render(DrawingContext context)
-    {
-        base.Render(context);
-        Point center = new(Bounds.Width / 2, Bounds.Height / 2);
-        var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2 + 1;
-        context.DrawEllipse(Brushes.Transparent, new Pen(Brushes.White, 1), center, outer_radius, outer_radius);
-    }
-
-    public CircleHaloEffect()
-    {
-        var blurEffect = new DropShadowEffect
-        {
-            OffsetX = 0,
-            OffsetY = 0,
-            BlurRadius = 20,
-            Color = Colors.White,
-            Opacity = 1
-        };
-        Effect = blurEffect;
-    }
-}
