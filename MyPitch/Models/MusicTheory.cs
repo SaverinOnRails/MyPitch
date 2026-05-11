@@ -261,6 +261,7 @@ public static class MusicTheory
                     "♭6",
                     "♭7"
                 },
+            ScaleMode.All => ChromaticScaleGraduation.ToList()
         };
     }
 }

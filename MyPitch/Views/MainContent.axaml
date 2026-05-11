@@ -15,8 +15,8 @@
 
     <Design.DataContext>
         <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        This only sets the DataContext for the previewer in an IDE,
+        to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
         -->
         <vm:MainViewModel />
     </Design.DataContext>
@@ -31,7 +31,7 @@
         Container.Name="main">
         <Grid x:Name="CircleDisplay" RowDefinitions="Auto,*">
             <controls:MelodyBar
-                BarState="{Binding MelodyBarState}"
+                BarState="{Binding Game.MelodyBarState}"
                 Classes.collapsed="{Binding !IsMelodyMode}"
                 NoteCount="{Binding MelodyNoteCount}">
                 <controls:MelodyBar.Transitions>
@@ -48,17 +48,19 @@
                     </Style>
                 </controls:MelodyBar.Styles>
             </controls:MelodyBar>
-
+            <StackPanel>
+                <TextBlock/>
+            </StackPanel>
             <controls:CircleOfFifths
                 x:Name="Circle"
                 Grid.Row="1"
                 Margin="10"
-                AnswerState="{Binding AnswerState}"
-                GameClickedIndex="{Binding GameClickedIndex}"
+                AnswerState="{Binding Game.AnswerState}"
+                GameClickedIndex="{Binding Game.GameClickedIndex}"
                 IncludedDegrees="{Binding Degrees}"
-                Octave="{Binding Octave}"
-                Tonic="{Binding Tonic}"
-                UserClickedIndex="{Binding UserClickedIndex, Mode=TwoWay}" />
+                Octave="{Binding Game.Octave}"
+                Tonic="{Binding Game.Tonic}"
+                UserClickedIndex="{Binding Game.UserClickedIndex, Mode=TwoWay}" />
         </Grid>
         <shadui:Card
             x:Name="Card"
@@ -76,7 +78,7 @@
                         shadui:ControlAssist.Label="Select Tonic"
                         IsEnabled="{Binding !UseRandomTonic}"
                         ItemsSource="{Binding Tonics}"
-                        SelectedItem="{Binding Tonic}"
+                        SelectedItem="{Binding Game.Tonic}"
                         ToolTip.Tip="Select the Tonic or Key for use in all Game modes">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -102,12 +104,12 @@
                     <TextBlock
                         FontSize="15"
                         FontWeight="DemiBold"
-                        Text="{Binding DroneVolume, StringFormat='Drone Voume : {0}%'}" />
+                        Text="{Binding Game.DroneVolume, StringFormat='Drone Voume : {0}%'}" />
                     <Slider
                         shadui:ControlAssist.Label="Volume"
                         Maximum="100"
                         Minimum="1"
-                        Value="{Binding DroneVolume}" />
+                        Value="{Binding Game.DroneVolume}" />
                 </StackPanel>
                 <ToggleSwitch
                     Grid.Column="1"
@@ -119,7 +121,7 @@
                     <TextBlock
                         FontSize="15"
                         FontWeight="DemiBold"
-                        Text="{Binding Octave, StringFormat='Octave : {0}'}" />
+                        Text="{Binding Game.Octave, StringFormat='Octave : {0}'}" />
                     <Grid ColumnDefinitions="*,Auto">
                         <Slider
                             shadui:ControlAssist.Label="Octave"
@@ -129,7 +131,7 @@
                             Minimum="1"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
-                            Value="{Binding Octave}" />
+                            Value="{Binding Game.Octave}" />
                         <ToggleSwitch
                             Grid.Column="1"
                             Margin="20,0,10,0"
@@ -205,12 +207,12 @@
                     Classes="Primary"
                     Command="{Binding TogglePlay}"
                     Content="Play"
-                    IsVisible="{Binding !IsPlaying}" />
+                    IsVisible="{Binding !Game.IsPlaying}" />
                 <Button
                     Classes="Secondary"
                     Command="{Binding TogglePlay}"
                     Content="Stop"
-                    IsVisible="{Binding IsPlaying}" />
+                    IsVisible="{Binding Game.IsPlaying}" />
                 <Border>
                     <TextBlock IsVisible="{Binding IsWasm}" Text="Enjoy superior performance on the desktop or mobile app" />
                 </Border>

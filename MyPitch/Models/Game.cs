@@ -17,7 +17,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private Key _tonic = Key.C;
     [ObservableProperty] private int _octave = 4;
     [ObservableProperty] private int _droneVolume = 100;
-    [ObservableProperty] private int _interactiveModeCount;
+    [ObservableProperty] private int _interactiveModeCount = 0;
     [ObservableProperty] private MelodyBarState _melodyBarState = new(); // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
 
     private const int _interactiveModeRoundCount = 20;

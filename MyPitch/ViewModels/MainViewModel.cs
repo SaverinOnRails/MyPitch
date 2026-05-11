@@ -8,7 +8,7 @@ namespace MyPitch.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    private Game Game { get; } = new();
+    public Game Game { get; } = new();
 
     public ObservableCollection<DegreeItem> Degrees { get; } =
         [
@@ -68,12 +68,12 @@ public partial class MainViewModel : ViewModelBase
     //THESE ONLY RUN WHEN THE USER MANUALLY TRIGGERS THEM IN THE UI
     private void SetRandomTonicManual()
     {
-        Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
+        Game.Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
     }
     private void SetRandomOctaveManual()
     {
         int[] octaveRange = [3, 4, 5];
-        Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
+        Game.Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
     }
 
     partial void OnUseRandomOctaveChanged(bool value)
@@ -88,41 +88,11 @@ public partial class MainViewModel : ViewModelBase
     partial void OnPlayCadenceOnKeyChangeChanged(bool value) => PushSettings();
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
-
-    public Key Tonic
-    {
-        get => Game.Tonic;
-        set => Game.Tonic = value;
-    }
-
-    public int DroneVolume
-    {
-        get => Game.DroneVolume;
-        set => Game.DroneVolume = value;
-    }
-    public int Octave
-    {
-        get => Game.Octave;
-        set => Game.Octave = value;
-    }
-
-    public int? UserClickedIndex
-    {
-        get => Game.UserClickedIndex;
-        set => Game.UserClickedIndex = value;
-    }
-
-    public bool IsPlaying => Game.IsPlaying;
-    public int? GameClickedIndex => Game.GameClickedIndex;
-    public MelodyBarState MelodyBarState => Game.MelodyBarState;
-    public AnswerState AnswerState => Game.AnswerState;
-
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Melody, GameMode.Cycle];
     public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
     public MainViewModel()
     {
-        Game.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
         foreach (var deg in Degrees)
             WireDegree(deg);
 
