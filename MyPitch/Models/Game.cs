@@ -17,11 +17,10 @@ public partial class Game : ObservableObject
     [ObservableProperty] private Key _tonic = Key.C;
     [ObservableProperty] private int _octave = 4;
     [ObservableProperty] private int _droneVolume = 100;
-    [ObservableProperty] private int _interactiveModeCount = 0;
+    [ObservableProperty] private int _interactiveModeRounds = 0;
     [ObservableProperty] private MelodyBarState _melodyBarState = new(); // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
 
-    private const int _interactiveModeRoundCount = 20;
-    private IGameModeStats? _gameModeStats;
+    private const int _interactiveModeMaxRoundCount = 5;
     private bool _playedCadence;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
@@ -88,6 +87,7 @@ public partial class Game : ObservableObject
         SuspendDrone();
         IsPlaying = false;
         AnswerState = AnswerState.Neutral;
+        InteractiveModeRounds = 0;
         MelodyBarState = new();
         _playedCadence = false;
         GameClickedIndex = null;
@@ -216,8 +216,11 @@ public partial class Game : ObservableObject
     }
     private async Task InteractiveGameLoop()
     {
+        var stats = new InteractiveModeStats();
+        TimeSpan totalResponseTime = TimeSpan.Zero;
         while (true)
         {
+            var now = DateTime.Now;
             AnswerState = AnswerState.Neutral;
             var tonic = Tonic;
             _cts.Token.ThrowIfCancellationRequested();
@@ -228,7 +231,10 @@ public partial class Game : ObservableObject
             var quizDeg = await PlayQuizNote(hidden: true);
             var quizNoteIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
             _userClickTcs = new TaskCompletionSource<int>();
+            var responseStart = DateTime.Now;
             var userResponse = await _userClickTcs.Task.WaitAsync(_cts.Token);
+            var responseEnd = DateTime.Now - responseStart;
+            totalResponseTime += responseEnd;
             if (userResponse == quizNoteIndex)
             {
                 AnswerState = AnswerState.Correct;
@@ -240,6 +246,7 @@ public partial class Game : ObservableObject
                     var resolutionIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(resolution) + 1, false));
                     await PlayScaleNote(resolution, hidden: false, duration: 500);
                 }
+                stats.AddStatForDeg(quizDeg, responseEnd, true, null);
                 GameClickedIndex = null;
             }
             else
@@ -251,7 +258,29 @@ public partial class Game : ObservableObject
                     await PlayScaleNote(quizDeg, hidden: false, duration: 200);
                     await Task.Delay(50, _cts.Token);
                 }
+                stats.AddStatForDeg(quizDeg, responseEnd, false, MusicTheory.FifthIntervalScaleGraduation[userResponse]);
             }
+
+            if (InteractiveModeRounds == _interactiveModeMaxRoundCount)
+            {
+                Debug.WriteLine("Mode complete");
+                stats.AverageResponseTime = ((totalResponseTime) / InteractiveModeRounds);
+                // Debug.WriteLine($"Average Response Time {stats.AverageResponseTime.TotalSeconds}");
+
+                // foreach (var degStat in stats.DegreeStats)
+                // {
+                //     Debug.WriteLine($"deg : {degStat.Key}");
+                //     var stat = degStat.Value;
+                //     Debug.WriteLine($"Times correct {stat.TimesCorrect}");
+                //     Debug.WriteLine($"Times incorrect {stat.TimesIncorrect}");
+                //     Debug.WriteLine($"Average Response Time{stat.AverageResponseTime.TotalSeconds}");
+                //     Debug.WriteLine($"Mistaken For :");
+                //     foreach (var p in stat.MistakenFor) Debug.WriteLine(p);
+                //     Debug.WriteLine("");
+                // }
+                _cts.Cancel();
+            }
+            InteractiveModeRounds++;
         }
     }
     private async Task FreeListenGameLoop()
@@ -371,14 +400,34 @@ public class MelodyBarState
 public class InteractiveModeStats : IGameModeStats
 {
     public TimeSpan AverageResponseTime = TimeSpan.Zero;
-    public Dictionary<string, InteractiveDegreeStats> DegreeStats = new();
+    public Dictionary<string, InteractiveDegreeStats> DegreeStats { get; private set; } = new();
+
+    public void AddStatForDeg(string deg, TimeSpan responseTime, bool correct, string? mistakenFor)
+    {
+        _ = DegreeStats.TryAdd(deg, new());
+        DegreeStats[deg].TotalResponseTime += responseTime;
+        if (correct)
+            DegreeStats[deg].TimesCorrect += 1;
+        else
+            DegreeStats[deg].TimesIncorrect += 1;
+        if (mistakenFor is not null)
+        {
+            if (!DegreeStats[deg].MistakenFor.Contains(mistakenFor))
+            {
+                DegreeStats[deg].MistakenFor.Add(mistakenFor);
+            }
+        }
+    }
+
 }
 public class InteractiveDegreeStats
 {
-    public int TimesCorrect = 0;
-    public int TimesIncorrect = 0;
-    public TimeSpan AverageResponseTime = TimeSpan.Zero;
-    public List<string> MistakedFor = new();
+    public int TimesCorrect { get; set; }
+    public int TimesIncorrect { get; set; }
+    public int TimesAppeared => TimesCorrect + TimesIncorrect; //will never be 0
+    public TimeSpan TotalResponseTime { get; set; } = TimeSpan.Zero;
+    public TimeSpan AverageResponseTime => TotalResponseTime / TimesAppeared;
+    public List<string> MistakenFor = new();
 }
 
 public interface IGameModeStats { }

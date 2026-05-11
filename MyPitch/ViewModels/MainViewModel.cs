@@ -39,7 +39,7 @@ public partial class MainViewModel : ViewModelBase
 
     partial void OnGameModeChanged(GameMode oldValue, GameMode newValue)
     {
-        PushSettings(); OnPropertyChanged(nameof(IsMelodyMode)); if (newValue == GameMode.Melody) ConfigureMelodyMode();
+        PushSettings(); OnPropertyChanged(nameof(IsMelodyMode)); OnPropertyChanged(nameof(IsInteractiveMode)); if (newValue == GameMode.Melody) ConfigureMelodyMode();
     }
     partial void OnMelodyNoteCountChanged(int oldValue, int newValue) => PushSettings();
 
@@ -88,6 +88,7 @@ public partial class MainViewModel : ViewModelBase
     partial void OnPlayCadenceOnKeyChangeChanged(bool value) => PushSettings();
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
+    public bool IsInteractiveMode => GameMode == GameMode.Interactive;
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Melody, GameMode.Cycle];
     public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];

@@ -122,30 +122,30 @@ public static class MusicTheory
     private static string NextNote(string prevNote, ScaleMode scale, List<string> degs)
     {
         var roll = Random.Shared.Next(100);
-        Debug.WriteLine(roll);
+        // Debug.WriteLine(roll);
         string note;
         if (roll < 20)
         {
             note = prevNote;
-            Debug.WriteLine($"Repeating {note}");
+            // Debug.WriteLine($"Repeating {note}");
         }
         if (roll < 60)
         {
             note = Step(prevNote, scale);
-            Debug.WriteLine($"Stepping to {prevNote} from {note}");
+            // Debug.WriteLine($"Stepping to {prevNote} from {note}");
         }
         else if (roll < 80)
         {
             note = Leap(prevNote, scale);
-            Debug.WriteLine($"Leaping to {prevNote} from {note}");
+            // Debug.WriteLine($"Leaping to {prevNote} from {note}");
         }
         else
         {
             note = degs[Random.Shared.Next(degs.Count)];
-            Debug.WriteLine($"Random roll {note}");
+            // Debug.WriteLine($"Random roll {note}");
 
         }
-        Debug.WriteLine("");
+        // Debug.WriteLine("");
         return degs.Contains(note) ? note : degs[Random.Shared.Next(degs.Count)];
     }
 

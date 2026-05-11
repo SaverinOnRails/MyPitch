@@ -15,8 +15,8 @@
 
     <Design.DataContext>
         <!--
-        This only sets the DataContext for the previewer in an IDE,
-        to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
         -->
         <vm:MainViewModel />
     </Design.DataContext>
@@ -30,6 +30,8 @@
         Margin="10,0,0,0"
         Container.Name="main">
         <Grid x:Name="CircleDisplay" RowDefinitions="Auto,*">
+            <!--  TODO: Improve this  -->
+            <!--  FOR MELODY MODE  -->
             <controls:MelodyBar
                 BarState="{Binding Game.MelodyBarState}"
                 Classes.collapsed="{Binding !IsMelodyMode}"
@@ -48,9 +50,29 @@
                     </Style>
                 </controls:MelodyBar.Styles>
             </controls:MelodyBar>
-            <StackPanel>
-                <TextBlock/>
+
+            <!--  FOR INTERACTIVE  -->
+            <StackPanel Classes.collapsed="{Binding !IsInteractiveMode}" ClipToBounds="true">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="45"
+                    Text="{Binding Game.InteractiveModeRounds, StringFormat={}{0}/20}" />
+                <StackPanel.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Height" Duration="0:0:0.05" />
+                    </Transitions>
+                </StackPanel.Transitions>
+                <StackPanel.Styles>
+                    <Style Selector="StackPanel">
+                        <Setter Property="Height" Value="50" />
+                    </Style>
+                    <Style Selector="StackPanel.collapsed">
+                        <Setter Property="Height" Value="0" />
+                    </Style>
+                </StackPanel.Styles>
             </StackPanel>
+
+
             <controls:CircleOfFifths
                 x:Name="Circle"
                 Grid.Row="1"
