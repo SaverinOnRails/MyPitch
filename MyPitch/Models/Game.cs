@@ -17,8 +17,11 @@ public partial class Game : ObservableObject
     [ObservableProperty] private Key _tonic = Key.C;
     [ObservableProperty] private int _octave = 4;
     [ObservableProperty] private int _droneVolume = 100;
+    [ObservableProperty] private int _interactiveModeCount;
     [ObservableProperty] private MelodyBarState _melodyBarState = new(); // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
-    private int _cycleIndex = 0;
+
+    private const int _interactiveModeRoundCount = 20;
+    private IGameModeStats? _gameModeStats;
     private bool _playedCadence;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
@@ -84,7 +87,6 @@ public partial class Game : ObservableObject
         _cts.Cancel();
         SuspendDrone();
         IsPlaying = false;
-        _cycleIndex = 0;
         AnswerState = AnswerState.Neutral;
         MelodyBarState = new();
         _playedCadence = false;
@@ -178,21 +180,22 @@ public partial class Game : ObservableObject
     }
     private async Task CycleModeGameLoop()
     {
+        int cycleIndex = 0;
         while (true)
         {
             int length = MusicTheory.ChromaticScaleGraduation.Length;
             _cts.Token.ThrowIfCancellationRequested();
             await MaybeChangeTonic();
             await MaybePlayCadence();
-            while (!AllowedDegreeStrings.Contains(MusicTheory.ChromaticScaleGraduation[_cycleIndex]))
+            while (!AllowedDegreeStrings.Contains(MusicTheory.ChromaticScaleGraduation[cycleIndex]))
             {
                 if (AllowedDegreeStrings.Count() == 0) break;
                 _cts.Token.ThrowIfCancellationRequested();
-                _cycleIndex = (_cycleIndex + 1) % length;
+                cycleIndex = (cycleIndex + 1) % length;
             }
-            string degAtCycleIndex = MusicTheory.ChromaticScaleGraduation[_cycleIndex];
+            string degAtCycleIndex = MusicTheory.ChromaticScaleGraduation[cycleIndex];
             await PlayScaleNote(degAtCycleIndex, hidden: false, duration: 2000);
-            _cycleIndex = (_cycleIndex + 1) % length;
+            cycleIndex = (cycleIndex + 1) % length;
             await Task.Delay(200, _cts.Token);
         }
     }
@@ -364,3 +367,20 @@ public class MelodyBarState
     public MelodyBarState()
     { }
 }
+
+public class InteractiveModeStats : IGameModeStats
+{
+    public TimeSpan AverageResponseTime = TimeSpan.Zero;
+    public Dictionary<string, InteractiveDegreeStats> DegreeStats = new();
+}
+public class InteractiveDegreeStats
+{
+    public int TimesCorrect = 0;
+    public int TimesIncorrect = 0;
+    public TimeSpan AverageResponseTime = TimeSpan.Zero;
+    public List<string> MistakedFor = new();
+}
+
+public interface IGameModeStats { }
+
+

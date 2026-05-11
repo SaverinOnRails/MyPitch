@@ -202,7 +202,7 @@ internal class CircleOfFifths : Control
             DrawSegment(i, angle, outer_radius, center, selectedDegreeIndices, context);
         }
 
-        DrawTonicIndicator(center, outer_radius, context);
+        // DrawTonicIndicator(center, outer_radius, context);
     }
 
     private void DrawTonicIndicator(Point center, double outerRadius, DrawingContext context)

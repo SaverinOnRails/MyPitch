@@ -48,6 +48,7 @@
                     </Style>
                 </controls:MelodyBar.Styles>
             </controls:MelodyBar>
+
             <controls:CircleOfFifths
                 x:Name="Circle"
                 Grid.Row="1"

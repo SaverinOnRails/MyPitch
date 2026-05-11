@@ -281,6 +281,7 @@ public enum Key
 }
 public enum ScaleMode
 {
+    All,
     Ionian,
     Dorian,
     Phrygian,

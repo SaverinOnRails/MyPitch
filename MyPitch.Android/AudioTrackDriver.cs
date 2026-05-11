@@ -30,7 +30,6 @@ internal class AudioTrackDriver : IAudioDriver
     {
         _synth = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
         _droneSynth = new MeltySynth.Synthesizer(droneFont, SAMPLE_RATE);
-
         var minBufferSize = AudioTrack.GetMinBufferSize(
              SAMPLE_RATE,
              ChannelOut.Stereo,

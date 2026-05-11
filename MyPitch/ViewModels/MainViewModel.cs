@@ -119,7 +119,7 @@ public partial class MainViewModel : ViewModelBase
 
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Melody, GameMode.Cycle];
-    public ScaleMode[] ScaleModes => [ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
+    public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
     public MainViewModel()
     {
         Game.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
