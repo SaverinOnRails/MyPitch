@@ -1,10 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
+using MyPitch.Controls;
 using MyPitch.ViewModels;
-using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
 namespace MyPitch.Views;
 
 public partial class MainView : UserControl
@@ -17,6 +14,7 @@ public partial class MainView : UserControl
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         var insetsmanager = TopLevel.GetTopLevel(this)?.InsetsManager;
+        (DataContext as MainViewModel)._dialogHost = this.DialogHost; //this is the easiest way, sue me
         if (insetsmanager is not null && System.OperatingSystem.IsAndroid())
         {
             insetsmanager.DisplayEdgeToEdgePreference = true;

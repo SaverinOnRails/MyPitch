@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using MyPitch.Controls;
 using System.Threading.Tasks;
 namespace MyPitch.Models;
 
@@ -17,10 +18,11 @@ public partial class Game : ObservableObject
     [ObservableProperty] private Key _tonic = Key.C;
     [ObservableProperty] private int _octave = 4;
     [ObservableProperty] private int _droneVolume = 100;
-    [ObservableProperty] private int _interactiveModeRounds = 0;
+    [ObservableProperty] private int _interactiveModeRounds = 1;
     [ObservableProperty] private MelodyBarState _melodyBarState = new(); // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
 
-    private const int _interactiveModeMaxRoundCount = 5;
+    public event DialogRequestedEventHandler? DialogNeeded;
+    private const int _interactiveModeMaxRoundCount = 1;
     private bool _playedCadence;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
@@ -87,7 +89,7 @@ public partial class Game : ObservableObject
         SuspendDrone();
         IsPlaying = false;
         AnswerState = AnswerState.Neutral;
-        InteractiveModeRounds = 0;
+        InteractiveModeRounds = 1;
         MelodyBarState = new();
         _playedCadence = false;
         GameClickedIndex = null;
@@ -263,21 +265,13 @@ public partial class Game : ObservableObject
 
             if (InteractiveModeRounds == _interactiveModeMaxRoundCount)
             {
-                Debug.WriteLine("Mode complete");
                 stats.AverageResponseTime = ((totalResponseTime) / InteractiveModeRounds);
-                // Debug.WriteLine($"Average Response Time {stats.AverageResponseTime.TotalSeconds}");
-
-                // foreach (var degStat in stats.DegreeStats)
-                // {
-                //     Debug.WriteLine($"deg : {degStat.Key}");
-                //     var stat = degStat.Value;
-                //     Debug.WriteLine($"Times correct {stat.TimesCorrect}");
-                //     Debug.WriteLine($"Times incorrect {stat.TimesIncorrect}");
-                //     Debug.WriteLine($"Average Response Time{stat.AverageResponseTime.TotalSeconds}");
-                //     Debug.WriteLine($"Mistaken For :");
-                //     foreach (var p in stat.MistakenFor) Debug.WriteLine(p);
-                //     Debug.WriteLine("");
-                // }
+                DialogNeeded?.Invoke(new(
+                    new InteractiveModeStatsDialogContent()
+                    {
+                        Stats = stats
+                    }
+                ));
                 _cts.Cancel();
             }
             InteractiveModeRounds++;
@@ -397,7 +391,7 @@ public class MelodyBarState
     { }
 }
 
-public class InteractiveModeStats : IGameModeStats
+public class InteractiveModeStats
 {
     public TimeSpan AverageResponseTime = TimeSpan.Zero;
     public Dictionary<string, InteractiveDegreeStats> DegreeStats { get; private set; } = new();
@@ -430,6 +424,5 @@ public class InteractiveDegreeStats
     public List<string> MistakenFor = new();
 }
 
-public interface IGameModeStats { }
 
 

@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MyPitch.Controls;
 using MyPitch.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MyPitch.ViewModels;
@@ -9,7 +11,7 @@ namespace MyPitch.ViewModels;
 public partial class MainViewModel : ViewModelBase
 {
     public Game Game { get; } = new();
-
+    public DialogHost? _dialogHost;
     public ObservableCollection<DegreeItem> Degrees { get; } =
         [
         new() { Label = "1"  },
@@ -96,9 +98,14 @@ public partial class MainViewModel : ViewModelBase
     {
         foreach (var deg in Degrees)
             WireDegree(deg);
-
+        Game.DialogNeeded += GameDialogNeeded;
         PushSettings();
         SyncDegrees();
+    }
+
+    private void GameDialogNeeded(DialogRequestedEventArgs e)
+    {
+        _dialogHost?.Show(e.Content);
     }
 
     partial void OnShouldSelectAllDegreesChanged(bool value)

@@ -52,7 +52,10 @@
             </controls:MelodyBar>
 
             <!--  FOR INTERACTIVE  -->
-            <StackPanel Classes.collapsed="{Binding !IsInteractiveMode}" ClipToBounds="true">
+            <StackPanel
+                Margin="5"
+                Classes.collapsed="{Binding !IsInteractiveMode}"
+                ClipToBounds="true">
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontSize="45"
