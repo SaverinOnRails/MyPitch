@@ -22,7 +22,7 @@ internal class CircleOfFifths : Control
         _toplevel = TopLevel.GetTopLevel(this)!;
     }
 
-    private static double EaseInOutCubic(double t) => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
+    public static double EaseInOutCubic(double t) => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
 
     private void OnToplevelRenderFrame(TimeSpan span)
     {

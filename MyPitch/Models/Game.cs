@@ -22,7 +22,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private MelodyBarState _melodyBarState = new(); // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
 
     public event DialogRequestedEventHandler? DialogNeeded;
-    private const int _interactiveModeMaxRoundCount = 1;
+    private const int _interactiveModeMinRoundCount = 20;
     private bool _playedCadence;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
@@ -263,7 +263,7 @@ public partial class Game : ObservableObject
                 stats.AddStatForDeg(quizDeg, responseEnd, false, MusicTheory.FifthIntervalScaleGraduation[userResponse]);
             }
 
-            if (InteractiveModeRounds == _interactiveModeMaxRoundCount)
+            if (InteractiveModeRounds == _interactiveModeMinRoundCount)
             {
                 stats.AverageResponseTime = ((totalResponseTime) / InteractiveModeRounds);
                 DialogNeeded?.Invoke(new(
@@ -395,7 +395,18 @@ public class InteractiveModeStats
 {
     public TimeSpan AverageResponseTime = TimeSpan.Zero;
     public Dictionary<string, InteractiveDegreeStats> DegreeStats { get; private set; } = new();
-
+    public float Accuracy
+    {
+        get
+        {
+            var correct = DegreeStats.Sum(p => p.Value.TimesCorrect);
+            var incorrect = DegreeStats.Sum(p => p.Value.TimesIncorrect);
+            var total = correct + incorrect;
+            if (total == 0)
+               return 0;
+            return (float)correct / total * 100f;
+        }
+    }
     public void AddStatForDeg(string deg, TimeSpan responseTime, bool correct, string? mistakenFor)
     {
         _ = DegreeStats.TryAdd(deg, new());

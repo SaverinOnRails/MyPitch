@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Media;
@@ -17,10 +18,8 @@ public class DialogHost : Panel
         VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
         Background = new SolidColorBrush(Colors.Black, 0.7);
         IsVisible = false;
-        // Show();
     }
-
-    public void Show(IDialogContent content)
+    public void Show(IDialogContent? content = null)
     {
         IsVisible = true;
         //get the parent size to know best to size the dialog
@@ -29,12 +28,12 @@ public class DialogHost : Panel
         Panel contentBox = new()
         {
             Height = 500,
-            Width = wideLayout ? 700 : 300,
+            Width = wideLayout ? 700 : parentWidth!.Value,
             Background = new SolidColorBrush(Color.Parse("#080616"))
         };
         Grid mGrid = new() { RowDefinitions = new("Auto,*") };
         var header = new Panel();
-        var cancelButton = new Button() { Content = new TextBlock() { Text = "×", FontSize = 20 }, Width = 60, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right };
+        var cancelButton = new Button() { Content = new TextBlock() { Text = "×", FontSize = 35 }, Width = 60, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right };
         header.Children.Add(cancelButton);
         cancelButton.Click += (s, e) =>
         {
@@ -47,7 +46,6 @@ public class DialogHost : Panel
         mGrid.Children.Add(mainContent);
         contentBox.Children.Add(mGrid);
         Children.Add(contentBox);
-
         if (content is InteractiveModeStatsDialogContent e)
         {
             BuildInteractiveStatsDialogContent(e, mainContent);
@@ -58,10 +56,14 @@ public class DialogHost : Panel
     {
         Grid mGrid = new() { RowDefinitions = new("Auto,*") };
         var tPanel = new Panel();
-        tPanel.Children.Add(new TextBlock() { Text = $"Average response time: {e.Stats.AverageResponseTime.TotalSeconds.ToString("F1")}", TextAlignment = TextAlignment.Center, FontSize = 20 });
+        Debug.WriteLine(e.Stats.Accuracy);
+        var circularProgress = new CircularProgress() { Height = 100, Width = 200 };
+        tPanel.Children.Add(
+            circularProgress
+        );
+        circularProgress.Progress = e.Stats.Accuracy;
         mGrid.Children.Add(tPanel);
-
-        Panel dGridPanel = new();
+        Panel dGridPanel = new() { Margin = new(10) };
         Grid.SetRow(dGridPanel, 1);
         contentBox.Children.Add(mGrid);
         var dataGrid = new DataGrid
@@ -78,8 +80,8 @@ public class DialogHost : Panel
                 Degree = p.Key,
                 TimesCorrect = p.Value.TimesCorrect,
                 TimesIncorrect = p.Value.TimesIncorrect,
-                AvgResponseTime = p.Value.AverageResponseTime.TotalSeconds.ToString("F1"),
-                MistakenFor = p.Value.MistakenFor.Count > 0 ? String.Join(',', p.Value.MistakenFor) : "None"
+                AvgResponseTime = p.Value.AverageResponseTime.TotalSeconds.ToString("F1") + " secs",
+                MistakenFor = p.Value.MistakenFor.Count > 0 ? String.Join(',', p.Value.MistakenFor) : " None"
             });
         }
         dataGrid.Columns.Add(new DataGridTextColumn
@@ -106,7 +108,7 @@ public class DialogHost : Panel
         });
         dataGrid.Columns.Add(new DataGridTextColumn
         {
-            Header = "Avg Response Time",
+            Header = "Avg. Response Time",
             Binding = new Binding("AvgResponseTime"),
             IsReadOnly = true,
             Width = new DataGridLength(1, DataGridLengthUnitType.Star)
@@ -119,6 +121,19 @@ public class DialogHost : Panel
             IsReadOnly = true,
             Width = new DataGridLength(1, DataGridLengthUnitType.Star)
         });
+        dataGrid.LoadingRow += (s, e) =>
+        {
+            if(e.Row.DataContext is null) return;
+            var dataModel = (InteractiveStatsTableViewModel)e.Row.DataContext;
+            if (dataModel?.TimesIncorrect > 0)
+            {
+                e.Row.Background = new SolidColorBrush(Colors.LightCoral, 0.6);
+            }
+            else
+            {
+                e.Row.Background = Brushes.Transparent;
+            }
+        };
         dataGrid.ItemsSource = dataModel;
         dGridPanel.Children.Add(dataGrid);
         mGrid.Children.Add(dGridPanel);
