@@ -23,6 +23,7 @@ public partial class Game : ObservableObject
 
     public event DialogRequestedEventHandler? DialogNeeded;
     private const int _interactiveModeMinRoundCount = 20;
+    private string? _interactiveQuizDeg = null;
     private bool _playedCadence;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _cts = new();
@@ -228,13 +229,15 @@ public partial class Game : ObservableObject
             _cts.Token.ThrowIfCancellationRequested();
             await MaybeChangeTonic();
             await MaybePlayCadence();
-            _cts.Token.ThrowIfCancellationRequested();
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
             var quizDeg = await PlayQuizNote(hidden: true);
             var quizNoteIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
             _userClickTcs = new TaskCompletionSource<int>();
             var responseStart = DateTime.Now;
+
+            _interactiveQuizDeg = quizDeg;
             var userResponse = await _userClickTcs.Task.WaitAsync(_cts.Token);
+            _interactiveQuizDeg = null;
             var responseEnd = DateTime.Now - responseStart;
             totalResponseTime += responseEnd;
             if (userResponse == quizNoteIndex)
@@ -288,6 +291,15 @@ public partial class Game : ObservableObject
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
             await PlayQuizNote(hidden: false);
             await Task.Delay(1000, _cts.Token);
+        }
+    }
+
+    public async Task TryRepeatQuizAsync()
+    {
+        if (!IsPlaying) return;
+        if (Settings.Mode == GameMode.Interactive && _interactiveQuizDeg is not null)
+        {
+            await PlayScaleNote(_interactiveQuizDeg, true);
         }
     }
     private async Task MaybeChangeTonic()
@@ -403,7 +415,7 @@ public class InteractiveModeStats
             var incorrect = DegreeStats.Sum(p => p.Value.TimesIncorrect);
             var total = correct + incorrect;
             if (total == 0)
-               return 0;
+                return 0;
             return (float)correct / total * 100f;
         }
     }

@@ -7,8 +7,10 @@ using MyPitch.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Input;
 using static MyPitch.PlatformServiceProvider;
 
 namespace MyPitch.Controls;
@@ -73,20 +75,31 @@ internal class CircleOfFifths : Control
     private DateTime _animationStartTime;
     private double _animationRotationAngleTarget;
     private double _animationRotationAngle;
-
+    private bool _mouseOnRepeatButton = false;
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
+    public static readonly StyledProperty<Models.GameMode> GameModeProperty = AvaloniaProperty.Register<CircleOfFifths, Models.GameMode>(nameof(GameMode));
     public static readonly StyledProperty<IEnumerable<DegreeItem>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<DegreeItem>>(nameof(IncludedDegrees));
     public static readonly StyledProperty<int> OctaveProperty = AvaloniaProperty.Register<CircleOfFifths, int>(nameof(Octave));
 
     public static readonly StyledProperty<int?> GameClickedIndexProperty = AvaloniaProperty.Register<CircleOfFifths, int?>(nameof(GameClickedIndex), null);
     public static readonly StyledProperty<int?> UserClickedIndexProperty = AvaloniaProperty.Register<CircleOfFifths, int?>(nameof(UserClickedIndex), null);
     public static readonly StyledProperty<AnswerState> AnswerStateProperty = AvaloniaProperty.Register<CircleOfFifths, AnswerState>(nameof(AnswerState));
+    public static readonly StyledProperty<ICommand> RepeatCommandProperty = AvaloniaProperty.Register<CircleOfFifths, ICommand>(nameof(RepeatCommand));
+
     public IEnumerable<DegreeItem> IncludedDegrees
     {
         get => GetValue(IncludedDegreesProperty);
         set
         {
             SetValue(IncludedDegreesProperty, value);
+        }
+    }
+    public ICommand RepeatCommand
+    {
+        get => GetValue(RepeatCommandProperty);
+        set
+        {
+            SetValue(RepeatCommandProperty, value);
         }
     }
     public AnswerState AnswerState
@@ -101,6 +114,11 @@ internal class CircleOfFifths : Control
     {
         get => GetValue(OctaveProperty);
         set => SetValue(OctaveProperty, value);
+    }
+    public GameMode GameMode
+    {
+        get => GetValue(GameModeProperty);
+        set => SetValue(GameModeProperty, value);
     }
     public int? GameClickedIndex
     {
@@ -133,7 +151,7 @@ internal class CircleOfFifths : Control
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (change.Property == GameClickedIndexProperty)
+        if (change.Property == GameClickedIndexProperty || change.Property == GameModeProperty)
         {
             InvalidateVisual();
         }
@@ -202,28 +220,27 @@ internal class CircleOfFifths : Control
             DrawSegment(i, angle, outer_radius, center, selectedDegreeIndices, context);
         }
 
-        // DrawTonicIndicator(center, outer_radius, context);
+        if (GameMode == GameMode.Interactive)
+        {
+            DrawRepeatSymbol(center, outer_radius, context);
+        }
     }
 
-    private void DrawTonicIndicator(Point center, double outerRadius, DrawingContext context)
+    private void DrawRepeatSymbol(Point center, double outerRadius, DrawingContext context)
     {
         double radius = outerRadius * THIRD_INNER_RADIUS_RATIO;
-
-        context.DrawEllipse(Brushes.Transparent, new Pen(_accentBrush), center, radius, radius);
-
-        string tonicString = Tonic.ToString();
-        string tonicText = tonicString.Length > 1 ? tonicString[0] + "♭" : tonicString;
-
+        // context.DrawEllipse(Brushes.Transparent, new Pen(_accentBrush), center, radius, radius);
         var text = new FormattedText(
-            tonicText.Trim(),
+            "⟳",
             CultureInfo.CurrentCulture,
             FlowDirection.LeftToRight,
             _notoSansTypeface,
-            emSize: Math.Max(10, radius),
-            _accentBrush);
-
-        var origin = new Point(center.X - text.Width / 2, center.Y - text.Height / 2);
-        context.DrawText(text, origin);
+            emSize: Math.Max(10, radius * 2),
+            _mouseOnRepeatButton ? Brushes.RoyalBlue : Brushes.LightCoral);
+        Point drawPoint = new(
+            center.X - text.Width / 2,
+            center.Y - (text.Baseline - text.Extent / 2)
+        ); context.DrawText(text, drawPoint);
     }
 
     private void DrawSegment(
@@ -383,14 +400,14 @@ internal class CircleOfFifths : Control
         //do not do hover effect if on touch
         if (e.Pointer.Type != PointerType.Touch)
         {
-            HitTestSegment(e.GetCurrentPoint(this));
+            HitTest(e.GetCurrentPoint(this));
         }
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        HitTestSegment(e.GetCurrentPoint(this), true);
+        HitTest(e.GetCurrentPoint(this), true);
 
     }
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
@@ -409,18 +426,49 @@ internal class CircleOfFifths : Control
     {
         base.OnPointerExited(e);
         _mouseOnIndex = null;
+        _mouseOnRepeatButton = false;
         InvalidateVisual();
     }
-    private void HitTestSegment(PointerPoint point, bool click = false)
+    private void HitTest(PointerPoint point, bool click = false)
     {
         Point center = new(Bounds.Width / 2, Bounds.Height / 2);
         var outerRadius = Math.Min(Bounds.Width, Bounds.Height) / 2;
         var innerRadius = outerRadius * FIRST_INNER_RADIUS_RATIO;
+        var third_inner_radius = outerRadius * THIRD_INNER_RADIUS_RATIO; //radius of circle where repeat button is
         var p = point.Position;
         double dx = p.X - center.X;
         double dy = p.Y - center.Y;
         double dist = Math.Sqrt(dx * dx + dy * dy);
-        if (dist < innerRadius || dist > outerRadius) return;
+        if (dist > innerRadius && dist < outerRadius)
+        {
+            HitTestSegment(dx, dy, click);
+        }
+        else if (dist < third_inner_radius)
+        {
+            HitTestRepeatButton(click);
+        }
+        else
+        {
+            if (_mouseOnRepeatButton)
+            {
+                _mouseOnRepeatButton = false;
+                InvalidateVisual();
+            }
+        }
+    }
+
+    private void HitTestRepeatButton(bool click)
+    {
+        _mouseOnRepeatButton = true;
+        if (click)
+        {
+            RepeatCommand.Execute(null);
+        }
+        InvalidateVisual();
+    }
+
+    private void HitTestSegment(double dx, double dy, bool click)
+    {
         double angle = Math.Atan2(dx, -dy);
         if (angle < 0) angle += 2 * Math.PI;
         double offsetAngle = angle + THIRTY_DEG_RAD / 2;

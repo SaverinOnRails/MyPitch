@@ -123,7 +123,7 @@ public class DialogHost : Panel
         });
         dataGrid.LoadingRow += (s, e) =>
         {
-            if(e.Row.DataContext is null) return;
+            if (e.Row.DataContext is null) return;
             var dataModel = (InteractiveStatsTableViewModel)e.Row.DataContext;
             if (dataModel?.TimesIncorrect > 0)
             {

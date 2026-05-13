@@ -58,7 +58,7 @@
                 ClipToBounds="true">
                 <TextBlock
                     HorizontalAlignment="Center"
-                    FontSize="45"
+                    FontSize="30"
                     Text="{Binding Game.InteractiveModeRounds, StringFormat={}{0}/20}" />
                 <StackPanel.Transitions>
                     <Transitions>
@@ -67,7 +67,7 @@
                 </StackPanel.Transitions>
                 <StackPanel.Styles>
                     <Style Selector="StackPanel">
-                        <Setter Property="Height" Value="50" />
+                        <Setter Property="Height" Value="40" />
                     </Style>
                     <Style Selector="StackPanel.collapsed">
                         <Setter Property="Height" Value="0" />
@@ -75,15 +75,16 @@
                 </StackPanel.Styles>
             </StackPanel>
 
-
             <controls:CircleOfFifths
                 x:Name="Circle"
                 Grid.Row="1"
                 Margin="10"
                 AnswerState="{Binding Game.AnswerState}"
                 GameClickedIndex="{Binding Game.GameClickedIndex}"
+                GameMode="{Binding GameMode}"
                 IncludedDegrees="{Binding Degrees}"
                 Octave="{Binding Game.Octave}"
+                RepeatCommand="{Binding Repeat}"
                 Tonic="{Binding Game.Tonic}"
                 UserClickedIndex="{Binding Game.UserClickedIndex, Mode=TwoWay}" />
         </Grid>
@@ -103,8 +104,7 @@
                         shadui:ControlAssist.Label="Select Tonic"
                         IsEnabled="{Binding !UseRandomTonic}"
                         ItemsSource="{Binding Tonics}"
-                        SelectedItem="{Binding Game.Tonic}"
-                        ToolTip.Tip="Select the Tonic or Key for use in all Game modes">
+                        SelectedItem="{Binding Game.Tonic}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock FontFamily="{StaticResource NotoSans}" Text="{Binding Converter={StaticResource TonicDisplayConverter}}" />

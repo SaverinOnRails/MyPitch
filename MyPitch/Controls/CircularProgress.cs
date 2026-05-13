@@ -100,7 +100,7 @@ internal class CircularProgress : Control
         ctx.BeginFigure(bottomLeft, false);
         ctx.ArcTo(bottomRight, new(radius, radius), 0, false, SweepDirection.Clockwise);
         var brush = new SolidColorBrush(Colors.LightGray, 0.7);
-        context.DrawGeometry(brush, new Pen(brush, 10,lineCap: PenLineCap.Round), geo);
+        context.DrawGeometry(brush, new Pen(brush, 10, lineCap: PenLineCap.Round), geo);
 
         string text = $"{Progress:F1}%";
         var formattedText = new FormattedText(

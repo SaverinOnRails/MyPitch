@@ -83,8 +83,6 @@ public partial class MainViewModel : ViewModelBase
         PushSettings(); if (value) SetRandomOctaveManual();
     }
 
-    // partial void OnDroneVolumeChanged(int value) => PushSettings();
-
     partial void OnPlayDroneChanged(bool value) => PushSettings();
 
     partial void OnPlayCadenceOnKeyChangeChanged(bool value) => PushSettings();
@@ -114,6 +112,10 @@ public partial class MainViewModel : ViewModelBase
         {
             deg.IsSelected = value;
         }
+    }
+    public async Task Repeat()
+    {
+        await Game.TryRepeatQuizAsync();
     }
 
     public async Task TogglePlay() => await Game.TogglePlay();
