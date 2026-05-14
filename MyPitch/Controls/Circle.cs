@@ -236,7 +236,7 @@ internal class CircleOfFifths : Control
             FlowDirection.LeftToRight,
             _notoSansTypeface,
             emSize: Math.Max(10, radius * 2),
-            _mouseOnRepeatButton ? Brushes.RoyalBlue : Brushes.LightCoral);
+            _mouseOnRepeatButton ? Brushes.Aquamarine : Brushes.LightCoral);
         Point drawPoint = new(
             center.X - text.Width / 2,
             center.Y - (text.Baseline - text.Extent / 2)

@@ -36,11 +36,19 @@ public static class MusicTheory
         "♭7",
         "4"
     };
-    public static readonly Dictionary<string, string> SimpleResolutionMap = new() {
-        {"2","1"},
-        {"7","1"},
-        {"4","3"},
-        {"6","5"}
+    public static readonly Dictionary<string, string> SimpleResolutionMap = new()
+    {
+        { "5",  "1" },
+        { "2",  "1" },
+        { "6",  "5" },
+        { "3",  "1" },
+        { "7",  "1" },
+        { "#4", "5" },
+        { "♭2", "1" },
+        { "♭6", "5" },
+        { "♭3", "2" },
+        { "♭7", "6" },
+        { "4",  "3" }
     };
     public static readonly string[] ChromaticScaleGraduation = {
         "1",

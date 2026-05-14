@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Media;
@@ -80,8 +81,9 @@ public class DialogHost : Panel
                 Degree = p.Key,
                 TimesCorrect = p.Value.TimesCorrect,
                 TimesIncorrect = p.Value.TimesIncorrect,
+                Familiarity = MathF.Round(p.Value.Familiarity, 1),
                 AvgResponseTime = p.Value.AverageResponseTime.TotalSeconds.ToString("F1") + " secs",
-                MistakenFor = p.Value.MistakenFor.Count > 0 ? String.Join(',', p.Value.MistakenFor) : " None"
+                MistakenFor = p.Value.MistakenFor.Count > 0 ? String.Join(" ,", p.Value.MistakenFor) : " None"
             });
         }
         dataGrid.Columns.Add(new DataGridTextColumn
@@ -121,13 +123,20 @@ public class DialogHost : Panel
             IsReadOnly = true,
             Width = new DataGridLength(1, DataGridLengthUnitType.Star)
         });
+        dataGrid.Columns.Add(new DataGridTextColumn
+        {
+            Header = "Familiarity",
+            Binding = new Binding("Familiarity"),
+            IsReadOnly = true,
+            Width = new DataGridLength(1, DataGridLengthUnitType.Star)
+        });
         dataGrid.LoadingRow += (s, e) =>
         {
             if (e.Row.DataContext is null) return;
             var dataModel = (InteractiveStatsTableViewModel)e.Row.DataContext;
             if (dataModel?.TimesIncorrect > 0)
             {
-                e.Row.Background = new SolidColorBrush(Colors.LightCoral, 0.6);
+                e.Row.Background = new SolidColorBrush(Colors.LightCoral, 0.4);
             }
             else
             {
@@ -145,13 +154,18 @@ public class DialogHost : Panel
     }
 }
 
+
 public class InteractiveStatsTableViewModel
 {
     public required string Degree { get; set; }
     public int TimesCorrect { get; set; }
     public int TimesIncorrect { get; set; }
+    public float Familiarity { get; set; }
     public required string AvgResponseTime { get; set; }
     public string MistakenFor { get; set; } = "None";
+
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(InteractiveStatsTableViewModel))]
+    private string dummyField = ""; //preserve this class for Native AOT
 }
 public interface IDialogContent;
 public class InteractiveModeStatsDialogContent : IDialogContent

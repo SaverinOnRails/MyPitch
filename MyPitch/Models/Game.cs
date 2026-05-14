@@ -235,7 +235,7 @@ public partial class Game : ObservableObject
             _userClickTcs = new TaskCompletionSource<int>();
             var responseStart = DateTime.Now;
 
-            _interactiveQuizDeg = quizDeg;
+            _interactiveQuizDeg = quizDeg; //for repeat
             var userResponse = await _userClickTcs.Task.WaitAsync(_cts.Token);
             _interactiveQuizDeg = null;
             var responseEnd = DateTime.Now - responseStart;
@@ -445,6 +445,30 @@ public class InteractiveDegreeStats
     public TimeSpan TotalResponseTime { get; set; } = TimeSpan.Zero;
     public TimeSpan AverageResponseTime => TotalResponseTime / TimesAppeared;
     public List<string> MistakenFor = new();
+
+    public float Familiarity
+    {
+        get
+        {
+            var incorrectPenalty = 1f / (1f + TimesIncorrect);
+            var confusionPenalty = 1f / (1f + MistakenFor.Count());
+
+            float responseTimeFactor = 0F;
+            if (AverageResponseTime.TotalSeconds < 1)
+            {
+                responseTimeFactor = 1f;
+            }
+            else if (AverageResponseTime.TotalSeconds < 2)
+            {
+                responseTimeFactor = 0.5f;
+            }
+            else
+            {
+                responseTimeFactor = 0.2f;
+            }
+            return incorrectPenalty * 0.6f + confusionPenalty * 0.3f + responseTimeFactor * 0.1f;
+        }
+    }
 }
 
 
