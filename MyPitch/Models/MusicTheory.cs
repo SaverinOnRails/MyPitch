@@ -47,7 +47,7 @@ public static class MusicTheory
         { "♭2", "1" },
         { "♭6", "5" },
         { "♭3", "2" },
-        { "♭7", "6" },
+        { "♭7", "1" },
         { "4",  "3" }
     };
     public static readonly string[] ChromaticScaleGraduation = {

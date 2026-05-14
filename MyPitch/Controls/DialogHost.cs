@@ -28,8 +28,8 @@ public class DialogHost : Panel
         bool wideLayout = parentWidth > 600;
         Panel contentBox = new()
         {
-            Height = 500,
-            Width = wideLayout ? 700 : parentWidth!.Value,
+            Height = 600,
+            Width = wideLayout ? 800 : parentWidth!.Value,
             Background = new SolidColorBrush(Color.Parse("#080616"))
         };
         Grid mGrid = new() { RowDefinitions = new("Auto,*") };
@@ -81,7 +81,7 @@ public class DialogHost : Panel
                 Degree = p.Key,
                 TimesCorrect = p.Value.TimesCorrect,
                 TimesIncorrect = p.Value.TimesIncorrect,
-                Familiarity = MathF.Round(p.Value.Familiarity, 1),
+                Familiarity = p.Value.Familiarity.ToString("F2"),
                 AvgResponseTime = p.Value.AverageResponseTime.TotalSeconds.ToString("F1") + " secs",
                 MistakenFor = p.Value.MistakenFor.Count > 0 ? String.Join(" ,", p.Value.MistakenFor) : " None"
             });
@@ -160,7 +160,7 @@ public class InteractiveStatsTableViewModel
     public required string Degree { get; set; }
     public int TimesCorrect { get; set; }
     public int TimesIncorrect { get; set; }
-    public float Familiarity { get; set; }
+    public required string Familiarity { get; set; }
     public required string AvgResponseTime { get; set; }
     public string MistakenFor { get; set; } = "None";
 

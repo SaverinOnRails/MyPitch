@@ -91,6 +91,7 @@ public partial class Game : ObservableObject
         IsPlaying = false;
         AnswerState = AnswerState.Neutral;
         InteractiveModeRounds = 1;
+        _interactiveQuizDeg = null;
         MelodyBarState = new();
         _playedCadence = false;
         GameClickedIndex = null;
@@ -450,6 +451,7 @@ public class InteractiveDegreeStats
     {
         get
         {
+            if (TimesCorrect == 0) return 0f;
             var incorrectPenalty = 1f / (1f + TimesIncorrect);
             var confusionPenalty = 1f / (1f + MistakenFor.Count());
 
