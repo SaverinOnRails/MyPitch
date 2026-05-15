@@ -26,7 +26,8 @@ MyPitch is still early in dev so bugs can be expected.
 - Stats report after interactive mode displaying useful data about strengths and weaknesses to better help you customize your next session.
 
 # Building
-To build from source on Desktop (Windows, Mac , Linux) install the latest dotnet 10 from dotnet.microsoft.com
+To build from source on Desktop (Windows, Mac , Linux) install the latest dotnet 10 from dotnet.microsoft.com.
+On Macos and Linux you must install FluidSynth from your respective package managers
 ```
 git clone https://github.com/saverinonrails/mypitch MyPitch
 cd MyPitch/MyPitch.Desktop
