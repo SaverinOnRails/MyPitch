@@ -246,11 +246,12 @@ public partial class Game : ObservableObject
                 AnswerState = AnswerState.Correct;
                 GameClickedIndex = quizNoteIndex;
                 await Task.Delay(1000, _cts.Token);
+                //resolve
                 if (MusicTheory.SimpleResolutionMap.ContainsKey(quizDeg))
                 {
                     var resolution = MusicTheory.SimpleResolutionMap[quizDeg];
-                    var resolutionIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(resolution) + 1, false));
-                    await PlayScaleNote(resolution, hidden: false, duration: 500);
+                    var resolutionIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(resolution.ResolveTo) + 1, false));
+                    await PlayScaleNote(resolution.ResolveTo, hidden: false, duration: 500 , resolution.ResolveToNextOctave ? Octave + 1 : Octave);
                 }
                 stats.AddStatForDeg(quizDeg, responseEnd, true, null);
                 GameClickedIndex = null;
@@ -342,11 +343,11 @@ public partial class Game : ObservableObject
             await PlayScaleNote(deg, hidden: false);
         _playedCadence = true;
     }
-    private async Task PlayScaleNote(string deg, bool hidden, int duration = 500)
+    private async Task PlayScaleNote(string deg, bool hidden, int duration = 500, int octave = -1)
     {
         _cts.Token.ThrowIfCancellationRequested();
         var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1, false);
-        var note = MusicTheory.ToMidiNote(Tonic, noteAtDeg, Octave);
+        var note = MusicTheory.ToMidiNote(Tonic, noteAtDeg, octave == -1 ? Octave : octave);
         if (!hidden) GameClickedIndex = MusicTheory.FifthSegment(Tonic, noteAtDeg);
         PlatformServiceProvider.AudioDriver.Play(note);
         try

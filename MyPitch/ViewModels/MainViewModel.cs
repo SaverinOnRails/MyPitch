@@ -103,7 +103,7 @@ public partial class MainViewModel : ViewModelBase
 
     private void GameDialogNeeded(DialogRequestedEventArgs e)
     {
-        _dialogHost?.Show(e.Content);
+        _dialogHost?.Show(e.Content , this);
     }
 
     partial void OnShouldSelectAllDegreesChanged(bool value)

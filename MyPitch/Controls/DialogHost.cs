@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using MyPitch.Models;
+using MyPitch.ViewModels;
 namespace MyPitch.Controls;
 
 public class DialogHost : Panel
@@ -20,7 +21,7 @@ public class DialogHost : Panel
         Background = new SolidColorBrush(Colors.Black, 0.7);
         IsVisible = false;
     }
-    public void Show(IDialogContent? content = null)
+    public void Show(IDialogContent? content, object? source)
     {
         IsVisible = true;
         //get the parent size to know best to size the dialog
@@ -49,19 +50,38 @@ public class DialogHost : Panel
         Children.Add(contentBox);
         if (content is InteractiveModeStatsDialogContent e)
         {
-            BuildInteractiveStatsDialogContent(e, mainContent);
+            BuildInteractiveStatsDialogContent(e, mainContent, source);
         }
     }
 
-    private void BuildInteractiveStatsDialogContent(InteractiveModeStatsDialogContent e, Panel contentBox)
+    private void BuildInteractiveStatsDialogContent(InteractiveModeStatsDialogContent e, Panel contentBox, object? source)
     {
         Grid mGrid = new() { RowDefinitions = new("Auto,*") };
         var tPanel = new Panel();
-        Debug.WriteLine(e.Stats.Accuracy);
         var circularProgress = new CircularProgress() { Height = 100, Width = 200 };
         tPanel.Children.Add(
             circularProgress
         );
+        Button drillButton = new Button() { Content = "Play Weaknesses", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left, Height = 40, Margin = new(20), VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom, Background = new SolidColorBrush(Color.Parse("#FFEDCE")) };
+        drillButton.Classes.Add("Primary");
+        drillButton.Click += (s, _) =>
+        {
+            if (source is MainViewModel vm)
+            {
+                var interests = e.Stats.DegreeStats
+                    .Where(p => p.Value.TimesIncorrect > 0)
+                    .Select(p => p.Key)
+                    .Concat(e.Stats.DegreeStats.SelectMany(p => p.Value.MistakenFor))
+                    .Distinct()
+                    .ToList();
+                foreach (var deg in vm.Degrees)
+                {
+                    deg.IsSelected = interests.Contains(deg.Label);
+                }
+                Hide();
+            }
+        };
+        tPanel.Children.Add(drillButton);
         circularProgress.Progress = e.Stats.Accuracy;
         mGrid.Children.Add(tPanel);
         Panel dGridPanel = new() { Margin = new(10) };
