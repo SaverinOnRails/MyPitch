@@ -129,7 +129,7 @@
                     <TextBlock
                         FontSize="15"
                         FontWeight="DemiBold"
-                        Text="{Binding Game.DroneVolume, StringFormat='Drone Voume : {0}%'}" />
+                        Text="{Binding Game.DroneVolume, StringFormat='Drone Volume : {0}%'}" />
                     <Slider
                         shadui:ControlAssist.Label="Volume"
                         Maximum="100"
@@ -165,14 +165,13 @@
                             OnContent="Random" />
                     </Grid>
                 </StackPanel>
-                <StackPanel>
+                <StackPanel IsVisible="{Binding IsMelodyMode}">
                     <TextBlock
                         FontSize="15"
                         FontWeight="DemiBold"
                         Text="{Binding MelodyNoteCount, StringFormat='Notes in melody : {0}'}" />
                     <Slider
                         shadui:ControlAssist.Label="Notes in melody"
-                        IsEnabled="{Binding IsMelodyMode}"
                         IsSnapToTickEnabled="True"
                         Maximum="5"
                         Minimum="2"
