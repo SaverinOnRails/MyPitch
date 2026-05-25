@@ -34,6 +34,12 @@ cd MyPitch/MyPitch.Desktop
 dotnet run
 dotnet publish --output dist
 ```
+
+Arch Linux users can install from the AUR:
+```
+yay -S mypitch-git
+```
+
   
 # How To Use
 Max Konyi has great videos on the concept this program is based on on youtube. Check him out: https://www.youtube.com/watch?v=AARDtj6wL3U
