@@ -36,6 +36,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="GC_Alto_Sax.sf2">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
 		<None Update="default.sf2">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

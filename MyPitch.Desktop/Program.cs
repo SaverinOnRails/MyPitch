@@ -33,7 +33,6 @@ sealed class Program
             else if (OperatingSystem.IsLinux())
             {
                 return NativeLibrary.Load("libfluidsynth.so.3");
-
             }
             else return nint.Zero;
         }

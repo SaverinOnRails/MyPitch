@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -48,7 +45,6 @@ internal class CircularProgress : Control
         }
     }
     private float _displayProgress = 0;
-    private TopLevel? _toplevel;
 
     public override void Render(Avalonia.Media.DrawingContext context)
     {
@@ -62,29 +58,10 @@ internal class CircularProgress : Control
             StartAnimation();
         }
     }
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        _toplevel = TopLevel.GetTopLevel(this);
-    }
     private void StartAnimation()
     {
         _animationStartTime = DateTime.Now;
         _animationTimer.Start();
-    }
-
-    private void OnToplevelRenderFrame(TimeSpan span)
-    {
-        var ellapsedMs = (DateTime.Now - _animationStartTime).TotalMilliseconds;
-        double t = Math.Clamp(ellapsedMs / _animationDurationMs, 0.0, 1);
-        double eased = CircleOfFifths.EaseInOutCubic(t);
-        _displayProgress = (float)(eased * Progress);
-        InvalidateVisual();
-        if (t >= 1)
-        {
-            _displayProgress = Progress;
-            return;
-        }
-        _toplevel?.RequestAnimationFrame(OnToplevelRenderFrame);
     }
 
     private void DrawBackgroundArc(DrawingContext context)
