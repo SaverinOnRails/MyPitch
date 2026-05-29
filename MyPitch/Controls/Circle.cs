@@ -220,7 +220,7 @@ internal class CircleOfFifths : Control
             DrawSegment(i, angle, outer_radius, center, selectedDegreeIndices, context);
         }
 
-        if (GameMode == GameMode.Interactive)
+        if (GameMode == GameMode.Interactive || GameMode == GameMode.Melody)
         {
             DrawRepeatSymbol(center, outer_radius, context);
         }
