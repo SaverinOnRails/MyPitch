@@ -129,6 +129,7 @@ public partial class Game : ObservableObject
             MelodyBarState = new();
             _cts.Token.ThrowIfCancellationRequested();
             await MaybeChangeTonic();
+            await MaybeChangeOctave();
             await MaybePlayCadence();
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
             var degrees = AllowedDegreeStrings;
@@ -189,13 +190,19 @@ public partial class Game : ObservableObject
         {
             int length = MusicTheory.ChromaticScaleGraduation.Length;
             _cts.Token.ThrowIfCancellationRequested();
-            await MaybeChangeTonic();
-            await MaybePlayCadence();
+            await MaybeChangeOctave();
             while (!AllowedDegreeStrings.Contains(MusicTheory.ChromaticScaleGraduation[cycleIndex]))
             {
                 if (AllowedDegreeStrings.Count() == 0) break;
                 _cts.Token.ThrowIfCancellationRequested();
                 cycleIndex = (cycleIndex + 1) % length;
+            }
+          
+            //only randomize when we complete a cycle
+            if (AllowedDegreeStrings.Count > 0 && cycleIndex == MusicTheory.ChromaticScaleGraduation.IndexOf(AllowedDegreeStrings.First()))
+            {
+                await MaybeChangeTonic();
+                await MaybePlayCadence();
             }
             string degAtCycleIndex = MusicTheory.ChromaticScaleGraduation[cycleIndex];
             await PlayScaleNote(degAtCycleIndex, hidden: false, duration: 2000);
@@ -209,6 +216,7 @@ public partial class Game : ObservableObject
         {
             _cts.Token.ThrowIfCancellationRequested();
             await MaybeChangeTonic();
+            await MaybeChangeOctave();
             await MaybePlayCadence();
             _cts.Token.ThrowIfCancellationRequested();
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
@@ -229,6 +237,7 @@ public partial class Game : ObservableObject
             var tonic = Tonic;
             _cts.Token.ThrowIfCancellationRequested();
             await MaybeChangeTonic();
+            await MaybeChangeOctave();
             await MaybePlayCadence();
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
             var quizDeg = await PlayQuizNote(hidden: true);
@@ -251,7 +260,7 @@ public partial class Game : ObservableObject
                 {
                     var resolution = MusicTheory.SimpleResolutionMap[quizDeg];
                     var resolutionIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(resolution.ResolveTo) + 1, false));
-                    await PlayScaleNote(resolution.ResolveTo, hidden: false, duration: 500 , resolution.ResolveToNextOctave ? Octave + 1 : Octave);
+                    await PlayScaleNote(resolution.ResolveTo, hidden: false, duration: 500, resolution.ResolveToNextOctave ? Octave + 1 : Octave);
                 }
                 stats.AddStatForDeg(quizDeg, responseEnd, true, null);
                 GameClickedIndex = null;
@@ -288,6 +297,7 @@ public partial class Game : ObservableObject
         {
             _cts.Token.ThrowIfCancellationRequested();
             await MaybeChangeTonic();
+            await MaybeChangeOctave();
             await MaybePlayCadence();
             _cts.Token.ThrowIfCancellationRequested();
             await Task.Delay(GameClickTimeout * 2, _cts.Token);
@@ -307,16 +317,19 @@ public partial class Game : ObservableObject
     private async Task MaybeChangeTonic()
     {
         if (Settings.RandomTonic) Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
-        if (Settings.RandomOctave)
-        {
-            int[] octaveRange = [3, 4, 5];
-            Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
-        }
         if (Settings.PlayCadenceOnKeyChange && _oldTonic != Tonic)
         {
             _playedCadence = false;
         }
         _oldTonic = Tonic;
+    }
+    private async Task MaybeChangeOctave()
+    {
+        if (Settings.RandomOctave)
+        {
+            int[] octaveRange = [3, 4, 5];
+            Octave = octaveRange[Random.Shared.Next(octaveRange.Length)];
+        }
     }
     private async Task MaybePlayCadence()
     {

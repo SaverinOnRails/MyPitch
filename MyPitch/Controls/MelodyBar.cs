@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using MyPitch.Models;
-using System.Collections.Generic;
 namespace MyPitch.Controls;
 
 internal class MelodyBar : ContentControl
