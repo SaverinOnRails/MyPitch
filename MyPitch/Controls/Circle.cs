@@ -135,7 +135,7 @@ internal class CircleOfFifths : Control
         InvalidateVisual(); //This might cause issues being done to rapidly
     }
 
-    private Typeface _notoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
+    public static Typeface NotoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
 
     private Models.Key _displayTonic = Models.Key.C;
     public Models.Key Tonic
@@ -389,7 +389,7 @@ internal class CircleOfFifths : Control
             text,
             CultureInfo.CurrentCulture,
             FlowDirection.LeftToRight,
-            _notoSansTypeface,
+            NotoSansTypeface,
             fontSize,
             brush);
 

@@ -57,18 +57,22 @@ internal class MelodyBar : ContentControl
                 Width = size,
                 Height = size
             };
-            if(incorrectDegs.Contains(i)) ellipse.Fill = new SolidColorBrush(Color.Parse("#C40C0C"));
+            if (incorrectDegs.Contains(i)) ellipse.Fill = new SolidColorBrush(Color.Parse("#C40C0C"));
             canvas.Children.Add(ellipse);
             if (fills.TryGetValue(i, out string? deg))
             {
                 var text = new TextBlock
                 {
                     Text = deg,
-                    FontSize = size * 0.667,
+                    FontSize = size * 0.6,
                     Foreground = new SolidColorBrush(Color.Parse("#76D2DB")),
+                    FontFamily = CircleOfFifths.NotoSansTypeface.FontFamily,
                 };
-                //Canvas.SetTop(text, 15);
-                Canvas.SetLeft(text, deg.Length == 1 ? size * 0.313 : size * 0.147);
+                Point center = new(size / 2, size / 2);
+                text.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                var desired = text.DesiredSize;
+                Canvas.SetLeft(text, center.X - desired.Width / 2);
+                Canvas.SetTop(text, center.Y - desired.Height / 2);
                 canvas.Children.Add(text);
             }
             root.Children.Add(canvas);

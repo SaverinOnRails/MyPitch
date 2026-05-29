@@ -13,7 +13,7 @@ namespace MyPitch.Controls;
 public class DialogHost : Panel
 {
 
-    private Typeface _notoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
+    private Typeface _notoSansTypeface =>  CircleOfFifths.NotoSansTypeface;
     public DialogHost()
     {
         HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
