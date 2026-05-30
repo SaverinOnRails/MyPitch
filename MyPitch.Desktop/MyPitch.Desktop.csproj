@@ -29,10 +29,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="GC_Alto_Sax.sf2">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-
         <None Update="default.sf2">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -58,6 +54,13 @@
         <Delete Files="$(PublishDir)libsfml-graphics.so.3.0"/>
         <Delete Files="$(PublishDir)libsfml-window.so.3.0"/>
         <Delete Files="$(PublishDir)MyPitch.pdb"/>
+
+        <Delete Files="$(PublishDir)csfml-graphics.dll"/>
+        <Delete Files="$(PublishDir)csfml-graphics-3.dll"/>
+        <Delete Files="$(PublishDir)csfml-window.dll"/>
+        <Delete Files="$(PublishDir)csfml-window-3.dll"/>
+        <Delete Files="$(PublishDir)sfml-graphics-3.dll"/>
+        <Delete Files="$(PublishDir)sfml-window-3.dll"/>
     </Target>
 
 
