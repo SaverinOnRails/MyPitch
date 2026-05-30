@@ -1,10 +1,6 @@
 ﻿using SFML.Audio;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Threading;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 namespace MyPitch.Desktop;
 
 public class FluidAudioDriver : IAudioDriver, IDisposable
