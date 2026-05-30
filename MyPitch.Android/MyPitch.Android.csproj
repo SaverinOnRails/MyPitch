@@ -4,9 +4,9 @@
 		<TargetFramework>net10.0-android</TargetFramework>
 		<SupportedOSPlatformVersion>23</SupportedOSPlatformVersion>
 		<Nullable>enable</Nullable>
-		<ApplicationId>com.CompanyName.MyPitch</ApplicationId>
+		<ApplicationId>com.saverin.MyPitch</ApplicationId>
 		<ApplicationVersion>1</ApplicationVersion>
-		<ApplicationDisplayVersion>0.13</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>0.15</ApplicationDisplayVersion>
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 	</PropertyGroup>
