@@ -19,8 +19,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private int _octave = 4;
     [ObservableProperty] private int _droneVolume = 100;
     [ObservableProperty] private int _interactiveModeRounds = 1;
-
-
+    
     // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
     [ObservableProperty] private MelodyBarState _melodyBarState = new();
 
@@ -114,10 +113,11 @@ public partial class Game : ObservableObject
                 switch
             {
                 GameMode.Interactive => InteractiveGameLoop(),
-                GameMode.Freelisten => FreeListenGameLoop(),
+                // GameMode.Freelisten => FreeListenGameLoop(),
                 GameMode.Pocketmode => PocketModeGameLoop(),
                 GameMode.Cycle => CycleModeGameLoop(),
                 GameMode.Melody => MelodyGameModeLoop(),
+                GameMode.Folk => FolkModeGameLoop(),
                 _ => Task.CompletedTask // Freeplay
             });
         }
@@ -191,6 +191,39 @@ public partial class Game : ObservableObject
                 }
             }
         }
+    }
+    private async Task FolkModeGameLoop()
+    {
+        var file = "/home/noble/Projects/mypitch/MelodyFileGen/To God Be The Glory.json";
+        var melodyFile = MelodyFile.FromJsonFile(file);
+        if (melodyFile is null)
+        {
+            Console.WriteLine("was null");
+            Stop();
+            return;
+        }
+        var startTime = Stopwatch.StartNew();
+        var tasks = new List<Task>();
+        foreach (var noteEvent in melodyFile.NoteEvents)
+        {
+            tasks.Add(Task.Run(async () =>
+            {
+                var delay = noteEvent.TriggerAt - startTime.ElapsedMilliseconds;
+                if (delay > 0)
+                    await Task.Delay((int)delay, _gameCancellationTokenSource.Token);
+
+                var deg = noteEvent.ScaleDegree.Replace("flat", "♭");
+                Octave = noteEvent.Octave;
+                await PlayScaleNote(
+                    deg,
+                    hidden: false,
+                    (int)noteEvent.DurationMs,
+                    noteEvent.Octave
+                );
+            }));
+        }
+
+        await Task.WhenAll(tasks);
     }
     private async Task CycleModeGameLoop()
     {
@@ -413,8 +446,9 @@ public enum GameMode
     Freeplay,
     Pocketmode,
     Interactive,
-    Freelisten,
+    // Freelisten,
     Cycle,
+    Folk,
     Melody
 }
 public enum AnswerState

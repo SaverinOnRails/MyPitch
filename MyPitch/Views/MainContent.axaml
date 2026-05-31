@@ -75,6 +75,24 @@
                 </StackPanel.Styles>
             </StackPanel>
 
+        <!-- FOR FOLK MODE-->
+            <controls:FolkMediaControl
+                Classes.collapsed="{Binding !IsFolkMode}">
+                <controls:FolkMediaControl.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Height" Duration="0:0:0.05" />
+                    </Transitions>
+                </controls:FolkMediaControl.Transitions>
+                <controls:FolkMediaControl.Styles>
+                    <Style Selector="controls|FolkMediaControl">
+                        <Setter Property="Height" Value="50" />
+                    </Style>
+                    <Style Selector="controls|FolkMediaControl.collapsed">
+                        <Setter Property="Height" Value="0" />
+                    </Style>
+                </controls:FolkMediaControl.Styles>
+            </controls:FolkMediaControl>
+
             <controls:CircleOfFifths
                 x:Name="Circle"
                 Grid.Row="1"

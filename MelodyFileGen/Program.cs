@@ -108,7 +108,6 @@ class Program
 
         if (!MusicTheory.ChromaticScale.Contains(normalNote))
         {
-            Console.WriteLine(normalNote);
             throw new Exception();
         }
         return normalNote;
