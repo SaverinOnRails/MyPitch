@@ -19,7 +19,9 @@ public partial class Game : ObservableObject
     [ObservableProperty] private int _octave = 4;
     [ObservableProperty] private int _droneVolume = 100;
     [ObservableProperty] private int _interactiveModeRounds = 1;
-    
+    [ObservableProperty] private TimeSpan _folkMediaDuration;
+    [ObservableProperty] private TimeSpan _folkMediaProgress;
+
     // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
     [ObservableProperty] private MelodyBarState _melodyBarState = new();
 
@@ -33,6 +35,7 @@ public partial class Game : ObservableObject
     private CancellationTokenSource _repeatCancellationTokenSource = new();
     private TaskCompletionSource<int>? _userClickTcs;
     private Models.Key _oldTonic;
+    private Stopwatch _folkMediaTimer = new();
     public GameSettings Settings
     {
         get;
@@ -94,6 +97,7 @@ public partial class Game : ObservableObject
         _repeatCancellationTokenSource.Cancel();
         SuspendDrone();
         IsPlaying = false;
+        _folkMediaTimer.Reset();
         AnswerState = AnswerState.Neutral;
         InteractiveModeRounds = 1;
         _currentInteractiveQuizDegree = null;
@@ -123,7 +127,7 @@ public partial class Game : ObservableObject
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message);
             // throw ex;
             Stop();
         }
@@ -192,38 +196,66 @@ public partial class Game : ObservableObject
             }
         }
     }
+
     private async Task FolkModeGameLoop()
     {
-        var file = "/home/noble/Projects/mypitch/MelodyFileGen/To God Be The Glory.json";
+        var file = "/home/noble/Projects/mypitch/MelodyFileGen/perfect.json";
         var melodyFile = MelodyFile.FromJsonFile(file);
         if (melodyFile is null)
         {
-            Console.WriteLine("was null");
             Stop();
             return;
         }
-        var startTime = Stopwatch.StartNew();
-        var tasks = new List<Task>();
-        foreach (var noteEvent in melodyFile.NoteEvents)
+        FolkMediaDuration = TimeSpan.FromMilliseconds(melodyFile.DurationMs);
+        var currentNoteEventIndex = 0;
+        _folkMediaTimer.Restart();
+        double lastNoteStopAt = -1;
+        int lastNote = -1;
+        while (true)
         {
-            tasks.Add(Task.Run(async () =>
+            //we've reached the end
+            var now = _folkMediaTimer.ElapsedMilliseconds;
+            if (currentNoteEventIndex == melodyFile.NoteEvents.Count())
             {
-                var delay = noteEvent.TriggerAt - startTime.ElapsedMilliseconds;
-                if (delay > 0)
-                    await Task.Delay((int)delay, _gameCancellationTokenSource.Token);
-
-                var deg = noteEvent.ScaleDegree.Replace("flat", "♭");
-                Octave = noteEvent.Octave;
-                await PlayScaleNote(
-                    deg,
-                    hidden: false,
-                    (int)noteEvent.DurationMs,
-                    noteEvent.Octave
-                );
-            }));
+                var timeLeft = melodyFile.DurationMs - now;
+                while (timeLeft > 0)
+                {
+                    var chunk = Math.Min(timeLeft, 10);
+                    await Task.Delay(TimeSpan.FromMilliseconds(chunk));
+                    now = _folkMediaTimer.ElapsedMilliseconds;
+                    FolkMediaProgress = TimeSpan.FromMilliseconds(now);
+                    timeLeft = melodyFile.DurationMs - now;
+                }
+                Stop();
+                return;
+            }
+            var note = melodyFile.NoteEvents[currentNoteEventIndex];
+            var delay = note.TriggerAt - now;
+            while (delay > 0)
+            {
+                if (lastNote != -1 &&
+                    _folkMediaTimer.ElapsedMilliseconds >= lastNoteStopAt)
+                {
+                    PlatformServiceProvider.AudioDriver.Release(lastNote);
+                    lastNote = -1;
+                    lastNoteStopAt = -1;
+                }
+                var chunk = Math.Min(delay, 10);
+                await Task.Delay(TimeSpan.FromMilliseconds(chunk), _gameCancellationTokenSource.Token);
+                now = _folkMediaTimer.ElapsedMilliseconds;
+                FolkMediaProgress = TimeSpan.FromMilliseconds(now);
+                delay = note.TriggerAt - now;
+            }
+            var deg = note.ScaleDegree.Replace("flat", "♭");
+            Octave = note.Octave;
+            var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1, false);
+            var noteToPlay = MusicTheory.ToMidiNote(Tonic, noteAtDeg, note.Octave);
+            GameClickedIndex = MusicTheory.FifthSegment(Tonic, noteAtDeg);
+            PlatformServiceProvider.AudioDriver.Play(noteToPlay);
+            lastNoteStopAt = note.TriggerAt + note.DurationMs;
+            lastNote = noteToPlay;
+            currentNoteEventIndex++;
         }
-
-        await Task.WhenAll(tasks);
     }
     private async Task CycleModeGameLoop()
     {
@@ -542,6 +574,3 @@ public class InteractiveDegreeStats
         }
     }
 }
-
-
-

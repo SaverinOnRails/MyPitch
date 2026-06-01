@@ -75,9 +75,11 @@
                 </StackPanel.Styles>
             </StackPanel>
 
-        <!-- FOR FOLK MODE-->
+            <!--  FOR FOLK MODE  -->
             <controls:FolkMediaControl
-                Classes.collapsed="{Binding !IsFolkMode}">
+                Classes.collapsed="{Binding !IsFolkMode}"
+                FolkMediaDuration="{Binding Game.FolkMediaDuration}"
+                FolkMediaProgress="{Binding Game.FolkMediaProgress}">
                 <controls:FolkMediaControl.Transitions>
                     <Transitions>
                         <DoubleTransition Property="Height" Duration="0:0:0.05" />
