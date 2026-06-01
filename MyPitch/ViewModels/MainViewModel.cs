@@ -118,7 +118,11 @@ public partial class MainViewModel : ViewModelBase
     {
         await Game.TryRepeatQuizAsync();
     }
-
+    public void FolkMediaSeek(object l)
+    {
+        double location = (double)l;
+        Game.FolkMediaSeek(location);
+    }
     public async Task TogglePlay() => await Game.TogglePlay();
 
     private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone));

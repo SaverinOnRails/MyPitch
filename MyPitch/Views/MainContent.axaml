@@ -79,6 +79,7 @@
             <controls:FolkMediaControl
                 Classes.collapsed="{Binding !IsFolkMode}"
                 FolkMediaDuration="{Binding Game.FolkMediaDuration}"
+                SeekCommand="{Binding FolkMediaSeek}"
                 FolkMediaProgress="{Binding Game.FolkMediaProgress}">
                 <controls:FolkMediaControl.Transitions>
                     <Transitions>

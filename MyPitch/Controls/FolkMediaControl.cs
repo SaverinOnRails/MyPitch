@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using MyPitch.Converters;
 using Avalonia.Controls;
+using System.Windows.Input;
 
 namespace MyPitch.Controls;
 
@@ -9,6 +10,17 @@ public class FolkMediaControl : ContentControl
 {
 
     public static readonly StyledProperty<TimeSpan> FolkMediaDurationProperty = AvaloniaProperty.Register<FolkMediaControl, TimeSpan>(nameof(FolkMediaDuration), default);
+
+    public static readonly StyledProperty<ICommand> SeekCommandProperty = AvaloniaProperty.Register<CircleOfFifths, ICommand>(nameof(SeekCommand));
+
+    public ICommand SeekCommand
+    {
+        get => GetValue(SeekCommandProperty);
+        set
+        {
+            SetValue(SeekCommandProperty, value);
+        }
+    }
 
     public TimeSpan FolkMediaDuration
     {
@@ -27,6 +39,24 @@ public class FolkMediaControl : ContentControl
     {
         var stackPanel = new StackPanel() { Orientation = Avalonia.Layout.Orientation.Horizontal, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center, Spacing = 10 };
         var progressbar = new Slider() { Width = 400 };
+        bool limit = false;
+        progressbar.ValueChanged += (s, e) =>
+        {
+            var diff = Math.Abs(e.OldValue - e.NewValue);
+            //probably done by the user
+            if (limit == true)
+            {
+                limit = false;
+            }
+            else
+            {
+                if (diff > 20)
+                {
+                    SeekCommand.Execute(e.NewValue);
+                    limit = true;
+                }
+            }
+        };
         progressbar.Bind(
             Slider.MaximumProperty,
             new Avalonia.Data.Binding(nameof(FolkMediaDuration))
