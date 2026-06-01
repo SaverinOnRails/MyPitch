@@ -209,7 +209,7 @@ public partial class Game : ObservableObject
 
     private async Task FolkModeGameLoop()
     {
-        var file = "/home/noble/Projects/mypitch/MelodyFileGen/To God Be The Glory.json";
+        var file = "/home/noble/Projects/mypitch/MelodyFileGen/katyusha.json";
         _melodyFile = MelodyFile.FromJsonFile(file);
         if (_melodyFile is null)
         {
