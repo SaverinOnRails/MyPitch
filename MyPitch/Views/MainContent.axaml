@@ -79,8 +79,8 @@
             <controls:FolkMediaControl
                 Classes.collapsed="{Binding !IsFolkMode}"
                 FolkMediaDuration="{Binding Game.FolkMediaDuration}"
-                SeekCommand="{Binding FolkMediaSeek}"
-                FolkMediaProgress="{Binding Game.FolkMediaProgress}">
+                FolkMediaProgress="{Binding Game.FolkMediaProgress}"
+                SeekCommand="{Binding FolkMediaSeek}">
                 <controls:FolkMediaControl.Transitions>
                     <Transitions>
                         <DoubleTransition Property="Height" Duration="0:0:0.05" />
@@ -201,6 +201,11 @@
                         Value="{Binding MelodyNoteCount}" />
                 </StackPanel>
 
+                <Button
+                    Classes="Primary"
+                    Content="Folk Database"
+                    Command="{Binding OpenFoldDatabaseDialog}"
+                    IsVisible="{Binding IsFolkMode}" />
                 <ComboBox
                     shadui:ControlAssist.Label="Select Game Mode"
                     ItemsSource="{Binding GameModes}"

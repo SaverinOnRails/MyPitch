@@ -13,7 +13,7 @@ namespace MyPitch.Controls;
 public class DialogHost : Panel
 {
 
-    private Typeface _notoSansTypeface =>  CircleOfFifths.NotoSansTypeface;
+    private Typeface _notoSansTypeface => CircleOfFifths.NotoSansTypeface;
     public DialogHost()
     {
         HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
@@ -51,6 +51,55 @@ public class DialogHost : Panel
         if (content is InteractiveModeStatsDialogContent e)
         {
             BuildInteractiveStatsDialogContent(e, mainContent, source);
+        }
+        if (content is FolkDatabaseDialogContent)
+        {
+            BuildFolkDatabaseDialogContent(mainContent, source);
+        }
+    }
+
+    private void BuildFolkDatabaseDialogContent(Panel mainContent, object? source)
+    {
+        Grid mgrid = new() { RowDefinitions = new("Auto,*") };
+        mainContent.Children.Add(mgrid);
+
+        var header = new TextBlock() { HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left, Margin = new(20, 0, 0, 0), FontSize = 30, Text = "Folk Database" };
+        mgrid.Children.Add(header);
+
+        var scrollViewer = new ScrollViewer() { HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch };
+        var bpanel = new WrapPanel() { HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch, ItemSpacing = 10, LineSpacing = 10, Margin = new(10) };
+        scrollViewer.Content = bpanel;
+        Grid.SetRow(scrollViewer, 1);
+        mgrid.Children.Add(scrollViewer);
+
+        //get json files
+        var jsonFiles = EmbeddedResources.GetMelodyFiles();
+        foreach (var file in jsonFiles)
+        {
+            var formattedName = file;
+            const string prefix = "MyPitch.FolkDatabase.";
+            if (formattedName.StartsWith(prefix))
+            {
+                formattedName = formattedName[prefix.Length..];
+            }
+
+            if (formattedName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            {
+                formattedName = formattedName[..^5];
+            }
+
+            formattedName = formattedName.Replace("_", " ");
+            var button = new Button() { Content = formattedName };
+            button.Classes.Add("Ghost");
+            button.Click += (_, _) =>
+            {
+                if (source is MainViewModel vm)
+                {
+                    vm.Game.SetFolkModeMelodyFile(file);
+                }
+                Hide();
+            };
+            bpanel.Children.Add(button);
         }
     }
 
@@ -192,6 +241,7 @@ public class InteractiveModeStatsDialogContent : IDialogContent
 {
     public required InteractiveModeStats Stats;
 }
+public class FolkDatabaseDialogContent : IDialogContent { }
 public delegate void DialogRequestedEventHandler(DialogRequestedEventArgs e);
 public class DialogRequestedEventArgs
 {

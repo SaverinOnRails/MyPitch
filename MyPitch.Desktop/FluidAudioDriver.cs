@@ -70,7 +70,7 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
     public void PlaySpeechSample(string sample)
     {
         //We can probably use sfml and melty instead of fluidsynth while we're at it but fluid works really well.
-        var stream = EmbeddedResources.Get(sample);
+        var stream = EmbeddedResources.GetSpeechSample(sample);
         if (stream is null)
         {
             return;

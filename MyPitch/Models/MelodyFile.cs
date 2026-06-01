@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -25,13 +24,12 @@ public class MelodyFile
         return JsonSerializer.Serialize(this, options); 
     }
 
-    public static MelodyFile? FromJsonFile(string filePath)
+    public static MelodyFile? FromJson(string buffer)
     {
         try
         {
-            var json = File.ReadAllText(filePath);
             return JsonSerializer.Deserialize(
-                json,
+                buffer,
                 MelodyFileJsonContext.Default.MelodyFile);
         }
         catch (Exception e)

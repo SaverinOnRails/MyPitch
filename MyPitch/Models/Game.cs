@@ -39,6 +39,7 @@ public partial class Game : ObservableObject
     private Models.Key _oldTonic;
     private Stopwatch _folkMediaTimer = new();
     private double _folkMediaStartTimeMs = 0;
+    private string? _melodyFileBuffer = null;
     private bool _invalidateOldFolkMediaPLaybackLoop = false;
     public GameSettings Settings
     {
@@ -95,7 +96,7 @@ public partial class Game : ObservableObject
         if (IsPlaying) Stop();
         else await Start();
     }
-    
+
     public void Stop()
     {
         _gameCancellationTokenSource.Cancel();
@@ -209,8 +210,12 @@ public partial class Game : ObservableObject
 
     private async Task FolkModeGameLoop()
     {
-        var file = "/home/noble/Projects/mypitch/MelodyFileGen/katyusha.json";
-        _melodyFile = MelodyFile.FromJsonFile(file);
+        if (_melodyFileBuffer is null)
+        {
+            Stop();
+            return;
+        }
+        _melodyFile = MelodyFile.FromJson(_melodyFileBuffer);
         if (_melodyFile is null)
         {
             Stop();
@@ -500,6 +505,12 @@ public partial class Game : ObservableObject
         _folkMediaStartTimeMs = location;
         _invalidateOldFolkMediaPLaybackLoop = true;
         _folkMediaTimer.Restart();
+    }
+
+    public void SetFolkModeMelodyFile(string path)
+    {
+        var buffer = EmbeddedResources.GetMelodyFile(path);
+        _melodyFileBuffer = buffer;
     }
 }
 public record GameSettings(GameMode Mode = GameMode.Freeplay, bool RandomTonic = false, bool RandomOctave = false, int MelodyNoteCount = 2, bool PlayCadenceOnKeyChange = true, bool PlayDrone = true);

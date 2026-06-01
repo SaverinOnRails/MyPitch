@@ -21,7 +21,7 @@ public class WebAudioDriver : IAudioDriver
 
     public unsafe void PlaySpeechSample(string sample)
     {
-        var stream = EmbeddedResources.Get(sample);
+        var stream = EmbeddedResources.GetSpeechSample(sample);
         if (stream is null)
         {
             return;

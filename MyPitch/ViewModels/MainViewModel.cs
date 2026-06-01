@@ -123,6 +123,10 @@ public partial class MainViewModel : ViewModelBase
         double location = (double)l;
         Game.FolkMediaSeek(location);
     }
+    public void OpenFoldDatabaseDialog()
+    {
+        _dialogHost?.Show(new FolkDatabaseDialogContent(), this);
+    }
     public async Task TogglePlay() => await Game.TogglePlay();
 
     private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone));
