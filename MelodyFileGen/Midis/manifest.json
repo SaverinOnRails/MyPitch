@@ -18,5 +18,17 @@
   "Pop_Goes_The_Weasel": {
     "Channel":0,
     "Tonic": "C"
+  },
+  "To_God_Be_The_Glory":{
+    "Channel":0,
+    "Tonic":"G#"
+  },
+  "Happy_Birthday":{
+    "Channel":0,
+    "Tonic":"C"
+  },
+  "Amazing_Grace": {
+    "Channel":0,
+    "Tonic":"D#"
   }
 }
