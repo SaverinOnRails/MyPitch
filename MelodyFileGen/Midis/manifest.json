@@ -10,5 +10,13 @@
   "When_The_Saints_Go_Marching_In": {
     "Channel":0,
     "Tonic":"D#"
+  },
+  "London_Bridge_Is_Falling_Down": {
+    "Channel":0,
+    "Tonic":"C"
+  },
+  "Pop_Goes_The_Weasel": {
+    "Channel":0,
+    "Tonic": "C"
   }
 }
