@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace MyPitch.Browser;
 
@@ -39,6 +38,11 @@ public class WebAudioDriver : IAudioDriver
     public void Release(int note)
     {
         Interop.NoteOff(0, note);
+    }
+
+    public void ReleaseAll()
+    {
+        Interop.AllNotesOff(0);
     }
 
     public void ReleaseDrone()

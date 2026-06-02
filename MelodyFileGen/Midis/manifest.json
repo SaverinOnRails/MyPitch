@@ -1,0 +1,14 @@
+{
+  "Twinkle_Twinkle_Little_Star": {
+    "Channel": 0,
+    "Tonic": "C"
+  },
+  "Yankee_Doodle": {
+    "Channel":0,
+    "Tonic": "G"
+  },
+  "When_The_Saints_Go_Marching_In": {
+    "Channel":0,
+    "Tonic":"D#"
+  }
+}

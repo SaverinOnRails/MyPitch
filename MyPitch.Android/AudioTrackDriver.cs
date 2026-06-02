@@ -123,4 +123,9 @@ internal class AudioTrackDriver : IAudioDriver
         _player.Prepare();
         _player.Start();
     }
+
+    public void ReleaseAll()
+    {
+        _synth.NoteOffAll(true);
+    }
 }

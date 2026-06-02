@@ -12,6 +12,8 @@ public interface IAudioDriver
 
     void Release(int note);
 
+    void ReleaseAll();
+
     void PlayDrone(int note, int velocity);
 
     void PlaySpeechSample(string sample);

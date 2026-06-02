@@ -90,4 +90,9 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
         var sound = new Sound(buffer);
         sound.Play();
     }
+
+    public void ReleaseAll()
+    {
+        _synth.AllNotesOff(0);
+    }
 }

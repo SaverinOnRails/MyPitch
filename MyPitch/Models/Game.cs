@@ -506,6 +506,7 @@ public partial class Game : ObservableObject
     public void FolkMediaSeek(double location)
     {
         if (_melodyFile is null) return;
+        PlatformServiceProvider.AudioDriver.ReleaseAll();
         var indexAtLocation = _melodyFile.NoteEvents
             .Select((item, index) => new { item, index })
             .Where(x => x.item.TriggerAt > location)

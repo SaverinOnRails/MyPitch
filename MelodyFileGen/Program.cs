@@ -67,11 +67,10 @@ class Program
         var tonicMidi = MusicTheory.ToMidiNote(Tonic, 4);
         foreach (var note in notes)
         {
-            ScaleDegree(note.NoteName);
-            var noteMidi =
-                  MusicTheory.ToMidiNote(note.NoteName.ToString(), note.Octave);
-            var octaveOffset =
-                (int)Math.Floor((noteMidi - tonicMidi) / 12.0);
+            var noteMidi = MusicTheory.ToMidiNote(note.NoteName.ToString(), note.Octave);
+            var scaleDegreeIndex = MusicTheory.ChromaticScaleGraduation.IndexOf(ScaleDegree(note.NoteName));
+            var octaveOffset = (noteMidi - tonicMidi - scaleDegreeIndex) / 12;
+            // Console.WriteLine($"tonic : {Tonic} note for {NormalizeNoteName(note.NoteName)} at {note.Octave} gives offset : {octaveOffset}");
             melodyFile.NoteEvents.Add(new()
             {
                 ScaleDegree = ScaleDegree(note.NoteName),
