@@ -64,15 +64,20 @@ class Program
         melodyFile.DurationMs = midiFile.GetDuration<MetricTimeSpan>().TotalMilliseconds;
         var tempoMap = midiFile.GetTempoMap();
         var notes = midiFile.GetNotes().Where(p => p.Channel == Channel);
+        var tonicMidi = MusicTheory.ToMidiNote(Tonic, 4);
         foreach (var note in notes)
         {
             ScaleDegree(note.NoteName);
+            var noteMidi =
+                  MusicTheory.ToMidiNote(note.NoteName.ToString(), note.Octave);
+            var octaveOffset =
+                (int)Math.Floor((noteMidi - tonicMidi) / 12.0);
             melodyFile.NoteEvents.Add(new()
             {
                 ScaleDegree = ScaleDegree(note.NoteName),
                 DurationMs = note.LengthAs<MetricTimeSpan>(tempoMap).TotalMilliseconds,
                 TriggerAt = note.TimeAs<MetricTimeSpan>(tempoMap).TotalMilliseconds,
-                Octave = note.Octave,
+                OctaveOffset = octaveOffset,
             });
         }
         var json = melodyFile.ToJson();

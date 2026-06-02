@@ -53,5 +53,5 @@ public class NoteEvent
     public required string ScaleDegree { get; set; }
     public required double DurationMs { get; set; }
     public required double TriggerAt { get; set; }
-    public required int Octave { get; set; }
+    public required int OctaveOffset { get; set; }
 }

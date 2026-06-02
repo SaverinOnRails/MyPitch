@@ -50,7 +50,7 @@ public class FolkMediaControl : ContentControl
             }
             else
             {
-                if (diff > 20)
+                if (diff > 100)
                 {
                     SeekCommand.Execute(e.NewValue);
                     limit = true;

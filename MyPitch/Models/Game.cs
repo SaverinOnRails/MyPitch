@@ -229,8 +229,8 @@ public partial class Game : ObservableObject
         int lastNote = -1;
         while (true)
         {
-            //we've reached the end
             var now = _folkMediaTimer.ElapsedMilliseconds + _folkMediaStartTimeMs;
+            //we've reached the end, so just wait out the last event and stop the game
             if (_currentFolkNoteEventIndex == _melodyFile.NoteEvents.Count())
             {
                 var timeLeft = _melodyFile.DurationMs - now;
@@ -267,10 +267,20 @@ public partial class Game : ObservableObject
                 FolkMediaProgress = TimeSpan.FromMilliseconds(now);
                 delay = note.TriggerAt - now;
             }
+            var baselineOctave = 4;
             var deg = note.ScaleDegree.Replace("flat", "♭");
-            Octave = note.Octave;
-            var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1, false);
-            var noteToPlay = MusicTheory.ToMidiNote(Tonic, noteAtDeg, note.Octave);
+            
+            //Logic for consistent transposition, thanks ChatGPT
+            Octave = note.OctaveOffset + baselineOctave;
+            var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1, false); //converts scale degree to note relative to tonic
+            var semitones =
+                MusicTheory.ChromaticScaleGraduation.IndexOf(deg);
+            var tonicMidi =
+                MusicTheory.ToMidiNote(Tonic.ToString(), baselineOctave);
+            var noteToPlay =
+                tonicMidi +
+                semitones +
+                note.OctaveOffset * 12;
             GameClickedIndex = MusicTheory.FifthSegment(Tonic, noteAtDeg);
             PlatformServiceProvider.AudioDriver.Play(noteToPlay);
             lastNoteStopAt = note.TriggerAt + note.DurationMs;
@@ -519,10 +529,9 @@ public enum GameMode
     Freeplay,
     Pocketmode,
     Interactive,
-    // Freelisten,
-    Cycle,
+    Melody,
     Folk,
-    Melody
+    Cycle,
 }
 public enum AnswerState
 {

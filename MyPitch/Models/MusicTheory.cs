@@ -112,6 +112,14 @@ public static class MusicTheory
         return tonicMidi + semitoneOffset;
     }
 
+    //same as above but not relative to the tonic
+    public static int ToMidiNote(string note, int octave = 4)
+    {
+        var index = Array.IndexOf(ChromaticScale, note);
+        return (octave + 1) * 12 + index;
+    }
+    
+
     public static List<string> GenMelody(List<string> degs, int noteCount)
     {
         var result = new List<string>();

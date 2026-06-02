@@ -1,0 +1,1495 @@
+{
+  "title": "Unknown",
+  "author": "Unknown",
+  "durationMs": 387080.271,
+  "noteEvents": [
+    {
+      "scaleDegree": "5",
+      "durationMs": 435.483,
+      "triggerAt": 6774.187,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 475.805,
+      "triggerAt": 7258.058,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2870.965,
+      "triggerAt": 7741.928,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 475.806,
+      "triggerAt": 10629.022,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 233.87,
+      "triggerAt": 11129.022,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 233.87,
+      "triggerAt": 11370.957,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2846.772,
+      "triggerAt": 11604.827,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 927.418,
+      "triggerAt": 14516.115,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2870.965,
+      "triggerAt": 15483.856,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 887.096,
+      "triggerAt": 18387.079,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2774.191,
+      "triggerAt": 19338.691,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 443.548,
+      "triggerAt": 22241.914,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 475.806,
+      "triggerAt": 22725.784,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2895.158,
+      "triggerAt": 23225.784,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 395.161,
+      "triggerAt": 26129.007,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 250,
+      "triggerAt": 26596.748,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 282.258,
+      "triggerAt": 26838.684,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2854.836,
+      "triggerAt": 27096.748,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 491.935,
+      "triggerAt": 29999.971,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.935,
+      "triggerAt": 30483.842,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 4830.64,
+      "triggerAt": 30967.712,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 467.741,
+      "triggerAt": 37725.77,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 475.806,
+      "triggerAt": 38217.705,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 2887.094,
+      "triggerAt": 38709.64,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.936,
+      "triggerAt": 41604.798,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 250,
+      "triggerAt": 42056.411,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 290.322,
+      "triggerAt": 42282.217,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2830.642,
+      "triggerAt": 42532.217,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 927.418,
+      "triggerAt": 45483.827,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2862.9,
+      "triggerAt": 46451.568,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 951.612,
+      "triggerAt": 49354.791,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2822.578,
+      "triggerAt": 50322.532,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 467.741,
+      "triggerAt": 53209.626,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 451.613,
+      "triggerAt": 53693.496,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2887.094,
+      "triggerAt": 54177.367,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 467.741,
+      "triggerAt": 57096.719,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 241.936,
+      "triggerAt": 57564.46,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 266.129,
+      "triggerAt": 57806.396,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 1895.159,
+      "triggerAt": 58064.46,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 1903.224,
+      "triggerAt": 59999.942,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 5798.381,
+      "triggerAt": 61935.424,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 435.483,
+      "triggerAt": 68709.611,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 475.805,
+      "triggerAt": 69193.482,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2870.965,
+      "triggerAt": 69677.352,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 475.806,
+      "triggerAt": 72564.446,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 233.87,
+      "triggerAt": 73064.446,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 233.87,
+      "triggerAt": 73306.381,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2846.772,
+      "triggerAt": 73540.251,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 927.418,
+      "triggerAt": 76451.539,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2870.965,
+      "triggerAt": 77419.28,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 887.096,
+      "triggerAt": 80322.503,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2774.191,
+      "triggerAt": 81274.115,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 443.548,
+      "triggerAt": 84177.338,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 475.806,
+      "triggerAt": 84661.208,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2895.158,
+      "triggerAt": 85161.208,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 395.161,
+      "triggerAt": 88064.431,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 250,
+      "triggerAt": 88532.172,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 282.258,
+      "triggerAt": 88774.108,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2854.836,
+      "triggerAt": 89032.172,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 491.935,
+      "triggerAt": 91935.395,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.935,
+      "triggerAt": 92419.266,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 4830.64,
+      "triggerAt": 92903.136,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 467.741,
+      "triggerAt": 99661.194,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 475.806,
+      "triggerAt": 100153.129,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 2887.094,
+      "triggerAt": 100645.064,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.936,
+      "triggerAt": 103540.222,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 250,
+      "triggerAt": 103991.835,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 290.322,
+      "triggerAt": 104217.641,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2830.642,
+      "triggerAt": 104467.641,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 927.418,
+      "triggerAt": 107419.251,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2862.9,
+      "triggerAt": 108386.992,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 951.612,
+      "triggerAt": 111290.215,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2822.578,
+      "triggerAt": 112257.956,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 467.741,
+      "triggerAt": 115145.05,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 451.613,
+      "triggerAt": 115628.92,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2887.094,
+      "triggerAt": 116112.791,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 467.741,
+      "triggerAt": 119032.143,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 241.936,
+      "triggerAt": 119499.884,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 266.129,
+      "triggerAt": 119741.82,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 1895.159,
+      "triggerAt": 119999.884,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 1903.224,
+      "triggerAt": 121935.366,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 5798.381,
+      "triggerAt": 123870.848,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 435.483,
+      "triggerAt": 130645.035,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 475.805,
+      "triggerAt": 131128.906,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2870.965,
+      "triggerAt": 131612.776,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 475.806,
+      "triggerAt": 134499.87,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 233.87,
+      "triggerAt": 134999.87,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 233.87,
+      "triggerAt": 135241.805,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2846.772,
+      "triggerAt": 135475.675,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 927.418,
+      "triggerAt": 138386.963,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2870.965,
+      "triggerAt": 139354.704,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 887.096,
+      "triggerAt": 142257.927,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2774.191,
+      "triggerAt": 143209.539,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 443.548,
+      "triggerAt": 146112.762,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 475.806,
+      "triggerAt": 146596.632,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2895.158,
+      "triggerAt": 147096.632,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 395.161,
+      "triggerAt": 149999.855,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 250,
+      "triggerAt": 150467.596,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 282.258,
+      "triggerAt": 150709.532,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2854.836,
+      "triggerAt": 150967.596,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 491.935,
+      "triggerAt": 153870.819,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.935,
+      "triggerAt": 154354.69,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 4830.64,
+      "triggerAt": 154838.56,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 467.741,
+      "triggerAt": 161596.618,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 475.806,
+      "triggerAt": 162088.553,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 2887.094,
+      "triggerAt": 162580.488,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.936,
+      "triggerAt": 165475.646,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 250,
+      "triggerAt": 165927.259,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 290.322,
+      "triggerAt": 166153.065,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2830.642,
+      "triggerAt": 166403.065,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 927.418,
+      "triggerAt": 169354.675,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2862.9,
+      "triggerAt": 170322.416,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 951.612,
+      "triggerAt": 173225.639,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2822.578,
+      "triggerAt": 174193.38,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 467.741,
+      "triggerAt": 177080.474,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 451.613,
+      "triggerAt": 177564.344,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2887.094,
+      "triggerAt": 178048.215,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 467.741,
+      "triggerAt": 180967.567,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 241.936,
+      "triggerAt": 181435.308,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 266.129,
+      "triggerAt": 181677.244,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 1895.159,
+      "triggerAt": 181935.308,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 1903.224,
+      "triggerAt": 183870.79,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 5798.381,
+      "triggerAt": 185806.272,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 435.483,
+      "triggerAt": 192580.459,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 475.805,
+      "triggerAt": 193064.33,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2870.965,
+      "triggerAt": 193548.2,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 475.806,
+      "triggerAt": 196435.294,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 233.87,
+      "triggerAt": 196935.294,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 233.87,
+      "triggerAt": 197177.229,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2846.772,
+      "triggerAt": 197411.099,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 927.418,
+      "triggerAt": 200322.387,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2870.965,
+      "triggerAt": 201290.128,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 887.096,
+      "triggerAt": 204193.351,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2774.191,
+      "triggerAt": 205144.963,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 443.548,
+      "triggerAt": 208048.186,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 475.806,
+      "triggerAt": 208532.056,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2895.158,
+      "triggerAt": 209032.056,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 395.161,
+      "triggerAt": 211935.279,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 250,
+      "triggerAt": 212403.02,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 282.258,
+      "triggerAt": 212644.956,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2854.836,
+      "triggerAt": 212903.02,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 491.935,
+      "triggerAt": 215806.243,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.935,
+      "triggerAt": 216290.114,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 4830.64,
+      "triggerAt": 216773.984,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 467.741,
+      "triggerAt": 223532.042,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 475.806,
+      "triggerAt": 224023.977,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 2887.094,
+      "triggerAt": 224515.912,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.936,
+      "triggerAt": 227411.07,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 250,
+      "triggerAt": 227862.683,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 290.322,
+      "triggerAt": 228088.489,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2830.642,
+      "triggerAt": 228338.489,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 927.418,
+      "triggerAt": 231290.099,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2862.9,
+      "triggerAt": 232257.84,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 951.612,
+      "triggerAt": 235161.063,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2822.578,
+      "triggerAt": 236128.804,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 467.741,
+      "triggerAt": 239015.898,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 451.613,
+      "triggerAt": 239499.768,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 2887.094,
+      "triggerAt": 239983.639,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 467.741,
+      "triggerAt": 242902.991,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 241.936,
+      "triggerAt": 243370.732,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 266.129,
+      "triggerAt": 243612.668,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 1895.159,
+      "triggerAt": 243870.732,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 1903.224,
+      "triggerAt": 245806.214,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 5798.381,
+      "triggerAt": 247741.696,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 435.483,
+      "triggerAt": 254515.883,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 475.805,
+      "triggerAt": 254999.754,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2870.965,
+      "triggerAt": 255483.624,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 475.806,
+      "triggerAt": 258370.718,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 233.87,
+      "triggerAt": 258870.718,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 233.87,
+      "triggerAt": 259112.653,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 2846.772,
+      "triggerAt": 259346.523,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 927.418,
+      "triggerAt": 262257.811,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2870.965,
+      "triggerAt": 263225.552,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 887.096,
+      "triggerAt": 266128.775,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 2774.191,
+      "triggerAt": 267080.387,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 443.548,
+      "triggerAt": 269983.61,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 475.806,
+      "triggerAt": 270467.48,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2895.158,
+      "triggerAt": 270967.48,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 395.161,
+      "triggerAt": 273870.703,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 250,
+      "triggerAt": 274338.444,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 282.258,
+      "triggerAt": 274580.38,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 2854.836,
+      "triggerAt": 274838.444,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.935,
+      "triggerAt": 277741.667,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 491.935,
+      "triggerAt": 278225.538,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 4830.64,
+      "triggerAt": 278709.408,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 467.741,
+      "triggerAt": 285467.466,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 475.806,
+      "triggerAt": 285959.401,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2887.094,
+      "triggerAt": 286451.336,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 491.936,
+      "triggerAt": 289346.494,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 250,
+      "triggerAt": 289798.107,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 290.322,
+      "triggerAt": 290023.913,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 2830.642,
+      "triggerAt": 290273.913,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 927.418,
+      "triggerAt": 293225.523,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2862.9,
+      "triggerAt": 294193.264,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 951.612,
+      "triggerAt": 297096.487,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 2822.578,
+      "triggerAt": 298064.228,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 467.741,
+      "triggerAt": 300951.322,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 451.613,
+      "triggerAt": 301435.192,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2887.094,
+      "triggerAt": 301919.063,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 467.741,
+      "triggerAt": 304838.415,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 241.936,
+      "triggerAt": 305306.156,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 266.129,
+      "triggerAt": 305548.092,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 1895.159,
+      "triggerAt": 305806.156,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 1903.224,
+      "triggerAt": 307741.638,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 5798.381,
+      "triggerAt": 309677.12,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 435.483,
+      "triggerAt": 316451.307,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 475.805,
+      "triggerAt": 316935.178,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2870.965,
+      "triggerAt": 317419.048,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 475.806,
+      "triggerAt": 320306.142,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 233.87,
+      "triggerAt": 320806.142,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 233.87,
+      "triggerAt": 321048.077,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 2846.772,
+      "triggerAt": 321281.947,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 927.418,
+      "triggerAt": 324193.235,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2870.965,
+      "triggerAt": 325160.976,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 887.096,
+      "triggerAt": 328064.199,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 2774.191,
+      "triggerAt": 329015.811,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 443.548,
+      "triggerAt": 331919.034,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 475.806,
+      "triggerAt": 332402.904,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2895.158,
+      "triggerAt": 332902.904,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 395.161,
+      "triggerAt": 335806.127,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 250,
+      "triggerAt": 336273.868,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 282.258,
+      "triggerAt": 336515.804,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 2854.836,
+      "triggerAt": 336773.868,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 491.935,
+      "triggerAt": 339677.091,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 491.935,
+      "triggerAt": 340160.962,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 4830.64,
+      "triggerAt": 340644.832,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 467.741,
+      "triggerAt": 347402.89,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 475.806,
+      "triggerAt": 347894.825,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 2887.094,
+      "triggerAt": 348386.76,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 491.936,
+      "triggerAt": 351281.918,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 250,
+      "triggerAt": 351733.531,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 290.322,
+      "triggerAt": 351959.337,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 2830.642,
+      "triggerAt": 352209.337,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 927.418,
+      "triggerAt": 355160.947,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2862.9,
+      "triggerAt": 356128.688,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 951.612,
+      "triggerAt": 359031.911,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 2822.578,
+      "triggerAt": 359999.652,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 467.741,
+      "triggerAt": 362886.746,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 451.613,
+      "triggerAt": 363370.616,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 2887.094,
+      "triggerAt": 363854.487,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 467.741,
+      "triggerAt": 366773.839,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 241.936,
+      "triggerAt": 367241.58,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 266.129,
+      "triggerAt": 367483.516,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 1895.159,
+      "triggerAt": 367741.58,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 1903.224,
+      "triggerAt": 369677.062,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 6766.122,
+      "triggerAt": 371612.544,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 3862.9,
+      "triggerAt": 379346.407,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "#4",
+      "durationMs": 3862.9,
+      "triggerAt": 383217.371,
+      "octaveOffset": 0
+    }
+  ]
+}
