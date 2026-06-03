@@ -1,4 +1,4 @@
-# Must be run for MelodyGen folder
+# Must be run from MelodyGen folder
 let manifest = open Midis/manifest.json
 dotnet build --property WarningLevel=0
 $manifest | transpose  name value | par-each { |f|

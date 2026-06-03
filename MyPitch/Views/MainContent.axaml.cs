@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
@@ -37,9 +36,10 @@ public partial class MainContent : UserControl
 
     private void NarrowLayoutCardResizer_Click(object? sender, RoutedEventArgs e)
     {
+        //if collapsed
         if (LayoutMain.RowDefinitions[0].Height.Value == 4)
         {
-            LayoutMain.RowDefinitions = new("*,3*");
+            LayoutMain.RowDefinitions = new("*,*");
         }
         else
         {

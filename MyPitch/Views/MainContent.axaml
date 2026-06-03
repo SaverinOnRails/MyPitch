@@ -80,7 +80,8 @@
                 Classes.collapsed="{Binding !IsFolkMode}"
                 FolkMediaDuration="{Binding Game.FolkMediaDuration}"
                 FolkMediaProgress="{Binding Game.FolkMediaProgress}"
-                SeekCommand="{Binding FolkMediaSeek}">
+                PlaybackSpeed="{Binding Game.PlaybackSpeed, Mode=TwoWay}"
+                SeekCommand="{Binding FolkMediaSeek, }">
                 <controls:FolkMediaControl.Transitions>
                     <Transitions>
                         <DoubleTransition Property="Height" Duration="0:0:0.05" />
@@ -88,7 +89,7 @@
                 </controls:FolkMediaControl.Transitions>
                 <controls:FolkMediaControl.Styles>
                     <Style Selector="controls|FolkMediaControl">
-                        <Setter Property="Height" Value="50" />
+                        <Setter Property="Height" Value="90" />
                     </Style>
                     <Style Selector="controls|FolkMediaControl.collapsed">
                         <Setter Property="Height" Value="0" />
