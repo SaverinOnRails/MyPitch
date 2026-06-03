@@ -11,10 +11,14 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
-    Background="#0A0A0A"
     mc:Ignorable="d">
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%%">
+            <GradientStop Color="#0A0A0A" Offset="0.4" />
+            <GradientStop Color="#15173D" Offset="1.0" />
 
-    <UserControl.Styles />
+        </LinearGradientBrush>
+    </UserControl.Background>
 
     <Design.DataContext>
         <!--
@@ -25,6 +29,6 @@
     </Design.DataContext>
     <Grid>
         <Panel x:Name="MainPanel" />
-        <controls:DialogHost x:Name="DialogHost"/>
+        <controls:DialogHost x:Name="DialogHost" />
     </Grid>
 </UserControl>
