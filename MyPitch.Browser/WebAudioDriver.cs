@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace MyPitch.Browser;
 
@@ -21,7 +20,7 @@ public class WebAudioDriver : IAudioDriver
 
     public unsafe void PlaySpeechSample(string sample)
     {
-        var stream = EmbeddedResources.Get(sample);
+        var stream = EmbeddedResources.GetSpeechSample(sample);
         if (stream is null)
         {
             return;
@@ -39,6 +38,11 @@ public class WebAudioDriver : IAudioDriver
     public void Release(int note)
     {
         Interop.NoteOff(0, note);
+    }
+
+    public void ReleaseAll()
+    {
+        Interop.AllNotesOff(0);
     }
 
     public void ReleaseDrone()

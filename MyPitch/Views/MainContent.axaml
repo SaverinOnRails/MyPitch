@@ -75,6 +75,28 @@
                 </StackPanel.Styles>
             </StackPanel>
 
+            <!--  FOR FOLK MODE  -->
+            <controls:FolkMediaControl
+                Classes.collapsed="{Binding !IsFolkMode}"
+                FolkMediaDuration="{Binding Game.FolkMediaDuration}"
+                FolkMediaProgress="{Binding Game.FolkMediaProgress}"
+                PlaybackSpeed="{Binding Game.PlaybackSpeed, Mode=TwoWay}"
+                SeekCommand="{Binding FolkMediaSeek, }">
+                <controls:FolkMediaControl.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Height" Duration="0:0:0.05" />
+                    </Transitions>
+                </controls:FolkMediaControl.Transitions>
+                <controls:FolkMediaControl.Styles>
+                    <Style Selector="controls|FolkMediaControl">
+                        <Setter Property="Height" Value="90" />
+                    </Style>
+                    <Style Selector="controls|FolkMediaControl.collapsed">
+                        <Setter Property="Height" Value="0" />
+                    </Style>
+                </controls:FolkMediaControl.Styles>
+            </controls:FolkMediaControl>
+
             <controls:CircleOfFifths
                 x:Name="Circle"
                 Grid.Row="1"
@@ -94,9 +116,16 @@
             Margin="0,10,5,10"
             HorizontalAlignment="Stretch">
             <shadui:Card.Header>
-                <StackPanel>
+                <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,*">
                     <shadui:CardTitle>Customize</shadui:CardTitle>
-                </StackPanel>
+                    <Button
+                        x:Name="NarrowLayoutCardResizer"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Classes="Ghost"
+                        Click="NarrowLayoutCardResizer_Click"
+                        FontSize="15" />
+                </Grid>
             </shadui:Card.Header>
             <StackPanel Spacing="15">
                 <Grid ColumnDefinitions="*,Auto">
@@ -180,6 +209,11 @@
                         Value="{Binding MelodyNoteCount}" />
                 </StackPanel>
 
+                <Button
+                    Classes="Primary"
+                    Command="{Binding OpenFoldDatabaseDialog}"
+                    Content="Folk Database"
+                    IsVisible="{Binding IsFolkMode}" />
                 <ComboBox
                     shadui:ControlAssist.Label="Select Game Mode"
                     ItemsSource="{Binding GameModes}"

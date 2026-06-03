@@ -1,8 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
-using Avalonia.Markup.Xaml;
-using System.Diagnostics;
 
 namespace MyPitch.Views;
 
@@ -26,15 +24,28 @@ public partial class MainContent : UserControl
         }
         else
         {
-            LayoutMain.RowDefinitions = new("*,*");
+            LayoutMain.RowDefinitions = new("4*,*");
             // Grid.SetRow(CircleHaloEffect, 0);
             Grid.SetRow(CircleDisplay, 0);
             Grid.SetRow(Card, 1);
             Card.MinWidth = 250;
+            (NarrowLayoutCardResizer as Button).Content = "☰";
         }
     }
     public Layout Layout { get; set; }
 
+    private void NarrowLayoutCardResizer_Click(object? sender, RoutedEventArgs e)
+    {
+        //if collapsed
+        if (LayoutMain.RowDefinitions[0].Height.Value == 4)
+        {
+            LayoutMain.RowDefinitions = new("*,*");
+        }
+        else
+        {
+            LayoutMain.RowDefinitions = new("4*,*");
+        }
+    }
 }
 
 public enum Layout

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace MyPitch;
 
@@ -13,7 +12,9 @@ public interface IAudioDriver
 
     void Release(int note);
 
-    void PlayDrone(int note , int velocity);
+    void ReleaseAll();
+
+    void PlayDrone(int note, int velocity);
 
     void PlaySpeechSample(string sample);
 
@@ -23,7 +24,7 @@ public interface IAudioDriver
 
 public static class EmbeddedResources
 {
-    public static Stream? Get(string name) //Will only look for out WAV files, anything else will crash
+    public static Stream? GetSpeechSample(string name) //Will only look for out WAV files, anything else will crash
     {
         var assembly = Assembly.GetExecutingAssembly();
         var lookUp = name.Replace("♭", "flat-").Replace("#", "sharp-");
@@ -31,5 +32,23 @@ public static class EmbeddedResources
         var stream = assembly.GetManifestResourceStream(
                  resource);
         return stream;
+    }
+
+    public static List<string> GetMelodyFiles()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        return assembly
+            .GetManifestResourceNames()
+            .Where(x => x.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    public static string? GetMelodyFile(string path)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream(path);
+        if (stream == null) return null;
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
     }
 }

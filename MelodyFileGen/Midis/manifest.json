@@ -1,0 +1,34 @@
+{
+  "Twinkle_Twinkle_Little_Star": {
+    "Channel": 0,
+    "Tonic": "C"
+  },
+  "Yankee_Doodle": {
+    "Channel":0,
+    "Tonic": "G"
+  },
+  "When_The_Saints_Go_Marching_In": {
+    "Channel":0,
+    "Tonic":"D#"
+  },
+  "London_Bridge_Is_Falling_Down": {
+    "Channel":0,
+    "Tonic":"C"
+  },
+  "Pop_Goes_The_Weasel": {
+    "Channel":0,
+    "Tonic": "C"
+  },
+  "To_God_Be_The_Glory":{
+    "Channel":0,
+    "Tonic":"G#"
+  },
+  "Happy_Birthday":{
+    "Channel":0,
+    "Tonic":"C"
+  },
+  "Amazing_Grace": {
+    "Channel":0,
+    "Tonic":"D#"
+  }
+}

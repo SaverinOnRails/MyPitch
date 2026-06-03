@@ -3,7 +3,6 @@ using MyPitch.Controls;
 using MyPitch.Models;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MyPitch.ViewModels;
@@ -41,7 +40,8 @@ public partial class MainViewModel : ViewModelBase
 
     partial void OnGameModeChanged(GameMode oldValue, GameMode newValue)
     {
-        PushSettings(); OnPropertyChanged(nameof(IsMelodyMode)); OnPropertyChanged(nameof(IsInteractiveMode)); if (newValue == GameMode.Melody) ConfigureMelodyMode();
+        PushSettings(); OnPropertyChanged(nameof(IsMelodyMode)); OnPropertyChanged(nameof(IsInteractiveMode)); OnPropertyChanged(nameof(IsFolkMode));
+        if (newValue == GameMode.Melody) ConfigureMelodyMode();
     }
     partial void OnMelodyNoteCountChanged(int oldValue, int newValue) => PushSettings();
 
@@ -89,8 +89,9 @@ public partial class MainViewModel : ViewModelBase
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
     public bool IsInteractiveMode => GameMode == GameMode.Interactive;
+    public bool IsFolkMode => GameMode == GameMode.Folk;
     public Key[] Tonics => MusicTheory.Keys;
-    public GameMode[] GameModes => [GameMode.Freeplay, GameMode.Interactive, GameMode.Pocketmode, GameMode.Melody, GameMode.Cycle];
+    public GameMode[] GameModes => Enum.GetValues<GameMode>();
     public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
     public MainViewModel()
     {
@@ -103,7 +104,7 @@ public partial class MainViewModel : ViewModelBase
 
     private void GameDialogNeeded(DialogRequestedEventArgs e)
     {
-        _dialogHost?.Show(e.Content , this);
+        _dialogHost?.Show(e.Content, this);
     }
 
     partial void OnShouldSelectAllDegreesChanged(bool value)
@@ -117,7 +118,15 @@ public partial class MainViewModel : ViewModelBase
     {
         await Game.TryRepeatQuizAsync();
     }
-
+    public void FolkMediaSeek(object l)
+    {
+        double location = (double)l;
+        Game.FolkMediaSeek(location);
+    }
+    public void OpenFoldDatabaseDialog()
+    {
+        _dialogHost?.Show(new FolkDatabaseDialogContent(), this);
+    }
     public async Task TogglePlay() => await Game.TogglePlay();
 
     private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone));

@@ -62,7 +62,7 @@ internal class AudioTrackDriver : IAudioDriver
         var names = new string[] { "1", "2", "3", "4", "5", "6", "7", "flat-2", "flat-3", "flat-6", "flat-7", "sharp-4" };
         foreach (var name in names)
         {
-            var stream = EmbeddedResources.Get(name);
+            var stream = EmbeddedResources.GetSpeechSample(name);
             if (stream is null)
             {
                 continue;
@@ -122,5 +122,10 @@ internal class AudioTrackDriver : IAudioDriver
         _player.SetDataSource(path);
         _player.Prepare();
         _player.Start();
+    }
+
+    public void ReleaseAll()
+    {
+        _synth.NoteOffAll(true);
     }
 }
