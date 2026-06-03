@@ -37,8 +37,9 @@ public class FolkMediaControl : ContentControl
 
     public FolkMediaControl()
     {
-        var stackPanel = new StackPanel() { Orientation = Avalonia.Layout.Orientation.Horizontal, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center, Spacing = 10 };
-        var progressbar = new Slider() { Width = 400 };
+        var grid = new Grid() { HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch, ColumnDefinitions = new("Auto,0.5*,Auto"), Margin = new(20, 0), ColumnSpacing = 20 };
+        var progressbar = new Slider() { HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch };
+        Grid.SetColumn(progressbar, 1);
         bool limit = false;
         progressbar.ValueChanged += (s, e) =>
         {
@@ -76,6 +77,7 @@ public class FolkMediaControl : ContentControl
             });
 
         var currentLocation = new TextBlock() { Margin = new(0, 15, 0, 0), FontSize = 20 };
+        Grid.SetColumn(currentLocation, 0);
         currentLocation.Bind(
             TextBlock.TextProperty,
             new Avalonia.Data.Binding(nameof(FolkMediaProgress))
@@ -87,6 +89,7 @@ public class FolkMediaControl : ContentControl
 
 
         var totalDuration = new TextBlock() { FontSize = 20, Margin = new(0, 15, 0, 0) };
+        Grid.SetColumn(totalDuration, 2);
         totalDuration.Bind(
             TextBlock.TextProperty,
             new Avalonia.Data.Binding(nameof(FolkMediaDuration))
@@ -95,9 +98,9 @@ public class FolkMediaControl : ContentControl
                 Mode = Avalonia.Data.BindingMode.OneWay,
                 StringFormat = "{0:mm\\:ss}"
             });
-        stackPanel.Children.Add(currentLocation);
-        stackPanel.Children.Add(progressbar);
-        stackPanel.Children.Add(totalDuration);
-        Content = stackPanel;
+        grid.Children.Add(currentLocation);
+        grid.Children.Add(progressbar);
+        grid.Children.Add(totalDuration);
+        Content = grid;
     }
 }
