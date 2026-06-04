@@ -6,6 +6,7 @@ Simple and powerful cross platform Functional Ear Trainer
 MyPitch is a free, open-source, simple, and customizable ear trainer for musicians. It helps train your ability to recognize the functions of scale notes within a tonal context and, by extension, your ability to recognize these pitches.
 Try in your browser:
 [MyPitch](https://saverinonrails.github.io)
+NOTE: while MyPitch does run in a browser, Performance is significantly better on the desktop or even Mobile apps. It is desktop first.
 
 MyPitch is still early in dev so bugs can be expected.
 </br>
