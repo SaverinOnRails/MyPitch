@@ -63,7 +63,7 @@ class Program
         var midiFile = MidiFile.Read(FilePath);
         var tempoMap = midiFile.GetTempoMap();
         var notes = midiFile.GetNotes().Where(p => p.Channel == Channel);
-        var durationOfLastNote = Math.Clamp(notes.Last().LengthAs<MetricTimeSpan>(tempoMap).TotalMilliseconds,0,50);
+        var durationOfLastNote = Math.Min(notes.Last().LengthAs<MetricTimeSpan>(tempoMap).TotalMilliseconds,200);
         melodyFile.DurationMs = notes.Last().TimeAs<MetricTimeSpan>(tempoMap).TotalMilliseconds + durationOfLastNote;
         var tonicMidi = MusicTheory.ToMidiNote(Tonic, 4);
         foreach (var note in notes)

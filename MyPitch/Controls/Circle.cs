@@ -298,7 +298,7 @@ internal class CircleOfFifths : Control
             ? _degreeBrushes[index]
             : new SolidColorBrush(Colors.Transparent, 0.5);
 
-        context.DrawGeometry(fill, new Pen(_accentBrush, 1), geo);
+        context.DrawGeometry(fill, new Pen(_accentBrush, 2), geo);
 
         if (isHovered)
             DrawHoverArc(outerStart, outerEnd, outerRadius, index, context);
