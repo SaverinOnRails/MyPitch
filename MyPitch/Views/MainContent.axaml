@@ -12,7 +12,6 @@
     d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
-
     <Design.DataContext>
         <!--
             This only sets the DataContext for the previewer in an IDE,
@@ -128,6 +127,9 @@
                 </Grid>
             </shadui:Card.Header>
             <StackPanel Spacing="15">
+                <Border>
+                    <TextBlock IsVisible="{Binding IsWasm}" Text="Enjoy superior performance on the desktop or mobile app" />
+                </Border>
                 <Grid ColumnDefinitions="*,Auto">
                     <ComboBox
                         shadui:ControlAssist.Label="Select Tonic"
@@ -271,9 +273,6 @@
                     Command="{Binding TogglePlay}"
                     Content="Stop"
                     IsVisible="{Binding Game.IsPlaying}" />
-                <Border>
-                    <TextBlock IsVisible="{Binding IsWasm}" Text="Enjoy superior performance on the desktop or mobile app" />
-                </Border>
             </StackPanel>
         </shadui:Card>
     </Grid>
