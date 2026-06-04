@@ -1,15 +1,6 @@
 # MyPitch
 Simple and powerful cross platform Functional Ear Trainer
 </br>
-<img width="1908" height="1010" alt="Screenshot 2026-05-15 064000" src="https://github.com/user-attachments/assets/f5ff29b6-1f7f-470b-b877-0199a0bebeb4" />
-<img width="1918" height="1025" alt="Screenshot 2026-05-15 063936" src="https://github.com/user-attachments/assets/40920f04-4a15-4c01-9458-eb29880cd3f3" />
-<img width="1918" height="1013" alt="Screenshot 2026-05-15 063849" src="https://github.com/user-attachments/assets/57debb1f-0fbe-4d4f-83f6-621783ffadf2" />
-
-<img width="1915" height="1008" alt="Screenshot 2026-05-15 064324" src="https://github.com/user-attachments/assets/3d78307b-be11-4058-b1d5-a91626df2445" />
-<img width="1918" height="1013" alt="Screenshot 2026-05-15 064203" src="https://github.com/user-attachments/assets/a603bae8-4ef0-4a8c-81d9-2f90cf7bd774" />
-
-
-
 
 # About
 MyPitch is a free, open-source, simple, and customizable ear trainer for musicians. It helps train your ability to recognize the functions of scale notes within a tonal context and, by extension, your ability to recognize these pitches.
@@ -17,6 +8,38 @@ Try in your browser:
 [MyPitch](https://saverinonrails.github.io)
 
 MyPitch is still early in dev so bugs can be expected.
+</br>
+
+<img width="1920" height="1013" alt="Screenshot (10)" src="https://github.com/user-attachments/assets/13f7a8c5-adfa-4391-883e-42dc096be56b" />
+</br>
+</br>
+
+<img width="1920" height="1013" alt="Screenshot (9)" src="https://github.com/user-attachments/assets/2938fdd5-a232-4bf2-b52d-25f35078d99d" />
+Interactive Mode
+</br>
+</br>
+
+<img width="1915" height="1013" alt="Screenshot (11)" src="https://github.com/user-attachments/assets/f4b51f1d-80c5-43d9-9282-c1e8cd23ccfe" />
+Performance review after interactive mode round highlighting areas that need improvement
+</br>
+</br>
+
+<img width="1906" height="1010" alt="Screenshot (12)" src="https://github.com/user-attachments/assets/c2be5344-33b8-48a1-8b5d-3e71ba9a68f7" />
+Melody mode, training the ability to obtain individual scale degrees from a short melody
+</br>
+</br>
+
+<img width="1918" height="1001" alt="Screenshot (13)" src="https://github.com/user-attachments/assets/a151a07b-11c9-45e0-b190-7ecc42c285b7" />
+Folk database with popular nursery rhymes, Hymns , Christman carols or just popular music
+</br>
+</br>
+
+<img width="1911" height="1011" alt="Screenshot (14)" src="https://github.com/user-attachments/assets/160ec657-a74b-4a62-8772-503803d08110" />
+Folk media playback, plays the scale degrees for folk songs showing how the work in real music. Playback speed is adjustable and folk songs are fully transposable into any key,
+</br>
+</br>
+
+
 
 # Features
 - Interactive quiz mode for all degrees or subsets at any key and octave, even randomized!
@@ -24,7 +47,7 @@ MyPitch is still early in dev so bugs can be expected.
 - Customizable Tonic Drone for anchoring to the key.
 - Melody quiz to drill decoding melodies within a key context in various scale modes.
 - Stats report after interactive mode displaying useful data about strengths and weaknesses to better help you customize your next session.
-
+- Folk mode to observe and recognise scale degrees in real music or melodies
 # Building
 To build from source on Desktop (Windows, Mac , Linux) install the latest dotnet 10 from dotnet.microsoft.com.
 On Macos and Linux you must install FluidSynth from your respective package managers
