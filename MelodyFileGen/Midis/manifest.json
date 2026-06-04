@@ -30,5 +30,25 @@
   "Amazing_Grace": {
     "Channel":0,
     "Tonic":"D#"
+  },
+  "Great_Is_Thy_Faithfulness":{
+    "Channel":0,
+    "Tonic":"D#"
+  },
+  "Blessed_Assurance":{
+    "Channel":0,
+    "Tonic":"D"
+  },
+  "Frere_Jacques": {
+    "Channel":0,
+    "Tonic":"C"
+  },
+  "Ode_To_Joy": {
+    "Channel":0,
+    "Tonic":"D"
+  },
+  "Joy_To_The_World":{
+    "Channel":15,
+    "Tonic":"D"
   }
 }

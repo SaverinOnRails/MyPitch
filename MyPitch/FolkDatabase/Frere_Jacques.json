@@ -1,0 +1,199 @@
+{
+  "title": "Unknown",
+  "author": "Unknown",
+  "durationMs": 15200,
+  "noteEvents": [
+    {
+      "scaleDegree": "1",
+      "durationMs": 500,
+      "triggerAt": 0,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 500,
+      "triggerAt": 500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 500,
+      "triggerAt": 1000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 500,
+      "triggerAt": 1500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 500,
+      "triggerAt": 2000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "2",
+      "durationMs": 500,
+      "triggerAt": 2500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 500,
+      "triggerAt": 3000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 500,
+      "triggerAt": 3500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 500,
+      "triggerAt": 4000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 500,
+      "triggerAt": 4500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 1000,
+      "triggerAt": 5000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 500,
+      "triggerAt": 6000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 500,
+      "triggerAt": 6500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 1000,
+      "triggerAt": 7000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 250,
+      "triggerAt": 8000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 250,
+      "triggerAt": 8250,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 250,
+      "triggerAt": 8500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 250,
+      "triggerAt": 8750,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 500,
+      "triggerAt": 9000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 500,
+      "triggerAt": 9500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 250,
+      "triggerAt": 10000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "6",
+      "durationMs": 250,
+      "triggerAt": 10250,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 250,
+      "triggerAt": 10500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "4",
+      "durationMs": 250,
+      "triggerAt": 10750,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "3",
+      "durationMs": 500,
+      "triggerAt": 11000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 500,
+      "triggerAt": 11500,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 500,
+      "triggerAt": 12000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 500,
+      "triggerAt": 12500,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 1000,
+      "triggerAt": 13000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 500,
+      "triggerAt": 14000,
+      "octaveOffset": 0
+    },
+    {
+      "scaleDegree": "5",
+      "durationMs": 500,
+      "triggerAt": 14500,
+      "octaveOffset": -1
+    },
+    {
+      "scaleDegree": "1",
+      "durationMs": 1000,
+      "triggerAt": 15000,
+      "octaveOffset": 0
+    }
+  ]
+}
