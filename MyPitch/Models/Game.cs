@@ -40,7 +40,7 @@ public partial class Game : ObservableObject
     private Models.Key _oldTonic;
     private Stopwatch _folkMediaTimer = new();
     private double _folkMediaStartTimeMs = 0;
-    private string? _melodyFileBuffer = null;
+    private byte[]? _melodyFileBuffer = null;
     private bool _invalidateOldFolkMediaPLaybackLoop = false;
     public GameSettings Settings
     {
@@ -219,7 +219,7 @@ public partial class Game : ObservableObject
     private async Task FolkModeGameLoop()
     {
         if (_melodyFileBuffer is null) { Stop(); return; }
-        _melodyFile = MelodyFile.FromJson(_melodyFileBuffer);
+        _melodyFile = MelodyFile.FromBytes(_melodyFileBuffer);
         if (_melodyFile is null) { Stop(); return; }
 
         FolkMediaDuration = TimeSpan.FromMilliseconds(_melodyFile.DurationMs);
@@ -279,8 +279,7 @@ public partial class Game : ObservableObject
                 FolkMediaProgress = TimeSpan.FromMilliseconds(now);
                 delay = note.TriggerAt - now;
             }
-            var deg = note.ScaleDegree.Replace("flat", "♭");
-
+            var deg = note.ScaleDegree;
             //get the note in the original key
             var originalTonic = Enum.Parse<Key>(_melodyFile.OriginalTonic);
             var noteAtDeg = MusicTheory.NoteAtDegree(

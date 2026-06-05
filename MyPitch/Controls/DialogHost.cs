@@ -63,8 +63,8 @@ public class DialogHost : Panel
         Grid mgrid = new() { RowDefinitions = new("Auto,*") };
         mainContent.Children.Add(mgrid);
 
-        var jsonFiles = EmbeddedResources.GetMelodyFiles();
-        var header = new TextBlock() { HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left, Margin = new(20, 0, 0, 0), FontSize = 30, Text = $"Folk Database({jsonFiles.Count})" };
+        var mfFiles = EmbeddedResources.GetMelodyFiles();
+        var header = new TextBlock() { HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left, Margin = new(20, 0, 0, 0), FontSize = 30, Text = $"Folk Database({mfFiles.Count})" };
         mgrid.Children.Add(header);
 
         var scrollViewer = new ScrollViewer() { HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch };
@@ -74,7 +74,7 @@ public class DialogHost : Panel
         mgrid.Children.Add(scrollViewer);
 
         //get json files
-        foreach (var file in jsonFiles)
+        foreach (var file in mfFiles)
         {
             var formattedName = file;
             const string prefix = "MyPitch.FolkDatabase.";
@@ -83,9 +83,9 @@ public class DialogHost : Panel
                 formattedName = formattedName[prefix.Length..];
             }
 
-            if (formattedName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            if (formattedName.EndsWith(".mf", StringComparison.OrdinalIgnoreCase))
             {
-                formattedName = formattedName[..^5];
+                formattedName = formattedName[..^3];
             }
 
             formattedName = formattedName.Replace("_", " ");

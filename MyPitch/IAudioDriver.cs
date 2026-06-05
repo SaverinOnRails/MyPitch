@@ -39,16 +39,17 @@ public static class EmbeddedResources
         var assembly = Assembly.GetExecutingAssembly();
         return assembly
             .GetManifestResourceNames()
-            .Where(x => x.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            .Where(x => x.EndsWith(".mf", StringComparison.OrdinalIgnoreCase))
             .ToList();
     }
 
-    public static string? GetMelodyFile(string path)
+    public static byte[]? GetMelodyFile(string path)
     {
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(path);
         if (stream == null) return null;
-        using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
+        using var memoryStream = new MemoryStream();
+        stream.CopyTo(memoryStream);
+        return memoryStream.ToArray();
     }
 }

@@ -10,6 +10,7 @@
 		<AvaloniaResource Include="Assets\**" />
 		<EmbeddedResource Include="SpeechSamples\*.wav" />
 		<EmbeddedResource Include="FolkDatabase\*.json" />
+		<EmbeddedResource Include="FolkDatabase\*.mf" />
 	</ItemGroup>
 
 	<ItemGroup>

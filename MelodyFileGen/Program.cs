@@ -74,10 +74,10 @@ class Program
                 Octave = note.Octave,
             });
         }
-        var json = melodyFile.ToJson();
-        var file = Path.GetFileNameWithoutExtension(FilePath) + ".json";
-        File.WriteAllText(file, json);
-        Console.WriteLine($"Completed with {melodyFile.NoteEvents.Count()} notes. Written to '{file}'");
+        var mfBin = melodyFile.Serialize();
+        var mfBinFile = Path.GetFileNameWithoutExtension(FilePath) + ".mf";
+        File.WriteAllBytes(mfBinFile, mfBin);
+        Console.WriteLine($"Completed with {melodyFile.NoteEvents.Count()} notes. Written to '{mfBinFile}'");
     }
 
     private static string NormalizeNoteName(NoteName noteName)

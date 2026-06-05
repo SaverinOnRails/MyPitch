@@ -1,52 +1,84 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.IO;
 
 namespace MyPitch.Models;
 
 public class MelodyFile
 {
     public double DurationMs { get; set; }
-    public required string OriginalTonic {get;set;}
+    public required string OriginalTonic { get; set; }
 
     public List<NoteEvent> NoteEvents { get; set; } = new();
 
-    public string ToJson()
+    //this of course only works after tonic and scale degrees have been normalised which they will be in MelodyFileGen/Program.cs
+    public byte[] Serialize()
     {
-        var options = new JsonSerializerOptions
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms);
+
+        //write duration
+        writer.Write(DurationMs);
+        //write original tonic
+        writer.Write((byte)MusicTheory.ChromaticScale.IndexOf(OriginalTonic));
+        //write length of note events
+        writer.Write(NoteEvents.Count);
+
+        //write events
+        foreach (var ev in NoteEvents)
         {
-            WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
+            //Pack scale degree and octave into one byte
+            //First 4 bits for scale degree
+            var scaleDeg = ev.ScaleDegree.Replace("flat", "♭");
+            byte pack = (byte)MusicTheory.ChromaticScaleGraduation.IndexOf(scaleDeg);
+            pack = (byte)(pack << 4);
+            //last 4 bits for octave
+            pack |= (byte)ev.Octave;
+            writer.Write(pack);
 
-        return JsonSerializer.Serialize(this, options); 
+            writer.Write(ev.DurationMs);
+            writer.Write(ev.TriggerAt);
+        }
+        return ms.ToArray();
     }
-
-    public static MelodyFile? FromJson(string buffer)
+    public static MelodyFile? FromBytes(byte[] buffer)
     {
         try
         {
-            return JsonSerializer.Deserialize(
-                buffer,
-                MelodyFileJsonContext.Default.MelodyFile);
+            var melodyFile = new MelodyFile() { OriginalTonic = "" };
+            using var ms = new MemoryStream(buffer);
+            using var reader = new BinaryReader(ms);
+
+            //read duration
+            melodyFile.DurationMs = reader.ReadDouble();
+            //read original tonic
+            melodyFile.OriginalTonic = MusicTheory.ChromaticScale[reader.ReadByte()];
+            //read length of note events
+            int length = reader.ReadInt32();
+            for (int i = 0; i < length; i++)
+            {
+                var pack = reader.ReadByte();
+                var octave = (pack & 0x0F);
+                pack = (byte)(pack >> 4);
+                var scaleDeg = MusicTheory.ChromaticScaleGraduation[pack];
+                var duration = reader.ReadDouble();
+                var triggerAt = reader.ReadDouble();
+                melodyFile.NoteEvents.Add(new()
+                {
+                    ScaleDegree = scaleDeg,
+                    DurationMs = duration,
+                    TriggerAt = triggerAt,
+                    Octave = octave
+                });
+            }
+            return melodyFile;
         }
-        catch (Exception e)
+        catch
         {
-            Console.WriteLine(e);
             return null;
         }
     }
 }
-
-[JsonSourceGenerationOptions(
-    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-    PropertyNameCaseInsensitive = true)]
-[JsonSerializable(typeof(MelodyFile))]
-public partial class MelodyFileJsonContext : JsonSerializerContext
-{
-}
-
 public class NoteEvent
 {
     public required string ScaleDegree { get; set; }
