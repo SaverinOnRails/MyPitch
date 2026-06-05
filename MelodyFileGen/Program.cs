@@ -58,26 +58,20 @@ class Program
 
     private static void Generate()
     {
-        MelodyFile melodyFile = new();
-        melodyFile.Title = Title;
+        MelodyFile melodyFile = new() { OriginalTonic = Tonic };
         var midiFile = MidiFile.Read(FilePath);
         var tempoMap = midiFile.GetTempoMap();
         var notes = midiFile.GetNotes().Where(p => p.Channel == Channel);
-        var durationOfLastNote = Math.Min(notes.Last().LengthAs<MetricTimeSpan>(tempoMap).TotalMilliseconds,200);
+        var durationOfLastNote = Math.Min(notes.Last().LengthAs<MetricTimeSpan>(tempoMap).TotalMilliseconds, 200);
         melodyFile.DurationMs = notes.Last().TimeAs<MetricTimeSpan>(tempoMap).TotalMilliseconds + durationOfLastNote;
-        var tonicMidi = MusicTheory.ToMidiNote(Tonic, 4);
         foreach (var note in notes)
         {
-            var noteMidi = MusicTheory.ToMidiNote(note.NoteName.ToString(), note.Octave);
-            var scaleDegreeIndex = MusicTheory.ChromaticScaleGraduation.IndexOf(ScaleDegree(note.NoteName));
-            var octaveOffset = (noteMidi - tonicMidi - scaleDegreeIndex) / 12;
-            // Console.WriteLine($"tonic : {Tonic} note for {NormalizeNoteName(note.NoteName)} at {note.Octave} gives offset : {octaveOffset}");
             melodyFile.NoteEvents.Add(new()
             {
                 ScaleDegree = ScaleDegree(note.NoteName),
                 DurationMs = note.LengthAs<MetricTimeSpan>(tempoMap).TotalMilliseconds,
                 TriggerAt = note.TimeAs<MetricTimeSpan>(tempoMap).TotalMilliseconds,
-                OctaveOffset = octaveOffset,
+                Octave = note.Octave,
             });
         }
         var json = melodyFile.ToJson();

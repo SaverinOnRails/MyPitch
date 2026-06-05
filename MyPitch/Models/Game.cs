@@ -21,7 +21,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private int _interactiveModeRounds = 1;
     [ObservableProperty] private TimeSpan _folkMediaDuration;
     [ObservableProperty] private TimeSpan _folkMediaProgress;
-    [ObservableProperty] private float _playbackSpeed =  1;
+    [ObservableProperty] private float _playbackSpeed = 1;
 
     // We can just change this reference to alert the view instead of implementing some change notifiers for its properties
     [ObservableProperty] private MelodyBarState _melodyBarState = new();
@@ -279,22 +279,20 @@ public partial class Game : ObservableObject
                 FolkMediaProgress = TimeSpan.FromMilliseconds(now);
                 delay = note.TriggerAt - now;
             }
-
-            var baselineOctave = 4;
             var deg = note.ScaleDegree.Replace("flat", "♭");
-            Octave = note.OctaveOffset + baselineOctave;
 
+            //get the note in the original key
+            var originalTonic = Enum.Parse<Key>(_melodyFile.OriginalTonic);
             var noteAtDeg = MusicTheory.NoteAtDegree(
-                Tonic,
+                originalTonic,
                 MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1,
                 false);
+            var noteToPlay = MusicTheory.ToMidiNote(noteAtDeg, note.Octave);
+            Octave = note.Octave;
+            GameClickedIndex = MusicTheory.FifthSegment(originalTonic, noteAtDeg);
 
-            //logic for consistent transpositon, thanks CHATGPT
-            var semitones = MusicTheory.ChromaticScaleGraduation.IndexOf(deg);
-            var tonicMidi = MusicTheory.ToMidiNote(Tonic.ToString(), baselineOctave);
-            var noteToPlay = tonicMidi + semitones + note.OctaveOffset * 12;
-            GameClickedIndex = MusicTheory.FifthSegment(Tonic, noteAtDeg);
-
+            //now transpose to the user chosen tonic with the semitone offset
+            noteToPlay += MusicTheory.ChromaticScale.IndexOf(Tonic.ToString()) - MusicTheory.ChromaticScale.IndexOf(_melodyFile.OriginalTonic);
             PlatformServiceProvider.AudioDriver.Play(noteToPlay);
             lastNoteStopAt = note.TriggerAt + note.DurationMs;
             lastNote = noteToPlay;

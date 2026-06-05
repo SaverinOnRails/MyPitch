@@ -1,523 +1,522 @@
 {
-  "title": "Unknown",
-  "author": "Unknown",
   "durationMs": 40762.49,
+  "originalTonic": "D",
   "noteEvents": [
     {
       "scaleDegree": "3",
       "durationMs": 827.586,
       "triggerAt": 1659.482,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 413.793,
       "triggerAt": 2499.999,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 310.344,
       "triggerAt": 2892.241,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 413.793,
       "triggerAt": 3301.723,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 414.871,
       "triggerAt": 3707.973,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 4116.378,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 4539.87,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 827.586,
       "triggerAt": 4955.818,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 5794.18,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 310.344,
       "triggerAt": 6207.973,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 620.69,
       "triggerAt": 6617.455,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 103.448,
       "triggerAt": 7242.455,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 827.586,
       "triggerAt": 7445.041,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 827.586,
       "triggerAt": 8283.403,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 413.793,
       "triggerAt": 9089.437,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 310.345,
       "triggerAt": 9503.23,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 413.793,
       "triggerAt": 9924.566,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 414.871,
       "triggerAt": 10334.049,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 10737.066,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 11172.411,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 827.586,
       "triggerAt": 11579.738,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 12420.256,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 12836.204,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 620.69,
       "triggerAt": 13235.988,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 103.449,
       "triggerAt": 13865.298,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 724.138,
       "triggerAt": 14078.66,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 724.138,
       "triggerAt": 14904.091,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 15701.505,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 413.793,
       "triggerAt": 16123.918,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 16545.254,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 207.974,
       "triggerAt": 16947.194,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 206.897,
       "triggerAt": 17146.547,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 17370.685,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 413.793,
       "triggerAt": 17771.547,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 18191.806,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 206.897,
       "triggerAt": 18622.84,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 206.897,
       "triggerAt": 18825.426,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 19038.788,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 19443.961,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 413.793,
       "triggerAt": 19866.374,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 20271.547,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 413.793,
       "triggerAt": 20696.116,
-      "octaveOffset": -2
+      "octave": 2
     },
     {
       "scaleDegree": "3",
       "durationMs": 724.137,
       "triggerAt": 21122.84,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 21945.038,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 413.793,
       "triggerAt": 22350.21,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 310.345,
       "triggerAt": 22744.606,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 413.793,
       "triggerAt": 23154.089,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 413.793,
       "triggerAt": 23563.572,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 23973.054,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 24391.158,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 827.586,
       "triggerAt": 24822.192,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 25649.778,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 26076.502,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 620.689,
       "triggerAt": 26485.985,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 103.448,
       "triggerAt": 27102.364,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 724.138,
       "triggerAt": 27317.881,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 724.138,
       "triggerAt": 28147.622,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 28951.501,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 413.793,
       "triggerAt": 29367.45,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 29774.777,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 206.897,
       "triggerAt": 30188.57,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 206.896,
       "triggerAt": 30397.622,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 30612.061,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 413.793,
       "triggerAt": 31012.923,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 31431.027,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 206.896,
       "triggerAt": 31846.975,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 206.897,
       "triggerAt": 32066.802,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 310.345,
       "triggerAt": 32286.63,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 32678.871,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 413.793,
       "triggerAt": 33092.664,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 33509.69,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 413.793,
       "triggerAt": 33932.104,
-      "octaveOffset": -2
+      "octave": 2
     },
     {
       "scaleDegree": "3",
       "durationMs": 724.138,
       "triggerAt": 34328.655,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 35182.103,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 413.793,
       "triggerAt": 35591.586,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 310.344,
       "triggerAt": 35990.293,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "5",
       "durationMs": 413.793,
       "triggerAt": 36407.318,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "4",
       "durationMs": 413.793,
       "triggerAt": 36825.422,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 37247.836,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 37650.853,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 827.586,
       "triggerAt": 38066.801,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 413.793,
       "triggerAt": 38879.301,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "3",
       "durationMs": 413.793,
       "triggerAt": 39308.18,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "2",
       "durationMs": 620.69,
       "triggerAt": 39728.438,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 103.448,
       "triggerAt": 40351.283,
-      "octaveOffset": -1
+      "octave": 3
     },
     {
       "scaleDegree": "1",
       "durationMs": 413.793,
       "triggerAt": 40562.49,
-      "octaveOffset": -1
+      "octave": 3
     }
   ]
 }
