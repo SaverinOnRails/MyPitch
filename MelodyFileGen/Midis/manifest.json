@@ -50,5 +50,17 @@
   "Joy_To_The_World":{
     "Channel":15,
     "Tonic":"D"
+  },
+  "Perfect": {
+    "Channel":0,
+    "Tonic":"G#"
+  },
+  "What_A_Friend_We_Have_In_Jesus":{
+    "Channel":0,
+    "Tonic":"F"
+  },
+  "In_Christ_Alone":{
+    "Channel":0,
+    "Tonic":"D#"
   }
 }

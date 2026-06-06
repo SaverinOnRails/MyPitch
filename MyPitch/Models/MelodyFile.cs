@@ -48,7 +48,6 @@ public class MelodyFile
             var melodyFile = new MelodyFile() { OriginalTonic = "" };
             using var ms = new MemoryStream(buffer);
             using var reader = new BinaryReader(ms);
-
             //read duration
             melodyFile.DurationMs = reader.ReadDouble();
             //read original tonic
