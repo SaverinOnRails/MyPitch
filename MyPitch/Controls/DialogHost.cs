@@ -105,7 +105,8 @@ public class DialogHost : Panel
 
     private void BuildInteractiveStatsDialogContent(InteractiveModeStatsDialogContent e, Panel contentBox, object? source)
     {
-        Grid mGrid = new() { RowDefinitions = new("Auto,*") };
+        bool narrowLayout = this.FindAncestorOfType<UserControl>()?.Bounds.Width <= 600;
+        Grid mGrid = new() { RowDefinitions = new(narrowLayout ? "Auto,Auto,*" : "Auto,*") };
         var tPanel = new Panel();
         var circularProgress = new CircularProgress() { Height = 100, Width = 200 };
         tPanel.Children.Add(
@@ -130,11 +131,20 @@ public class DialogHost : Panel
                 Hide();
             }
         };
-        tPanel.Children.Add(drillButton);
+        var parentWidth = this.FindAncestorOfType<UserControl>()?.Bounds.Width;
+        if (!narrowLayout)
+        {
+            tPanel.Children.Add(drillButton);
+        }
+        else
+        {
+            Grid.SetRow(drillButton, 1);
+            mGrid.Children.Add(drillButton);
+        }
         circularProgress.Progress = e.Stats.Accuracy;
         mGrid.Children.Add(tPanel);
         Panel dGridPanel = new() { Margin = new(10) };
-        Grid.SetRow(dGridPanel, 1);
+        Grid.SetRow(dGridPanel, narrowLayout ? 2 : 1);
         contentBox.Children.Add(mGrid);
         var dataGrid = new DataGrid
         {
