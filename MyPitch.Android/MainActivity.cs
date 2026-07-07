@@ -1,13 +1,9 @@
 ﻿using Android.App;
 using Android.Content.PM;
-using Android.Content.Res;
+using Android.Runtime;
 using Avalonia;
 using Avalonia.Android;
-using Java.Nio.FileNio;
-using System;
 using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace MyPitch.Droid;
 
@@ -17,8 +13,17 @@ namespace MyPitch.Droid;
     Icon = "@drawable/icon",
     MainLauncher = true,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
-public class MainActivity : AvaloniaMainActivity<App>
+public class MainActivity : AvaloniaMainActivity
 {
+
+}
+
+[Application]
+public class Application : AvaloniaAndroidApplication<App>
+{
+    protected Application(nint javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+    {
+    }
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         var path = System.IO.Path.Combine(FilesDir!.AbsolutePath, "default.sf2");
@@ -37,9 +42,8 @@ public class MainActivity : AvaloniaMainActivity<App>
             using var fileStream = File.Create(path2);
             stream.CopyTo(fileStream);
         }
-        PlatformServiceProvider.AudioDriver = new AudioTrackDriver(path,path2);
+        PlatformServiceProvider.AudioDriver = new AudioTrackDriver(path, path2);
         return base.CustomizeAppBuilder(builder)
             .WithInterFont();
     }
-
 }
