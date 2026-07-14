@@ -1,5 +1,4 @@
-﻿using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MyPitch.Controls;
 using MyPitch.Models;
 using System;
@@ -31,6 +30,7 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] private bool _wideLayout;
     [ObservableProperty] private bool _shouldSelectAllDegrees = true;
     [ObservableProperty] private int _melodyNoteCount = 3;
+    [ObservableProperty] private int _melodyNoteGap = 1;
     [ObservableProperty] private GameMode _gameMode = GameMode.Freeplay;
     [ObservableProperty] private ScaleMode _scaleMode;
     [ObservableProperty] private bool _useRandomTonic;
@@ -45,6 +45,7 @@ public partial class MainViewModel : ViewModelBase
         if (newValue == GameMode.Melody) ConfigureMelodyMode();
     }
     partial void OnMelodyNoteCountChanged(int oldValue, int newValue) => PushSettings();
+    partial void OnMelodyNoteGapChanged(int oldValue, int newValue) => PushSettings();
 
     private void ConfigureMelodyMode()
     {
@@ -130,7 +131,7 @@ public partial class MainViewModel : ViewModelBase
     }
     public async Task TogglePlay() => await Game.TogglePlay();
 
-    private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone));
+    private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone, MelodyNoteGap));
 
     private void SyncDegrees() => Game.AllowDegrees = Degrees;
 

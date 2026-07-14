@@ -209,6 +209,18 @@
                         TickFrequency="1"
                         TickPlacement="BottomRight"
                         Value="{Binding MelodyNoteCount}" />
+                    <TextBlock
+                        FontSize="15"
+                        FontWeight="DemiBold"
+                        Text="{Binding MelodyNoteGap, StringFormat='Melody Notes Delay (s) : {0}'}" />
+                    <Slider
+                        shadui:ControlAssist.Label="Melody Note Delay"
+                        IsSnapToTickEnabled="True"
+                        Maximum="3"
+                        Minimum="1"
+                        TickFrequency="1"
+                        TickPlacement="BottomRight"
+                        Value="{Binding MelodyNoteGap}" />
                 </StackPanel>
 
                 <Button

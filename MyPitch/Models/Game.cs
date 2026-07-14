@@ -161,7 +161,7 @@ public partial class Game : ObservableObject
             var melody = MusicTheory.GenMelody(degrees, melodyNoteCount);
             foreach (var note in melody)
             {
-                await PlayScaleNote(note, hidden: true, 1000);
+                await PlayScaleNote(note, hidden: true, Settings.MelodyNoteGapMs());
             }
             _currentMelodyQuizDegrees = melody;
             //await user responses
@@ -435,7 +435,7 @@ public partial class Game : ObservableObject
             _repeatCancellationTokenSource = new();
             foreach (var note in _currentMelodyQuizDegrees)
             {
-                await PlayScaleNote(note, hidden: true, 1000, cts: _repeatCancellationTokenSource);
+                await PlayScaleNote(note, hidden: true, Settings.MelodyNoteGapMs(), cts: _repeatCancellationTokenSource);
             }
         }
         else { }
@@ -534,7 +534,13 @@ public partial class Game : ObservableObject
         _melodyFileBuffer = buffer;
     }
 }
-public record GameSettings(GameMode Mode = GameMode.Freeplay, bool RandomTonic = false, bool RandomOctave = false, int MelodyNoteCount = 2, bool PlayCadenceOnKeyChange = true, bool PlayDrone = true);
+public record GameSettings(GameMode Mode = GameMode.Freeplay, bool RandomTonic = false, bool RandomOctave = false, int MelodyNoteCount = 2, bool PlayCadenceOnKeyChange = true, bool PlayDrone = true, int MelodyNoteGap = 1)
+{
+    public int MelodyNoteGapMs()
+    {
+        return 1000 * MelodyNoteGap;
+    }
+}
 public enum GameMode
 {
     Freeplay,
