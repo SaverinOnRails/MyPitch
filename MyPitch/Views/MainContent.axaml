@@ -114,7 +114,7 @@
             MaxWidth="700"
             Margin="0,10,5,10"
             HorizontalAlignment="Stretch">
-            <shadui:Card.Header>
+            <StackPanel Spacing="15" >
                 <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,*">
                     <shadui:CardTitle>Customize</shadui:CardTitle>
                     <Button
@@ -125,11 +125,13 @@
                         Click="NarrowLayoutCardResizer_Click"
                         FontSize="15" />
                 </Grid>
-            </shadui:Card.Header>
-            <StackPanel Spacing="15">
                 <Border>
                     <TextBlock IsVisible="{Binding IsWasm}" Text="Enjoy superior performance on the desktop or mobile app" />
                 </Border>
+                <ComboBox
+                    shadui:ControlAssist.Label="Select Game Mode"
+                    ItemsSource="{Binding GameModes}"
+                    SelectedValue="{Binding GameMode}" />
                 <Grid ColumnDefinitions="*,Auto">
                     <ComboBox
                         shadui:ControlAssist.Label="Select Tonic"
@@ -228,10 +230,6 @@
                     Command="{Binding OpenFoldDatabaseDialog}"
                     Content="Folk Database"
                     IsVisible="{Binding IsFolkMode}" />
-                <ComboBox
-                    shadui:ControlAssist.Label="Select Game Mode"
-                    ItemsSource="{Binding GameModes}"
-                    SelectedValue="{Binding GameMode}" />
                 <ComboBox
                     shadui:ControlAssist.Label="Select Scale Mode"
                     ItemsSource="{Binding ScaleModes}"
