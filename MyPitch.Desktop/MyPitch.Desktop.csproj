@@ -20,12 +20,13 @@
     </ItemGroup>-->
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Desktop"/>
-        <PackageReference Include="SFML.Audio"/>
+        <PackageReference Include="Avalonia.Desktop" />
+        <PackageReference Include="Avalonia.Wayland" />
+        <PackageReference Include="SFML.Audio" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MyPitch\MyPitch.csproj"/>
+        <ProjectReference Include="..\MyPitch\MyPitch.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -46,21 +47,21 @@
         </None>
     </ItemGroup>
 
-    <Target Name="AfterPublishCleanup"  AfterTargets="Publish">
-        <Delete Files="$(PublishDir)libcsfml-graphics.so"/>
-        <Delete Files="$(PublishDir)libcsfml-graphics.so.3.0"/>
-        <Delete Files="$(PublishDir)libcsfml-window.so"/>
-        <Delete Files="$(PublishDir)libcsfml-window.so.3.0"/>
-        <Delete Files="$(PublishDir)libsfml-graphics.so.3.0"/>
-        <Delete Files="$(PublishDir)libsfml-window.so.3.0"/>
-        <Delete Files="$(PublishDir)MyPitch.pdb"/>
+    <Target Name="AfterPublishCleanup" AfterTargets="Publish">
+        <Delete Files="$(PublishDir)libcsfml-graphics.so" />
+        <Delete Files="$(PublishDir)libcsfml-graphics.so.3.0" />
+        <Delete Files="$(PublishDir)libcsfml-window.so" />
+        <Delete Files="$(PublishDir)libcsfml-window.so.3.0" />
+        <Delete Files="$(PublishDir)libsfml-graphics.so.3.0" />
+        <Delete Files="$(PublishDir)libsfml-window.so.3.0" />
+        <Delete Files="$(PublishDir)MyPitch.pdb" />
 
-        <Delete Files="$(PublishDir)csfml-graphics.dll"/>
-        <Delete Files="$(PublishDir)csfml-graphics-3.dll"/>
-        <Delete Files="$(PublishDir)csfml-window.dll"/>
-        <Delete Files="$(PublishDir)csfml-window-3.dll"/>
-        <Delete Files="$(PublishDir)sfml-graphics-3.dll"/>
-        <Delete Files="$(PublishDir)sfml-window-3.dll"/>
+        <Delete Files="$(PublishDir)csfml-graphics.dll" />
+        <Delete Files="$(PublishDir)csfml-graphics-3.dll" />
+        <Delete Files="$(PublishDir)csfml-window.dll" />
+        <Delete Files="$(PublishDir)csfml-window-3.dll" />
+        <Delete Files="$(PublishDir)sfml-graphics-3.dll" />
+        <Delete Files="$(PublishDir)sfml-window-3.dll" />
     </Target>
 
 

@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using Avalonia.Wayland;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -43,8 +44,16 @@ sealed class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
-            .UsePlatformDetect()
-            .WithInterFont()
-            .LogToTrace();
+    {
+        var builder = AppBuilder.Configure<App>()
+               .UsePlatformDetect()
+               .WithInterFont()
+               .LogToTrace();
+        if (OperatingSystem.IsLinux()
+              && Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") is not null)
+        {
+            builder = builder.UseWayland();
+        }
+        return builder;
+    }
 }
