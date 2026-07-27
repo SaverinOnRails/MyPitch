@@ -25,78 +25,65 @@
         <converters:GameModeDisplayConverter x:Key="GameModeDisplayConverter" />
         <FontFamily x:Key="NotoSans">avares://MyPitch/Assets/Fonts/#Noto Sans</FontFamily>
     </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Styles>
+            <Style Selector=":is(Control).mode-panel">
+                <Setter Property="ClipToBounds" Value="True" />
+                <Setter Property="Transitions">
+                    <Transitions>
+                        <DoubleTransition Property="Height" Duration="0:0:0.30" />
+                    </Transitions>
+                </Setter>
+            </Style>
+
+            <!--  per-control expanded heights  -->
+            <Style Selector="controls|MelodyBar.mode-panel">
+                <Setter Property="Height" Value="50" />
+            </Style>
+            <Style Selector="StackPanel.mode-panel">
+                <Setter Property="Height" Value="40" />
+            </Style>
+            <Style Selector="controls|FolkMediaControl.mode-panel">
+                <Setter Property="Height" Value="90" />
+            </Style>
+
+            <!--  collapsed override, must come after the above to win on specificity  -->
+            <Style Selector=":is(Control).mode-panel.collapsed">
+                <Setter Property="Height" Value="0" />
+            </Style>
+        </Styles>
+    </UserControl.Styles>
     <Grid
         x:Name="LayoutMain"
         Margin="10,0,0,0"
         Container.Name="main">
         <Grid x:Name="CircleDisplay" RowDefinitions="Auto,*">
-            <!--  TODO: Improve this  -->
-            <!--  FOR MELODY MODE  -->
             <controls:MelodyBar
                 BarState="{Binding Game.MelodyBarState}"
+                Classes="mode-panel"
                 Classes.collapsed="{Binding !IsMelodyMode}"
-                NoteCount="{Binding MelodyNoteCount}">
-                <controls:MelodyBar.Transitions>
-                    <Transitions>
-                        <DoubleTransition Property="Height" Duration="0:0:0.05" />
-                    </Transitions>
-                </controls:MelodyBar.Transitions>
-                <controls:MelodyBar.Styles>
-                    <Style Selector="controls|MelodyBar">
-                        <Setter Property="Height" Value="50" />
-                    </Style>
-                    <Style Selector="controls|MelodyBar.collapsed">
-                        <Setter Property="Height" Value="0" />
-                    </Style>
-                </controls:MelodyBar.Styles>
-            </controls:MelodyBar>
+                NoteCount="{Binding MelodyNoteCount}" />
 
-            <!--  FOR INTERACTIVE  -->
             <StackPanel
                 Margin="5"
-                Classes.collapsed="{Binding !IsInteractiveMode}"
-                ClipToBounds="true">
+                Classes="mode-panel"
+                Classes.collapsed="{Binding !IsInteractiveMode}">
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontSize="30"
                     Text="{Binding Game.InteractiveModeRounds, StringFormat={}{0}/20}" />
-                <StackPanel.Transitions>
-                    <Transitions>
-                        <DoubleTransition Property="Height" Duration="0:0:0.05" />
-                    </Transitions>
-                </StackPanel.Transitions>
-                <StackPanel.Styles>
-                    <Style Selector="StackPanel">
-                        <Setter Property="Height" Value="40" />
-                    </Style>
-                    <Style Selector="StackPanel.collapsed">
-                        <Setter Property="Height" Value="0" />
-                    </Style>
-                </StackPanel.Styles>
             </StackPanel>
 
-            <!--  FOR FOLK MODE  -->
             <controls:FolkMediaControl
+                Classes="mode-panel"
                 Classes.collapsed="{Binding !IsFolkMode}"
                 FolkMediaDuration="{Binding Game.FolkMediaDuration}"
                 FolkMediaProgress="{Binding Game.FolkMediaProgress}"
                 PlaybackSpeed="{Binding Game.PlaybackSpeed, Mode=TwoWay}"
-                SeekCommand="{Binding FolkMediaSeek, }">
-                <controls:FolkMediaControl.Transitions>
-                    <Transitions>
-                        <DoubleTransition Property="Height" Duration="0:0:0.05" />
-                    </Transitions>
-                </controls:FolkMediaControl.Transitions>
-                <controls:FolkMediaControl.Styles>
-                    <Style Selector="controls|FolkMediaControl">
-                        <Setter Property="Height" Value="90" />
-                    </Style>
-                    <Style Selector="controls|FolkMediaControl.collapsed">
-                        <Setter Property="Height" Value="0" />
-                    </Style>
-                </controls:FolkMediaControl.Styles>
-            </controls:FolkMediaControl>
+                SeekCommand="{Binding FolkMediaSeek}" />
 
+            <controls:ChordQualityInput IsVisible="{Binding IsChordQualityMode}" />
             <controls:CircleOfFifths
                 x:Name="Circle"
                 Grid.Row="1"
@@ -105,10 +92,11 @@
                 GameClickedIndex="{Binding Game.GameClickedIndex}"
                 GameMode="{Binding GameMode}"
                 IncludedDegrees="{Binding Degrees}"
+                IsVisible="{Binding !HideCircleOfFifths}"
                 Octave="{Binding Game.Octave}"
                 RepeatCommand="{Binding Repeat}"
                 Tonic="{Binding Game.Tonic}"
-                UserClickedIndex="{Binding Game.UserClickedIndex, Mode=TwoWay}" />
+                UserClickedIndex="{Binding Game.UserClickedIndex, Mode=TwoWay}" />        
         </Grid>
         <shadui:Card
             x:Name="Card"

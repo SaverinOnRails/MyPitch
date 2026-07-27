@@ -41,7 +41,12 @@ public partial class MainViewModel : ViewModelBase
 
     partial void OnGameModeChanged(GameMode oldValue, GameMode newValue)
     {
-        PushSettings(); OnPropertyChanged(nameof(IsMelodyMode)); OnPropertyChanged(nameof(IsInteractiveMode)); OnPropertyChanged(nameof(IsFolkMode));
+        PushSettings();
+        OnPropertyChanged(nameof(IsMelodyMode));
+        OnPropertyChanged(nameof(IsInteractiveMode));
+        OnPropertyChanged(nameof(IsFolkMode));
+        OnPropertyChanged(nameof(IsChordQualityMode));
+        OnPropertyChanged(nameof(HideCircleOfFifths));
         if (newValue == GameMode.Melody) ConfigureMelodyMode();
     }
     partial void OnMelodyNoteCountChanged(int oldValue, int newValue) => PushSettings();
@@ -69,7 +74,6 @@ public partial class MainViewModel : ViewModelBase
         PushSettings(); if (value) SetRandomTonicManual();
     }
 
-    //THESE ONLY RUN WHEN THE USER MANUALLY TRIGGERS THEM IN THE UI
     private void SetRandomTonicManual()
     {
         Game.Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
@@ -91,12 +95,14 @@ public partial class MainViewModel : ViewModelBase
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
     public bool IsInteractiveMode => GameMode == GameMode.Interactive;
-
+    public bool HideCircleOfFifths => GameMode == GameMode.ChordQuality;
+    public bool IsChordQualityMode => GameMode == GameMode.ChordQuality;
     public bool IsFolkMode => false;  //GameMode == GameMode.Folk;
 
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => Enum.GetValues<GameMode>();
     public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
+
     public MainViewModel()
     {
         foreach (var deg in Degrees)
