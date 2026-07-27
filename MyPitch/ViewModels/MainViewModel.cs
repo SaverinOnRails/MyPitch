@@ -12,19 +12,19 @@ public partial class MainViewModel : ViewModelBase
     public Game Game { get; } = new();
     public DialogHost? _dialogHost;
     public ObservableCollection<DegreeItem> Degrees { get; } =
-        [
+    [
         new() { Label = "1"  },
-    new() { Label = "♭2" },
-    new() { Label = "2"  },
-    new() { Label = "♭3" },
-    new() { Label = "3"  },
-    new() { Label = "4"  },
-    new() { Label = "#4" },
-    new() { Label = "5"  },
-    new() { Label = "♭6" },
-    new() { Label = "6"  },
-    new() { Label = "♭7" },
-    new() { Label = "7"  },
+        new() { Label = "♭2" },
+        new() { Label = "2"  },
+        new() { Label = "♭3" },
+        new() { Label = "3"  },
+        new() { Label = "4"  },
+        new() { Label = "#4" },
+        new() { Label = "5"  },
+        new() { Label = "♭6" },
+        new() { Label = "6"  },
+        new() { Label = "♭7" },
+        new() { Label = "7"  },
     ];
 
     [ObservableProperty] private bool _wideLayout;
@@ -91,7 +91,9 @@ public partial class MainViewModel : ViewModelBase
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
     public bool IsInteractiveMode => GameMode == GameMode.Interactive;
-    public bool IsFolkMode => GameMode == GameMode.Folk;
+
+    public bool IsFolkMode => false;  //GameMode == GameMode.Folk;
+
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => Enum.GetValues<GameMode>();
     public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];

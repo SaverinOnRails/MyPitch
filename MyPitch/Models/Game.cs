@@ -133,7 +133,7 @@ public partial class Game : ObservableObject
                 GameMode.Pocketmode => PocketModeGameLoop(),
                 GameMode.Cycle => CycleModeGameLoop(),
                 GameMode.Melody => MelodyGameModeLoop(),
-                GameMode.Folk => FolkModeGameLoop(),
+                // GameMode.Folk => FolkModeGameLoop(),
                 _ => Task.CompletedTask // Freeplay
             });
         }
@@ -164,6 +164,7 @@ public partial class Game : ObservableObject
                 await PlayScaleNote(note, hidden: true, Settings.MelodyNoteGapMs());
             }
             _currentMelodyQuizDegrees = melody;
+            
             //await user responses
             List<string> userResponses = new();
             for (int i = 0; i < melodyNoteCount; i++)
@@ -374,7 +375,6 @@ public partial class Game : ObservableObject
                 if (MusicTheory.SimpleResolutionMap.ContainsKey(quizDeg))
                 {
                     var resolution = MusicTheory.SimpleResolutionMap[quizDeg];
-                    var resolutionIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(resolution.ResolveTo) + 1, false));
                     await PlayScaleNote(resolution.ResolveTo, hidden: false, duration: 500, resolution.ResolveToNextOctave ? Octave + 1 : Octave);
                 }
                 stats.AddStatForDeg(quizDeg, responseEnd, true, null);
@@ -547,7 +547,7 @@ public enum GameMode
     Pocketmode,
     Interactive,
     Melody,
-    Folk,
+    ChordQuality,
     Cycle,
 }
 public enum AnswerState

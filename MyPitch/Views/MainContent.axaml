@@ -22,6 +22,7 @@
     <UserControl.Resources>
         <converters:TonicDisplayConverter x:Key="TonicDisplayConverter" />
         <converters:ScaleModeDisplayConverter x:Key="ScaleModeDisplayConverter" />
+        <converters:GameModeDisplayConverter x:Key="GameModeDisplayConverter" />
         <FontFamily x:Key="NotoSans">avares://MyPitch/Assets/Fonts/#Noto Sans</FontFamily>
     </UserControl.Resources>
     <Grid
@@ -131,7 +132,13 @@
                 <ComboBox
                     shadui:ControlAssist.Label="Select Game Mode"
                     ItemsSource="{Binding GameModes}"
-                    SelectedValue="{Binding GameMode}" />
+                    SelectedValue="{Binding GameMode}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource GameModeDisplayConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <Grid ColumnDefinitions="*,Auto">
                     <ComboBox
                         shadui:ControlAssist.Label="Select Tonic"
