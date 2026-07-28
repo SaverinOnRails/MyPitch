@@ -36,8 +36,13 @@
                     </Transitions>
                 </Setter>
             </Style>
-
-            <!--  per-control expanded heights  -->
+            <Style Selector=":is(Control).fade-panel">
+                <Setter Property="Transitions">
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+                    </Transitions>
+                </Setter>
+            </Style>
             <Style Selector="controls|MelodyBar.mode-panel">
                 <Setter Property="Height" Value="50" />
             </Style>
@@ -48,9 +53,14 @@
                 <Setter Property="Height" Value="90" />
             </Style>
 
-            <!--  collapsed override, must come after the above to win on specificity  -->
             <Style Selector=":is(Control).mode-panel.collapsed">
                 <Setter Property="Height" Value="0" />
+            </Style>
+
+            <Style Selector=":is(Control).fade-panel.collapsed">
+                <Setter Property="Opacity" Value="0" />
+                <Setter Property="IsVisible" Value="false" />
+                <Setter Property="IsHitTestVisible" Value="False" />
             </Style>
         </Styles>
     </UserControl.Styles>
@@ -83,20 +93,20 @@
                 PlaybackSpeed="{Binding Game.PlaybackSpeed, Mode=TwoWay}"
                 SeekCommand="{Binding FolkMediaSeek}" />
 
-            <controls:ChordQualityInput IsVisible="{Binding IsChordQualityMode}" />
+            <controls:ChordQualityInput Classes="fade-panel" Classes.collapsed="{Binding !IsChordQualityMode}" Grid.Row="1"/>
             <controls:CircleOfFifths
-                x:Name="Circle"
                 Grid.Row="1"
                 Margin="10"
                 AnswerState="{Binding Game.AnswerState}"
+                Classes="fade-panel"
+                Classes.collapsed="{Binding HideCircleOfFifths}"
                 GameClickedIndex="{Binding Game.GameClickedIndex}"
                 GameMode="{Binding GameMode}"
                 IncludedDegrees="{Binding Degrees}"
-                IsVisible="{Binding !HideCircleOfFifths}"
                 Octave="{Binding Game.Octave}"
                 RepeatCommand="{Binding Repeat}"
                 Tonic="{Binding Game.Tonic}"
-                UserClickedIndex="{Binding Game.UserClickedIndex, Mode=TwoWay}" />        
+                UserClickedIndex="{Binding Game.UserClickedIndex, Mode=TwoWay}" />
         </Grid>
         <shadui:Card
             x:Name="Card"
@@ -127,7 +137,7 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Grid ColumnDefinitions="*,Auto">
+                <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding GameModeNeedTonicControl}">
                     <ComboBox
                         shadui:ControlAssist.Label="Select Tonic"
                         IsEnabled="{Binding !UseRandomTonic}"
@@ -150,10 +160,11 @@
                     Grid.Column="1"
                     Margin="4,0,0,0"
                     IsChecked="{Binding PlayDrone}"
+                    IsVisible="{Binding GameModeNeedDroneControl}"
                     OffContent="Play Drone"
                     OnContent="Play Drone" />
 
-                <StackPanel>
+                <StackPanel IsVisible="{Binding GameModeNeedDroneControl}">
                     <TextBlock
                         FontSize="15"
                         FontWeight="DemiBold"
@@ -171,9 +182,10 @@
                     Grid.Column="1"
                     Margin="10,0,0,0"
                     IsChecked="{Binding PlayCadenceOnKeyChange}"
+                    IsVisible="{Binding GameModeNeedTonicControl}"
                     OffContent="Play Cadence On Key Change"
                     OnContent="Play Cadence On Key Change" />
-                <StackPanel>
+                <StackPanel IsVisible="{Binding GameModeNeedOctaveControl}">
                     <TextBlock
                         FontSize="15"
                         FontWeight="DemiBold"
@@ -230,6 +242,7 @@
                     IsVisible="{Binding IsFolkMode}" />
                 <ComboBox
                     shadui:ControlAssist.Label="Select Scale Mode"
+                    IsVisible="{Binding GameModeNeedScaleControl}"
                     ItemsSource="{Binding ScaleModes}"
                     SelectedValue="{Binding ScaleMode}">
                     <ComboBox.ItemTemplate>
@@ -238,7 +251,7 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Expander Padding="20">
+                <Expander Padding="20" IsVisible="{Binding GameModeNeedScaleControl}">
                     <Expander.Header>
                         <TextBlock FontSize="16">
                             Included Scale Degrees

@@ -27,6 +27,21 @@ public partial class MainViewModel : ViewModelBase
         new() { Label = "7"  },
     ];
 
+    public bool IsMelodyMode => GameMode == GameMode.Melody;
+    public bool IsInteractiveMode => GameMode == GameMode.Interactive;
+    public bool IsFolkMode => false;  //GameMode == GameMode.Folk;
+    public bool IsChordQualityMode => GameMode == GameMode.ChordQuality;
+
+    public bool HideCircleOfFifths => GameMode == GameMode.ChordQuality;
+    public bool GameModeNeedTonicControl => GameMode != GameMode.ChordQuality;
+    public bool GameModeNeedDroneControl => GameMode != GameMode.ChordQuality;
+    public bool GameModeNeedOctaveControl => GameMode != GameMode.ChordQuality;
+    public bool GameModeNeedScaleControl => GameMode != GameMode.ChordQuality;
+
+    public Key[] Tonics => MusicTheory.Keys;
+    public GameMode[] GameModes => Enum.GetValues<GameMode>();
+    public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
+
     [ObservableProperty] private bool _wideLayout;
     [ObservableProperty] private bool _shouldSelectAllDegrees = true;
     [ObservableProperty] private int _melodyNoteCount = 3;
@@ -47,6 +62,10 @@ public partial class MainViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsFolkMode));
         OnPropertyChanged(nameof(IsChordQualityMode));
         OnPropertyChanged(nameof(HideCircleOfFifths));
+        OnPropertyChanged(nameof(GameModeNeedDroneControl));
+        OnPropertyChanged(nameof(GameModeNeedOctaveControl));
+        OnPropertyChanged(nameof(GameModeNeedScaleControl));
+        OnPropertyChanged(nameof(GameModeNeedTonicControl));
         if (newValue == GameMode.Melody) ConfigureMelodyMode();
     }
     partial void OnMelodyNoteCountChanged(int oldValue, int newValue) => PushSettings();
@@ -92,16 +111,6 @@ public partial class MainViewModel : ViewModelBase
     partial void OnPlayDroneChanged(bool value) => PushSettings();
 
     partial void OnPlayCadenceOnKeyChangeChanged(bool value) => PushSettings();
-
-    public bool IsMelodyMode => GameMode == GameMode.Melody;
-    public bool IsInteractiveMode => GameMode == GameMode.Interactive;
-    public bool HideCircleOfFifths => GameMode == GameMode.ChordQuality;
-    public bool IsChordQualityMode => GameMode == GameMode.ChordQuality;
-    public bool IsFolkMode => false;  //GameMode == GameMode.Folk;
-
-    public Key[] Tonics => MusicTheory.Keys;
-    public GameMode[] GameModes => Enum.GetValues<GameMode>();
-    public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
 
     public MainViewModel()
     {

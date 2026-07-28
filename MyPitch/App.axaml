@@ -2,6 +2,7 @@
     x:Class="MyPitch.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:MyPitch.Controls"
     xmlns:local="using:MyPitch"
     xmlns:themes="clr-namespace:ShadUI;assembly=ShadUI"
     RequestedThemeVariant="Dark">
@@ -11,12 +12,47 @@
         <local:ViewLocator />
     </Application.DataTemplates>
 
-    <Application.Styles>
-        <themes:ShadTheme />
-    </Application.Styles>
     <Application.Resources>
         <ResourceDictionary>
             <Color x:Key="PrimaryColor">#FACE68</Color>
         </ResourceDictionary>
     </Application.Resources>
+
+    <Application.Styles>
+        <themes:ShadTheme />
+        <Styles>
+            <Style Selector="controls|PressableBorder.quality-input-button">
+                <Setter Property="Margin" Value="8" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="BorderBrush" Value="#66FFFFFF" />
+                <Setter Property="Background" Value="#E13F7C" />
+                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="BoxShadow" Value="0 10 22 0 #70000000" />
+            </Style>
+
+            <Style Selector="controls|PressableBorder.quality-input-button:pointerover">
+                <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
+                <Setter Property="BorderBrush" Value="White" />
+                <Setter Property="RenderTransform">
+                    <ScaleTransform ScaleX="1.04" ScaleY="1.04" />
+                </Setter>
+                <Setter Property="BoxShadow" Value="0 10 22 0 #70000000" />
+            </Style>
+
+            <Style Selector="controls|PressableBorder.quality-input-button:pressed">
+                <Setter Property="RenderTransform">
+                    <ScaleTransform ScaleX="0.98" ScaleY="0.98" />
+                </Setter>
+            </Style>
+
+            <Style Selector="controls|PressableBorder.quality-input-button TextBlock">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontSize" Value="28" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+        </Styles>
+    </Application.Styles>
 </Application>

@@ -16,7 +16,6 @@
         <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%%">
             <GradientStop Color="#0A0A0A" Offset="0.4" />
             <GradientStop Color="#15173D" Offset="1.0" />
-
         </LinearGradientBrush>
     </UserControl.Background>
 
