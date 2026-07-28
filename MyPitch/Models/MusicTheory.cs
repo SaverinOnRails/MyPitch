@@ -118,7 +118,7 @@ public static class MusicTheory
         var index = Array.IndexOf(ChromaticScale, note);
         return (octave + 1) * 12 + index;
     }
-    
+
 
     public static List<string> GenMelody(List<string> degs, int noteCount)
     {
@@ -306,6 +306,15 @@ public enum ScaleMode
     Aeolian,
     Locrian
 }
+
+public enum ChordQuality
+{
+    Major,
+    Minor,
+    Minor7,
+    Major7
+};
+
 public class ResolutionData
 {
     public string ResolveTo { get; set; }

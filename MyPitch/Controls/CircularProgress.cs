@@ -57,6 +57,7 @@ internal class CircularProgress : Control
         {
             StartAnimation();
         }
+        base.OnPropertyChanged(change);
     }
     private void StartAnimation()
     {

@@ -59,11 +59,11 @@ public partial class Game : ObservableObject
             SuspendDrone();
         }
     }
-    public IEnumerable<DegreeItem> AllowDegrees
+    public IEnumerable<MultiSelectableItem> AllowDegrees
     {
         get;
         set;
-    } = new ObservableCollection<DegreeItem>();
+    } = new ObservableCollection<MultiSelectableItem>();
     private List<string> AllowedDegreeStrings => AllowDegrees.Where(d => d.IsSelected).Select(d => d.Label).ToList();
     private int? _userClickedIndex;
     private bool _dronePlaying;

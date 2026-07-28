@@ -2,7 +2,9 @@
 using MyPitch.Controls;
 using MyPitch.Models;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyPitch.ViewModels;
@@ -11,7 +13,7 @@ public partial class MainViewModel : ViewModelBase
 {
     public Game Game { get; } = new();
     public DialogHost? _dialogHost;
-    public ObservableCollection<DegreeItem> Degrees { get; } =
+    public List<MultiSelectableItem> Degrees { get; } =
     [
         new() { Label = "1"  },
         new() { Label = "♭2" },
@@ -26,6 +28,24 @@ public partial class MainViewModel : ViewModelBase
         new() { Label = "♭7" },
         new() { Label = "7"  },
     ];
+
+    public List<MultiSelectableItem> ChordQualities { get; } = Enum
+        .GetValues<ChordQuality>()
+        .Select(q =>
+        {
+            var item = new MultiSelectableItem
+            {
+                Label = q.ToString(),
+                IsSelected = q == ChordQuality.Major || q == ChordQuality.Minor
+            };
+            return item;
+        })
+        .ToList();
+
+    private void SyncChordQualities()
+    {
+
+    }
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
     public bool IsInteractiveMode => GameMode == GameMode.Interactive;
@@ -115,7 +135,13 @@ public partial class MainViewModel : ViewModelBase
     public MainViewModel()
     {
         foreach (var deg in Degrees)
-            WireDegree(deg);
+        {
+            deg.PropertyChanged += (_, _) => SyncDegrees();
+        }
+        foreach (var qual in ChordQualities)
+        {
+            qual.PropertyChanged += (_, _) => SyncChordQualities();
+        }
         Game.DialogNeeded += GameDialogNeeded;
         PushSettings();
         SyncDegrees();
@@ -151,14 +177,11 @@ public partial class MainViewModel : ViewModelBase
     private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone, MelodyNoteGap));
 
     private void SyncDegrees() => Game.AllowDegrees = Degrees;
-
-    private void WireDegree(DegreeItem deg) =>
-    deg.PropertyChanged += (_, _) => SyncDegrees();
-
 }
 
-public partial class DegreeItem : ObservableObject
+public partial class MultiSelectableItem : ObservableObject
 {
     [ObservableProperty] private string _label = "";
     [ObservableProperty] private bool _isSelected = true;
 }
+

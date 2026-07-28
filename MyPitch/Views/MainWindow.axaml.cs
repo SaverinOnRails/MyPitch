@@ -1,5 +1,7 @@
-using System.Diagnostics;
+using System;
+
 namespace MyPitch.Views;
+
 public partial class MainWindow : ShadUI.Window
 {
     public MainWindow()
@@ -15,18 +17,11 @@ public partial class MainWindow : ShadUI.Window
     {
         try
         {
-            using var process = new Process();
-            process.StartInfo.FileName = "gsettings";
-            process.StartInfo.Arguments = "get org.gnome.desktop.wm.preferences button-layout";
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.UseShellExecute = false;
-            process.Start();
-            var error = process.StandardError.ReadToEnd();
-            if (error is not null && error.Length > 0) return false;
-            string output = process.StandardOutput.ReadToEnd();
-            if (!output.Contains("maximise") && !output.Contains("minimize")) return true;
-            process.WaitForExit();
+            var gtk_csd = Environment.GetEnvironmentVariable("GTK_CSD");
+            if (gtk_csd is not null)
+            {
+                if (gtk_csd == "1" || gtk_csd.ToLower() == "true") return true;
+            }
             return false;
         }
         catch

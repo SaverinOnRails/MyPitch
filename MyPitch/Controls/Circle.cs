@@ -77,7 +77,7 @@ internal class CircleOfFifths : Control
     private bool _mouseOnRepeatButton = false;
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
     public static readonly StyledProperty<Models.GameMode> GameModeProperty = AvaloniaProperty.Register<CircleOfFifths, Models.GameMode>(nameof(GameMode));
-    public static readonly StyledProperty<IEnumerable<DegreeItem>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<DegreeItem>>(nameof(IncludedDegrees));
+    public static readonly StyledProperty<IEnumerable<MultiSelectableItem>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<MultiSelectableItem>>(nameof(IncludedDegrees));
     public static readonly StyledProperty<int> OctaveProperty = AvaloniaProperty.Register<CircleOfFifths, int>(nameof(Octave));
 
     public static readonly StyledProperty<int?> GameClickedIndexProperty = AvaloniaProperty.Register<CircleOfFifths, int?>(nameof(GameClickedIndex), null);
@@ -85,7 +85,7 @@ internal class CircleOfFifths : Control
     public static readonly StyledProperty<AnswerState> AnswerStateProperty = AvaloniaProperty.Register<CircleOfFifths, AnswerState>(nameof(AnswerState));
     public static readonly StyledProperty<ICommand> RepeatCommandProperty = AvaloniaProperty.Register<CircleOfFifths, ICommand>(nameof(RepeatCommand));
 
-    public IEnumerable<DegreeItem> IncludedDegrees
+    public IEnumerable<MultiSelectableItem> IncludedDegrees
     {
         get => GetValue(IncludedDegreesProperty);
         set
@@ -161,7 +161,7 @@ internal class CircleOfFifths : Control
         if (change.Property == IncludedDegreesProperty)
         {
             if (change.NewValue is null) return;
-            var value = (IEnumerable<DegreeItem>)change.NewValue;
+            var value = (IEnumerable<MultiSelectableItem>)change.NewValue;
             foreach (var deg in value)
             {
                 deg.PropertyChanged += IncludedDegreesChanged;

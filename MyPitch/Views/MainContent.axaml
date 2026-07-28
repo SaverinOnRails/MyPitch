@@ -93,7 +93,11 @@
                 PlaybackSpeed="{Binding Game.PlaybackSpeed, Mode=TwoWay}"
                 SeekCommand="{Binding FolkMediaSeek}" />
 
-            <controls:ChordQualityInput Classes="fade-panel" Classes.collapsed="{Binding !IsChordQualityMode}" Grid.Row="1"/>
+            <controls:ChordQualityInput
+                Grid.Row="1"
+                Classes="fade-panel"
+                Classes.collapsed="{Binding !IsChordQualityMode}"
+                IncludedChordQualities="{Binding ChordQualities}" />
             <controls:CircleOfFifths
                 Grid.Row="1"
                 Margin="10"
@@ -267,6 +271,39 @@
                             <CheckBox Content="Select All" IsChecked="{Binding ShouldSelectAllDegrees}" />
                         </Grid>
                         <ItemsControl Margin="28,0,0,0" ItemsSource="{Binding Degrees}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid ColumnSpacing="20" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        Margin="0,2"
+                                        Content="{Binding Label}"
+                                        FontFamily="{StaticResource NotoSans}"
+                                        IsChecked="{Binding IsSelected}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+                <Expander Padding="20" IsVisible="{Binding IsChordQualityMode}">
+                    <Expander.Header>
+                        <TextBlock FontSize="16">
+                            Included Chord Qualities
+                        </TextBlock>
+                    </Expander.Header>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel.Styles>
+                            <Style Selector="CheckBox">
+                                <Setter Property="FontSize" Value="20" />
+                            </Style>
+                        </StackPanel.Styles>
+                        <!-- <Grid ColumnDefinitions="*,*"> -->
+                        <!-- <CheckBox Content="Select All" IsChecked="{Binding ShouldSelectAllDegrees}" /> -->
+                        <!-- </Grid> -->
+                        <ItemsControl Margin="28,0,0,0" ItemsSource="{Binding ChordQualities}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <UniformGrid ColumnSpacing="20" />

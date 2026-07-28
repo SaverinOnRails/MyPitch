@@ -26,7 +26,9 @@
                 <Setter Property="Padding" Value="16" />
                 <Setter Property="CornerRadius" Value="14" />
                 <Setter Property="BorderBrush" Value="#66FFFFFF" />
-                <Setter Property="Background" Value="#E13F7C" />
+                <Setter Property="Background">
+                    <SolidColorBrush Opacity="0.7" Color="#E13F7C " />
+                </Setter>
                 <Setter Property="BorderThickness" Value="2" />
                 <Setter Property="BoxShadow" Value="0 10 22 0 #70000000" />
             </Style>
