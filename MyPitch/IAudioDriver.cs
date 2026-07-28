@@ -10,6 +10,8 @@ public interface IAudioDriver
 {
     void Play(int note);
 
+    void PlayChord(List<int> notes);
+
     void Release(int note);
 
     void ReleaseAll();

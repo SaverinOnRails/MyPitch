@@ -96,6 +96,7 @@
             <controls:ChordQualityInput
                 Grid.Row="1"
                 Classes="fade-panel"
+                Tonic="{Binding Game.Tonic}"
                 Classes.collapsed="{Binding !IsChordQualityMode}"
                 IncludedChordQualities="{Binding ChordQualities}" />
             <controls:CircleOfFifths

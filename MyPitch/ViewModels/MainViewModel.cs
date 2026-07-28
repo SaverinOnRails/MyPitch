@@ -13,7 +13,7 @@ public partial class MainViewModel : ViewModelBase
 {
     public Game Game { get; } = new();
     public DialogHost? _dialogHost;
-    public List<MultiSelectableItem> Degrees { get; } =
+    public List<MultiSelectableItem<string>> Degrees { get; } =
     [
         new() { Label = "1"  },
         new() { Label = "♭2" },
@@ -29,23 +29,20 @@ public partial class MainViewModel : ViewModelBase
         new() { Label = "7"  },
     ];
 
-    public List<MultiSelectableItem> ChordQualities { get; } = Enum
+    public List<MultiSelectableItem<ChordQuality>> ChordQualities { get; } = Enum
         .GetValues<ChordQuality>()
         .Select(q =>
         {
-            var item = new MultiSelectableItem
+            var item = new MultiSelectableItem<ChordQuality>
             {
                 Label = q.ToString(),
+                Data = q,
                 IsSelected = q == ChordQuality.Major || q == ChordQuality.Minor
             };
             return item;
         })
         .ToList();
 
-    private void SyncChordQualities()
-    {
-
-    }
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
     public bool IsInteractiveMode => GameMode == GameMode.Interactive;
@@ -53,14 +50,14 @@ public partial class MainViewModel : ViewModelBase
     public bool IsChordQualityMode => GameMode == GameMode.ChordQuality;
 
     public bool HideCircleOfFifths => GameMode == GameMode.ChordQuality;
-    public bool GameModeNeedTonicControl => GameMode != GameMode.ChordQuality;
+    public bool GameModeNeedTonicControl => true;
     public bool GameModeNeedDroneControl => GameMode != GameMode.ChordQuality;
     public bool GameModeNeedOctaveControl => GameMode != GameMode.ChordQuality;
     public bool GameModeNeedScaleControl => GameMode != GameMode.ChordQuality;
 
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => Enum.GetValues<GameMode>();
-    public ScaleMode[] ScaleModes => [ScaleMode.All, ScaleMode.Ionian, ScaleMode.Dorian, ScaleMode.Phrygian, ScaleMode.Lydian, ScaleMode.Mixolydian, ScaleMode.Aeolian, ScaleMode.Locrian];
+    public ScaleMode[] ScaleModes => Enum.GetValues<ScaleMode>();
 
     [ObservableProperty] private bool _wideLayout;
     [ObservableProperty] private bool _shouldSelectAllDegrees = true;
@@ -145,6 +142,7 @@ public partial class MainViewModel : ViewModelBase
         Game.DialogNeeded += GameDialogNeeded;
         PushSettings();
         SyncDegrees();
+        SyncChordQualities();
     }
 
     private void GameDialogNeeded(DialogRequestedEventArgs e)
@@ -176,12 +174,15 @@ public partial class MainViewModel : ViewModelBase
 
     private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone, MelodyNoteGap));
 
-    private void SyncDegrees() => Game.AllowDegrees = Degrees;
+    private void SyncDegrees() => Game.AllowedDegrees = Degrees;
+    private void SyncChordQualities() => Game.AllowedChordQualities = ChordQualities;
 }
 
-public partial class MultiSelectableItem : ObservableObject
+public partial class MultiSelectableItem<TData> : ObservableObject
 {
-    [ObservableProperty] private string _label = "";
+    public string Label { get; set; } = "";
     [ObservableProperty] private bool _isSelected = true;
+    public TData? Data { get; set; }
+
 }
 

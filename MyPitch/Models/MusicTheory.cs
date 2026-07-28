@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 namespace MyPitch.Models;
 
 public static class MusicTheory
@@ -164,6 +163,29 @@ public static class MusicTheory
         return degs.Contains(note) ? note : degs[Random.Shared.Next(degs.Count)];
     }
 
+    public static List<int> BuildChord(Key root, Key Tonic, ChordQuality quality)
+    {
+        int rootIndex = Array.IndexOf(Keys, root);
+
+        if (rootIndex == -1)
+            throw new ArgumentException("Invalid root key.", nameof(root));
+
+        int[] intervals = quality switch
+        {
+            ChordQuality.Major => new[] { 0, 4, 7 },
+            ChordQuality.Minor => new[] { 0, 3, 7 },
+            ChordQuality.Minor7 => new[] { 0, 3, 7, 10 },
+            ChordQuality.Major7 => new[] { 0, 4, 7, 11 },
+            _ => throw new ArgumentOutOfRangeException(nameof(quality))
+        };
+        List<int> chord = new(intervals.Length);
+        foreach (int interval in intervals)
+        {
+            var key = Keys[(rootIndex + interval) % Keys.Length];
+            chord.Add(ToMidiNote(Tonic, key.ToString()));
+        }
+        return chord;
+    }
     private static string Leap(string prevNote, ScaleMode mode)
     {
         //intervals within the key context, not semitones

@@ -6,16 +6,27 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using MyPitch.Models;
 using MyPitch.ViewModels;
 
 namespace MyPitch.Controls;
 
 public class ChordQualityInput : ContentControl
+
 {
+    public static readonly StyledProperty<IList<MultiSelectableItem<ChordQuality>>> IncludedChordQualitiesProperty = AvaloniaProperty.Register<ChordQualityInput, IList<MultiSelectableItem<ChordQuality>>>(nameof(IncludedChordQualities));
 
-    public static readonly StyledProperty<IList<MultiSelectableItem>> IncludedChordQualitiesProperty = AvaloniaProperty.Register<ChordQualityInput, IList<MultiSelectableItem>>(nameof(IncludedChordQualities));
+    public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<ChordQualityInput, Models.Key>(nameof(Tonic));
 
-    public IList<MultiSelectableItem> IncludedChordQualities
+    public Models.Key Tonic
+    {
+        get => GetValue(TonicProperty);
+        set
+        {
+            SetValue(TonicProperty, value);
+        }
+    }
+    public IList<MultiSelectableItem<ChordQuality>> IncludedChordQualities
     {
         get => GetValue(IncludedChordQualitiesProperty);
         set
@@ -36,7 +47,7 @@ public class ChordQualityInput : ContentControl
         if (change.Property == IncludedChordQualitiesProperty)
         {
             if (change.NewValue is null) return;
-            var value = (IList<MultiSelectableItem>)change.NewValue;
+            var value = (IList<MultiSelectableItem<ChordQuality>>)change.NewValue;
             foreach (var deg in value)
             {
                 deg.PropertyChanged += IncludedChordQualitiesChanged;
@@ -57,8 +68,8 @@ public class ChordQualityInput : ContentControl
 
     void Build()
     {
-        var i = IncludedChordQualities.Count(p => p.IsSelected == true);
-        int maxCols = Math.Min(i, 3);
+        var selections = IncludedChordQualities.Where(p => p.IsSelected == true).ToList();
+        int maxCols = Math.Min(selections.Count(), 3);
 
         Grid main = new() { RowDefinitions = new("Auto,*") };
 
@@ -67,13 +78,15 @@ public class ChordQualityInput : ContentControl
             Columns = maxCols,
         };
         Grid.SetRow(uniformGrid, 1);
-        for (int j = 0; j < i; j++)
+        for (int j = 0; j < selections.Count(); j++)
         {
-            var buttonPanel = new PressableBorder();
+            var chordQuality = selections[j];
+            var buttonPanel = new PressableBorder() { Tag = chordQuality.Data};
             buttonPanel.Classes.Add("quality-input-button");
+            buttonPanel.PointerPressed += buttonPanelPointerPressed;
             var text = new TextBlock
             {
-                Text = IncludedChordQualities[j].Label,
+                Text = chordQuality.Label,
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
             };
@@ -91,6 +104,13 @@ public class ChordQualityInput : ContentControl
         main.Children.Add(topPanel);
         main.Children.Add(uniformGrid);
         Content = main;
+    }
+
+    private void buttonPanelPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (sender is null || ((PressableBorder)sender).Tag is not ChordQuality qual) return;
+        var chord = MusicTheory.BuildChord(Tonic, Tonic, qual);
+        PlatformServiceProvider.AudioDriver.PlayChord(chord);
     }
 }
 

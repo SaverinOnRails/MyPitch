@@ -1,5 +1,6 @@
 ﻿using SFML.Audio;
 using System;
+using System.Collections.Generic;
 using System.IO;
 namespace MyPitch.Desktop;
 
@@ -14,6 +15,15 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
     public void Play(int note)
     {
         _synth.NoteOn(0, note, 127);
+    }
+
+    public void PlayChord(List<int> notes)
+    {
+        ReleaseAll();
+        foreach (int note in notes)
+        {
+            _synth.NoteOn(0, note, 127);
+        }
     }
 
     public void Stop()
@@ -56,7 +66,7 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
         _synth.NoteOff(0, note);
     }
 
-    public void PlayDrone(int note , int velocity)
+    public void PlayDrone(int note, int velocity)
     {
         ReleaseDrone();
         _synth.NoteOn(5, note, velocity);
@@ -95,4 +105,5 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
     {
         _synth.AllNotesOff(0);
     }
+
 }
