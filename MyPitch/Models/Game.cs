@@ -11,15 +11,11 @@ using System.Threading.Tasks;
 namespace MyPitch.Models;
 
 public interface IUserResponse;
-public sealed class CircleIndexResponse : IUserResponse
-{
-    public int index { get; set; }
-}
 
-public sealed class ChordQualityResponse : IUserResponse
-{
-    public ChordQuality Quality { get; set; }
-}
+public sealed record CircleIndexResponse(int Index) : IUserResponse;
+
+public sealed record ChordQualityResponse(ChordQuality Quality) : IUserResponse;
+
 public partial class Game : ObservableObject
 {
     [ObservableProperty] private bool _isPlaying;
@@ -42,11 +38,13 @@ public partial class Game : ObservableObject
     private int _currentFolkNoteEventIndex = 0;
     private List<string>? _currentMelodyQuizDegrees = null;
     private bool _playedCadence;
+    private GameMode? _currentGameMode = null;
+    private Type? _expectedResponseType = null;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _gameCancellationTokenSource = new();
     private MelodyFile? _melodyFile = null;
     private CancellationTokenSource _repeatCancellationTokenSource = new();
-    private TaskCompletionSource<int>? _userClickTcs;
+    private TaskCompletionSource<IUserResponse>? _userResponseTcs;
 
     private Models.Key _oldTonic;
     private Stopwatch _folkMediaTimer = new();
@@ -90,19 +88,14 @@ public partial class Game : ObservableObject
         set
         {
             _userResponse = value;
+            if (value is null) return;
+            //check if the response type is the expected type, if not discard it.
+            if (value.GetType() != _expectedResponseType) return;
+            _userResponseTcs?.TrySetResult(value);
+
         }
     }
-    private int? _userClickedIndex;
     private bool _dronePlaying;
-    public int? UserClickedIndex
-    {
-        get => _userClickedIndex;
-        set
-        {
-            _userClickedIndex = value;
-            if (value is not null) _userClickTcs?.TrySetResult(value.Value);
-        }
-    }
 
     public bool GameModeNeedsDrone => Settings.Mode != GameMode.ChordQuality;
 
@@ -128,10 +121,14 @@ public partial class Game : ObservableObject
         else await Start();
     }
 
+
+    //stop and clean up game state
     public void Stop()
     {
         _gameCancellationTokenSource.Cancel();
         _repeatCancellationTokenSource.Cancel();
+        _currentGameMode = null;
+        _expectedResponseType = null;
         SuspendDrone();
         IsPlaying = false;
         _folkMediaTimer.Reset();
@@ -155,6 +152,15 @@ public partial class Game : ObservableObject
         {
             PlayDrone();
             IsPlaying = true;
+            _currentGameMode = Settings.Mode;
+            if (_currentGameMode == GameMode.ChordQuality)
+            {
+                _expectedResponseType = typeof(ChordQualityResponse);
+            }
+            else
+            {
+                _expectedResponseType = typeof(CircleIndexResponse);
+            }
             await (Settings.Mode
                 switch
             {
@@ -220,10 +226,10 @@ public partial class Game : ObservableObject
             List<string> userResponses = new();
             for (int i = 0; i < melodyNoteCount; i++)
             {
-                _userClickTcs = new TaskCompletionSource<int>();
-                var userResponse = await _userClickTcs.Task.WaitAsync(_gameCancellationTokenSource.Token);
+                _userResponseTcs = new();
+                var userResponse = await _userResponseTcs.Task.WaitAsync(_gameCancellationTokenSource.Token);
                 var dict = MelodyBarState.UserChoices;
-                var deg = MusicTheory.FifthIntervalScaleGraduation[userResponse];
+                var deg = MusicTheory.FifthIntervalScaleGraduation[((CircleIndexResponse)userResponse).Index];
                 dict[i] = deg;
                 userResponses.Add(deg);
                 MelodyBarState = new(dict, new());
@@ -409,15 +415,16 @@ public partial class Game : ObservableObject
             await Task.Delay(GameClickTimeout * 2, _gameCancellationTokenSource.Token);
             var quizDeg = await PlayQuizNote(hidden: true);
             var quizNoteIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
-            _userClickTcs = new TaskCompletionSource<int>();
+            _userResponseTcs = new();
             var responseStart = DateTime.Now;
 
             _currentInteractiveQuizDegree = quizDeg; //for repeat
-            var userResponse = await _userClickTcs.Task.WaitAsync(_gameCancellationTokenSource.Token);
+            var userResponse = await _userResponseTcs.Task.WaitAsync(_gameCancellationTokenSource.Token);
             _currentInteractiveQuizDegree = null;
             var responseEnd = DateTime.Now - responseStart;
             totalResponseTime += responseEnd;
-            if (userResponse == quizNoteIndex)
+            var index = ((CircleIndexResponse)userResponse).Index;
+            if (index == quizNoteIndex)
             {
                 AnswerState = AnswerState.Correct;
                 GameClickedIndex = quizNoteIndex;
@@ -440,7 +447,7 @@ public partial class Game : ObservableObject
                     await PlayScaleNote(quizDeg, hidden: false, duration: 200);
                     await Task.Delay(50, _gameCancellationTokenSource.Token);
                 }
-                stats.AddStatForDeg(quizDeg, responseEnd, false, MusicTheory.FifthIntervalScaleGraduation[userResponse]);
+                stats.AddStatForDeg(quizDeg, responseEnd, false, MusicTheory.FifthIntervalScaleGraduation[index]);
             }
 
             if (InteractiveModeRounds == _interactiveModeMinRoundCount)

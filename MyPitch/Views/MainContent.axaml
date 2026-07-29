@@ -111,7 +111,7 @@
                 Octave="{Binding Game.Octave}"
                 RepeatCommand="{Binding Repeat}"
                 Tonic="{Binding Game.Tonic}"
-                UserClickedIndex="{Binding Game.UserClickedIndex, Mode=TwoWay}" />
+                UserResponse="{Binding Game.UserResponse, Mode=TwoWay}" />
         </Grid>
         <shadui:Card
             x:Name="Card"
