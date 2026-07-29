@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Avalonia;
@@ -7,61 +6,11 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using MyPitch.Models;
-using MyPitch.ViewModels;
 
 namespace MyPitch.Controls;
 
-public class ChordQualityInput : ContentControl
+internal class ChordQualityInput : GameInputControl<ChordQuality>
 {
-
-    public static readonly StyledProperty<IList<MultiSelectableItem<ChordQuality>>> IncludedChordQualitiesProperty = AvaloniaProperty.Register<ChordQualityInput, IList<MultiSelectableItem<ChordQuality>>>(nameof(IncludedChordQualities));
-
-    public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<ChordQualityInput, Models.Key>(nameof(Tonic));
-
-    public static readonly StyledProperty<IModeResponse?> UserResponseProperty = AvaloniaProperty.Register<ChordQualityInput, IModeResponse?>(nameof(UserResponse), null);
-
-    public static readonly StyledProperty<IModeResponse?> GameResponseProperty = AvaloniaProperty.Register<ChordQualityInput, IModeResponse?>(nameof(GameResponse), null);
-
-
-    public static readonly StyledProperty<AnswerState> AnswerStateProperty = AvaloniaProperty.Register<CircleOfFifths, AnswerState>(nameof(AnswerState));
-
-    public IModeResponse? UserResponse
-    {
-        get => GetValue(UserResponseProperty);
-        set => SetValue(UserResponseProperty, value);
-    }
-    public IModeResponse? GameResponse
-    {
-        get => GetValue(GameResponseProperty);
-        set => SetValue(GameResponseProperty, value);
-    }
-
-    public Models.Key Tonic
-    {
-        get => GetValue(TonicProperty);
-        set
-        {
-            SetValue(TonicProperty, value);
-        }
-    }
-
-    public AnswerState AnswerState
-    {
-        get => GetValue(AnswerStateProperty);
-        set
-        {
-            SetValue(AnswerStateProperty, value);
-        }
-    }
-    public IList<MultiSelectableItem<ChordQuality>> IncludedChordQualities
-    {
-        get => GetValue(IncludedChordQualitiesProperty);
-        set
-        {
-            SetValue(IncludedChordQualitiesProperty, value);
-        }
-    }
-
     public ChordQualityInput()
     {
         HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
@@ -71,29 +20,13 @@ public class ChordQualityInput : ContentControl
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == IncludedChordQualitiesProperty)
-        {
-            if (change.NewValue is null) return;
-            var value = (IList<MultiSelectableItem<ChordQuality>>)change.NewValue;
-            foreach (var deg in value)
-            {
-                deg.PropertyChanged += IncludedChordQualitiesChanged;
-            }
-        }
-        if (change.Property == GameResponseProperty)
-        {
-            Build();
-        }
-        if (change.Property == AnswerStateProperty)
-        {
-            Build();
-        }
     }
 
     private void IncludedChordQualitiesChanged(object? sender, PropertyChangedEventArgs e)
     {
         Build();
     }
+    protected override void DrawFunc() => Build();
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -103,7 +36,7 @@ public class ChordQualityInput : ContentControl
 
     void Build()
     {
-        var selections = IncludedChordQualities.Where(p => p.IsSelected == true).ToList();
+        var selections = IncludedMultiSelectable.Where(p => p.IsSelected == true).ToList();
         int maxCols = Math.Min(selections.Count(), 3);
 
         Grid main = new() { RowDefinitions = new("Auto,*") };
@@ -156,6 +89,7 @@ public class ChordQualityInput : ContentControl
         PlatformServiceProvider.AudioDriver.PlayChord(chord);
         UserResponse = new ChordQualityResponse(qual);
     }
+
 }
 
 public class PressableBorder : Border

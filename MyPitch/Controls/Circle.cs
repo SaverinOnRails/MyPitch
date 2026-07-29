@@ -14,7 +14,7 @@ using static MyPitch.PlatformServiceProvider;
 
 namespace MyPitch.Controls;
 
-internal class CircleOfFifths : Control
+internal class CircleOfFifths : GameInputControl<string>
 {
     private readonly String[] _noteGraduations = MusicTheory.FifthIntervalScaleGraduation;
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -75,39 +75,17 @@ internal class CircleOfFifths : Control
     private double _animationRotationAngleTarget;
     private double _animationRotationAngle;
     private bool _mouseOnRepeatButton = false;
-    public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<CircleOfFifths, Models.Key>(nameof(Tonic));
     public static readonly StyledProperty<Models.GameMode> GameModeProperty = AvaloniaProperty.Register<CircleOfFifths, Models.GameMode>(nameof(GameMode));
-    public static readonly StyledProperty<IEnumerable<MultiSelectableItem<string>>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<MultiSelectableItem<string>>>(nameof(IncludedDegrees));
     public static readonly StyledProperty<int> OctaveProperty = AvaloniaProperty.Register<CircleOfFifths, int>(nameof(Octave));
 
-    public static readonly StyledProperty<IModeResponse?> GameResponseProperty = AvaloniaProperty.Register<ChordQualityInput, IModeResponse?>(nameof(UserResponse), null);
-
-    public static readonly StyledProperty<IModeResponse?> UserResponseProperty = AvaloniaProperty.Register<CircleOfFifths, IModeResponse?>(nameof(UserResponse), null);
-    public static readonly StyledProperty<AnswerState> AnswerStateProperty = AvaloniaProperty.Register<CircleOfFifths, AnswerState>(nameof(AnswerState));
     public static readonly StyledProperty<ICommand> RepeatCommandProperty = AvaloniaProperty.Register<CircleOfFifths, ICommand>(nameof(RepeatCommand));
 
-    public IEnumerable<MultiSelectableItem<string>> IncludedDegrees
-    {
-        get => GetValue(IncludedDegreesProperty);
-        set
-        {
-            SetValue(IncludedDegreesProperty, value);
-        }
-    }
     public ICommand RepeatCommand
     {
         get => GetValue(RepeatCommandProperty);
         set
         {
             SetValue(RepeatCommandProperty, value);
-        }
-    }
-    public AnswerState AnswerState
-    {
-        get => GetValue(AnswerStateProperty);
-        set
-        {
-            SetValue(AnswerStateProperty, value);
         }
     }
     public int Octave
@@ -120,17 +98,6 @@ internal class CircleOfFifths : Control
         get => GetValue(GameModeProperty);
         set => SetValue(GameModeProperty, value);
     }
-    public IModeResponse? UserResponse
-    {
-        get => GetValue(UserResponseProperty);
-        set => SetValue(UserResponseProperty, value);
-    }
-
-    public IModeResponse? GameResponse
-    {
-        get => GetValue(GameResponseProperty);
-        set => SetValue(GameResponseProperty, value);
-    }
     private void IncludedDegreesChanged(object? sender, PropertyChangedEventArgs e)
     {
         InvalidateVisual(); //This might cause issues being done to rapidly
@@ -139,35 +106,15 @@ internal class CircleOfFifths : Control
     public static Typeface NotoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
 
     private Models.Key _displayTonic = Models.Key.C;
-    public Models.Key Tonic
-    {
-        get => GetValue(TonicProperty);
-        set
-        {
-            SetValue(TonicProperty, value);
-        }
-    }
+
     private int? _mouseOnSegmentIndex = null;
     private TopLevel? _toplevel;
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (change.Property == GameResponseProperty || change.Property == GameModeProperty)
+        if (change.Property == GameModeProperty)
         {
             InvalidateVisual();
-        }
-        if (change.Property == AnswerStateProperty)
-        {
-            HandleAnswerStateChange();
-        }
-        if (change.Property == IncludedDegreesProperty)
-        {
-            if (change.NewValue is null) return;
-            var value = (IEnumerable<MultiSelectableItem<string>>)change.NewValue;
-            foreach (var deg in value)
-            {
-                deg.PropertyChanged += IncludedDegreesChanged;
-            }
         }
         if (change.Property == TonicProperty)
         {
@@ -188,29 +135,14 @@ internal class CircleOfFifths : Control
         }
         base.OnPropertyChanged(change);
     }
-    private void HandleAnswerStateChange()
-    {
-        if (AnswerState == AnswerState.Correct)
-        {
-            _accentBrush = new SolidColorBrush(Color.Parse("#48A111"));
-        }
-        else if (AnswerState == AnswerState.Incorrect)
-        {
-            _accentBrush = new SolidColorBrush(Color.Parse("#C40C0C"));
-        }
-        else
-        {
-            _accentBrush = new SolidColorBrush((Color)Application.Current!.Resources["PrimaryColor"]!); //is it costly to keep calling this?
-        }
-        InvalidateVisual();
-    }
 
     public override void Render(DrawingContext context)
     {
+
         var outer_radius = Math.Min(Bounds.Width, Bounds.Height) / 2;
         var center = new Point(Bounds.Width / 2, Bounds.Height / 2);
 
-        var selectedDegreeIndices = IncludedDegrees
+        var selectedDegreeIndices = IncludedMultiSelectable
             .Where(p => p.IsSelected)
             .Select(p => _noteGraduations.IndexOf(p.Label));
 
@@ -410,6 +342,24 @@ internal class CircleOfFifths : Control
         }
     }
 
+    protected override void DrawFunc() => InvalidateVisual();
+
+    protected override void OnAnswerStateChanged()
+    {
+        if (AnswerState == AnswerState.Correct)
+        {
+            _accentBrush = new SolidColorBrush(Color.Parse("#48A111"));
+        }
+        else if (AnswerState == AnswerState.Incorrect)
+        {
+            _accentBrush = new SolidColorBrush(Color.Parse("#C40C0C"));
+        }
+        else
+        {
+            _accentBrush = new SolidColorBrush((Color)Application.Current!.Resources["PrimaryColor"]!); //is it costly to keep calling this?
+        }
+        base.OnAnswerStateChanged();
+    }
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
@@ -505,5 +455,6 @@ internal class CircleOfFifths : Control
           center.Y - distance * Math.Cos(angle)
         );
     }
+
 }
 
