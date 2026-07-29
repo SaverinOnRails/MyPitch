@@ -95,17 +95,20 @@
 
             <controls:ChordQualityInput
                 Grid.Row="1"
+                AnswerState="{Binding Game.AnswerState}"
                 Classes="fade-panel"
-                Tonic="{Binding Game.Tonic}"
                 Classes.collapsed="{Binding !IsChordQualityMode}"
-                IncludedChordQualities="{Binding ChordQualities}" />
+                GameResponse="{Binding Game.GameResponse}"
+                IncludedChordQualities="{Binding ChordQualities}"
+                Tonic="{Binding Game.Tonic}"
+                UserResponse="{Binding Game.UserResponse, Mode=TwoWay}" />
             <controls:CircleOfFifths
                 Grid.Row="1"
                 Margin="10"
                 AnswerState="{Binding Game.AnswerState}"
                 Classes="fade-panel"
                 Classes.collapsed="{Binding HideCircleOfFifths}"
-                GameClickedIndex="{Binding Game.GameClickedIndex}"
+                GameResponse="{Binding Game.GameResponse}"
                 GameMode="{Binding GameMode}"
                 IncludedDegrees="{Binding Degrees}"
                 Octave="{Binding Game.Octave}"

@@ -12,11 +12,29 @@ using MyPitch.ViewModels;
 namespace MyPitch.Controls;
 
 public class ChordQualityInput : ContentControl
-
 {
+
     public static readonly StyledProperty<IList<MultiSelectableItem<ChordQuality>>> IncludedChordQualitiesProperty = AvaloniaProperty.Register<ChordQualityInput, IList<MultiSelectableItem<ChordQuality>>>(nameof(IncludedChordQualities));
 
     public static readonly StyledProperty<Models.Key> TonicProperty = AvaloniaProperty.Register<ChordQualityInput, Models.Key>(nameof(Tonic));
+
+    public static readonly StyledProperty<IModeResponse?> UserResponseProperty = AvaloniaProperty.Register<ChordQualityInput, IModeResponse?>(nameof(UserResponse), null);
+
+    public static readonly StyledProperty<IModeResponse?> GameResponseProperty = AvaloniaProperty.Register<ChordQualityInput, IModeResponse?>(nameof(GameResponse), null);
+
+
+    public static readonly StyledProperty<AnswerState> AnswerStateProperty = AvaloniaProperty.Register<CircleOfFifths, AnswerState>(nameof(AnswerState));
+
+    public IModeResponse? UserResponse
+    {
+        get => GetValue(UserResponseProperty);
+        set => SetValue(UserResponseProperty, value);
+    }
+    public IModeResponse? GameResponse
+    {
+        get => GetValue(GameResponseProperty);
+        set => SetValue(GameResponseProperty, value);
+    }
 
     public Models.Key Tonic
     {
@@ -24,6 +42,15 @@ public class ChordQualityInput : ContentControl
         set
         {
             SetValue(TonicProperty, value);
+        }
+    }
+
+    public AnswerState AnswerState
+    {
+        get => GetValue(AnswerStateProperty);
+        set
+        {
+            SetValue(AnswerStateProperty, value);
         }
     }
     public IList<MultiSelectableItem<ChordQuality>> IncludedChordQualities
@@ -53,6 +80,14 @@ public class ChordQualityInput : ContentControl
                 deg.PropertyChanged += IncludedChordQualitiesChanged;
             }
         }
+        if (change.Property == GameResponseProperty)
+        {
+            Build();
+        }
+        if (change.Property == AnswerStateProperty)
+        {
+            Build();
+        }
     }
 
     private void IncludedChordQualitiesChanged(object? sender, PropertyChangedEventArgs e)
@@ -81,9 +116,16 @@ public class ChordQualityInput : ContentControl
         for (int j = 0; j < selections.Count(); j++)
         {
             var chordQuality = selections[j];
-            var buttonPanel = new PressableBorder() { Tag = chordQuality.Data};
+            var buttonPanel = new PressableBorder() { Tag = chordQuality.Data };
             buttonPanel.Classes.Add("quality-input-button");
             buttonPanel.PointerPressed += buttonPanelPointerPressed;
+            if (GameResponse is ChordQualityResponse r && r.Quality == chordQuality.Data)
+            {
+                if (AnswerState == AnswerState.Correct)
+                    buttonPanel.Classes.Add("game-correct");
+                else if (AnswerState == AnswerState.Incorrect)
+                    buttonPanel.Classes.Add("game-incorrect");
+            }
             var text = new TextBlock
             {
                 Text = chordQuality.Label,
@@ -106,11 +148,13 @@ public class ChordQualityInput : ContentControl
         Content = main;
     }
 
+
     private void buttonPanelPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (sender is null || ((PressableBorder)sender).Tag is not ChordQuality qual) return;
         var chord = MusicTheory.BuildChord(Tonic, Tonic, qual);
         PlatformServiceProvider.AudioDriver.PlayChord(chord);
+        UserResponse = new ChordQualityResponse(qual);
     }
 }
 

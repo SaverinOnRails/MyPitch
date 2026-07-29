@@ -80,8 +80,9 @@ internal class CircleOfFifths : Control
     public static readonly StyledProperty<IEnumerable<MultiSelectableItem<string>>> IncludedDegreesProperty = AvaloniaProperty.Register<CircleOfFifths, IEnumerable<MultiSelectableItem<string>>>(nameof(IncludedDegrees));
     public static readonly StyledProperty<int> OctaveProperty = AvaloniaProperty.Register<CircleOfFifths, int>(nameof(Octave));
 
-    public static readonly StyledProperty<int?> GameClickedIndexProperty = AvaloniaProperty.Register<CircleOfFifths, int?>(nameof(GameClickedIndex), null);
-    public static readonly StyledProperty<IUserResponse?> UserResponseProperty = AvaloniaProperty.Register<CircleOfFifths, IUserResponse?>(nameof(UserResponse), null);
+    public static readonly StyledProperty<IModeResponse?> GameResponseProperty = AvaloniaProperty.Register<ChordQualityInput, IModeResponse?>(nameof(UserResponse), null);
+
+    public static readonly StyledProperty<IModeResponse?> UserResponseProperty = AvaloniaProperty.Register<CircleOfFifths, IModeResponse?>(nameof(UserResponse), null);
     public static readonly StyledProperty<AnswerState> AnswerStateProperty = AvaloniaProperty.Register<CircleOfFifths, AnswerState>(nameof(AnswerState));
     public static readonly StyledProperty<ICommand> RepeatCommandProperty = AvaloniaProperty.Register<CircleOfFifths, ICommand>(nameof(RepeatCommand));
 
@@ -119,15 +120,16 @@ internal class CircleOfFifths : Control
         get => GetValue(GameModeProperty);
         set => SetValue(GameModeProperty, value);
     }
-    public int? GameClickedIndex
-    {
-        get => GetValue(GameClickedIndexProperty);
-        set => SetValue(GameClickedIndexProperty, value);
-    }
-    public IUserResponse? UserResponse
+    public IModeResponse? UserResponse
     {
         get => GetValue(UserResponseProperty);
         set => SetValue(UserResponseProperty, value);
+    }
+
+    public IModeResponse? GameResponse
+    {
+        get => GetValue(GameResponseProperty);
+        set => SetValue(GameResponseProperty, value);
     }
     private void IncludedDegreesChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -150,7 +152,7 @@ internal class CircleOfFifths : Control
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (change.Property == GameClickedIndexProperty || change.Property == GameModeProperty)
+        if (change.Property == GameResponseProperty || change.Property == GameModeProperty)
         {
             InvalidateVisual();
         }
@@ -183,7 +185,6 @@ internal class CircleOfFifths : Control
             _animationDurationMs = Math.Clamp(Math.Abs(diff * 300), 300, 1000);
             _animationStartTime = DateTime.Now;
             _toplevel?.RequestAnimationFrame(OnToplevelRenderFrame);
-
         }
         base.OnPropertyChanged(change);
     }
@@ -258,7 +259,11 @@ internal class CircleOfFifths : Control
         double endAngle = startAngle + THIRTY_DEG_RAD;
         double midAngle = startAngle + THIRTY_DEG_RAD / 2;
 
-        bool isClicked = _userClickedIndex == index || GameClickedIndex == index;
+        bool isClicked = _userClickedIndex == index;
+        if (GameResponse is CircleIndexResponse r)
+        {
+            isClicked = isClicked || (r.Index == index);
+        }
         bool isHovered = _mouseOnSegmentIndex == index;
         bool isGrayedOut = !selectedDegreeIndices.Contains(index);
 
