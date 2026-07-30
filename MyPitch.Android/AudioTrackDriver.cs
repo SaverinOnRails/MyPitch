@@ -1,18 +1,11 @@
-﻿using Android.Bluetooth;
-using Android.Hardware.Lights;
-using Android.Icu.Util;
-using Android.Media;
-using Android.Renderscripts;
+﻿using Android.Media;
 using MeltySynth;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using AndroidMedia = Android.Media;
-using AndroidOS = Android.OS;
 namespace MyPitch.Droid;
 
 internal class AudioTrackDriver : IAudioDriver
@@ -26,8 +19,13 @@ internal class AudioTrackDriver : IAudioDriver
     private float[] _interlaced;
     private MediaPlayer _player = new();
 
+    private string _soundFontPath;
+    private string _droneSoundFontPath;
+
     public AudioTrackDriver(string soundFont, string droneFont)
     {
+        _soundFontPath = soundFont;
+        _droneSoundFontPath = droneFont;
         _synth = new MeltySynth.Synthesizer(soundFont, SAMPLE_RATE);
         _droneSynth = new MeltySynth.Synthesizer(droneFont, SAMPLE_RATE);
         var minBufferSize = AudioTrack.GetMinBufferSize(
@@ -56,7 +54,10 @@ internal class AudioTrackDriver : IAudioDriver
         _interlaced = new float[blocksize * 2];
         _temp = new float[blocksize * 2];
         _audioTrack.Play();
-        Task.Factory.StartNew(WriteToSink, TaskCreationOptions.LongRunning);
+        _ = Task.Run(() =>
+        {
+            WriteToSink();
+        });
 
         //Can probably convert these too PCMs and play directly with AudioTrack for more performance but honestly who cares
         var names = new string[] { "1", "2", "3", "4", "5", "6", "7", "flat-2", "flat-3", "flat-6", "flat-7", "sharp-4" };
@@ -83,6 +84,25 @@ internal class AudioTrackDriver : IAudioDriver
     {
         _synth.NoteOn(0, note, 127);
     }
+
+    public void PlayChord(List<int> notes)
+    {
+        ReleaseAll();
+        //TODO: Find out why this throws
+        try
+        {
+            foreach (int note in notes)
+            {
+                _synth.NoteOn(0, note, 127);
+            }
+        }
+        catch
+        {
+            //for now recreate synthesizer when it dies
+            _synth = new MeltySynth.Synthesizer(_soundFontPath, SAMPLE_RATE);
+        }
+    }
+
     private void WriteToSink()
     {
         while (true)
@@ -104,7 +124,7 @@ internal class AudioTrackDriver : IAudioDriver
         _synth.NoteOff(0, note);
     }
 
-    public void PlayDrone(int note , int velocity)
+    public void PlayDrone(int note, int velocity)
     {
         ReleaseDrone();
         _droneSynth.NoteOn(0, note, velocity);

@@ -115,7 +115,6 @@ internal class ChordQualityInput : GameInputControl<ChordQuality>
             UserResponse = new ChordQualityResponse(qual);
         }
     }
-
 }
 
 public class PressableBorder : Border

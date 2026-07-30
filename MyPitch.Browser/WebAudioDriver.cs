@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Collections.Generic;
 
 namespace MyPitch.Browser;
 
@@ -18,7 +19,15 @@ public class WebAudioDriver : IAudioDriver
         Interop.NoteOn(5, note, velocity);
     }
 
-    public unsafe void PlaySpeechSample(string sample)
+    public void PlayChord(List<int> notes)
+    {
+        ReleaseAll();
+        foreach (int note in notes)
+        {
+            Interop.NoteOn(0, note, 127);
+        }
+    }
+    public void PlaySpeechSample(string sample)
     {
         var stream = EmbeddedResources.GetSpeechSample(sample);
         if (stream is null)
