@@ -110,7 +110,10 @@ internal class ChordQualityInput : GameInputControl<ChordQuality>
         if (sender is null || ((PressableBorder)sender).Tag is not ChordQuality qual) return;
         var chord = MusicTheory.BuildChord(Tonic, Tonic, qual);
         PlatformServiceProvider.AudioDriver.PlayChord(chord);
-        UserResponse = new ChordQualityResponse(qual);
+        if (e.Properties.IsLeftButtonPressed)
+        {
+            UserResponse = new ChordQualityResponse(qual);
+        }
     }
 
 }

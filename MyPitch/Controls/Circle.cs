@@ -351,7 +351,8 @@ internal class CircleOfFifths : GameInputControl<string>
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        HitTest(e.GetCurrentPoint(this), true);
+        var point = e.GetCurrentPoint(this);
+        HitTest(point, point.Properties.IsLeftButtonPressed ? MouseButton.Left : MouseButton.Right);
 
     }
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
@@ -373,7 +374,7 @@ internal class CircleOfFifths : GameInputControl<string>
         _mouseOnRepeatButton = false;
         InvalidateVisual();
     }
-    private void HitTest(PointerPoint point, bool click = false)
+    private void HitTest(PointerPoint point, MouseButton? clickedMouseButton = null)
     {
         Point center = new(Bounds.Width / 2, Bounds.Height / 2);
         var outerRadius = Math.Min(Bounds.Width, Bounds.Height) / 2;
@@ -385,11 +386,11 @@ internal class CircleOfFifths : GameInputControl<string>
         double dist = Math.Sqrt(dx * dx + dy * dy);
         if (dist < third_inner_radius)
         {
-            HitTestRepeatButton(click);
+            HitTestRepeatButton(clickedMouseButton);
         }
         else if (dist > innerRadius && dist < outerRadius)
         {
-            HitTestSegment(dx, dy, click);
+            HitTestSegment(dx, dy, clickedMouseButton);
         }
         else
         {
@@ -401,9 +402,9 @@ internal class CircleOfFifths : GameInputControl<string>
         }
     }
 
-    private void HitTestRepeatButton(bool click)
+    private void HitTestRepeatButton(MouseButton? click)
     {
-        if (click)
+        if (click is not null)
         {
             RepeatCommand.Execute(null);
         }
@@ -414,14 +415,14 @@ internal class CircleOfFifths : GameInputControl<string>
         InvalidateVisual();
     }
 
-    private void HitTestSegment(double dx, double dy, bool click)
+    private void HitTestSegment(double dx, double dy, MouseButton? click)
     {
         double angle = Math.Atan2(dx, -dy);
         if (angle < 0) angle += 2 * Math.PI;
         double offsetAngle = angle + THIRTY_DEG_RAD / 2;
         if (offsetAngle >= 2 * Math.PI) offsetAngle -= 2 * Math.PI;
         int index = (int)(offsetAngle / (Math.PI / 6)) % 12;
-        if (click == false)
+        if (click is null)
         {
             if (index == _mouseOnSegmentIndex) return;
             _mouseOnSegmentIndex = index;
@@ -429,7 +430,10 @@ internal class CircleOfFifths : GameInputControl<string>
         else
         {
             _userClickedIndex = index;
-            UserResponse = new CircleIndexResponse(index);
+            if (click == MouseButton.Left)
+            {
+                UserResponse = new CircleIndexResponse(index);
+            }
             var note = MusicTheory.ToMidiNote(Tonic, MusicTheory.NoteAtDegree(Tonic, index + 1, true), Octave);
             AudioDriver.Play(note);
         }
@@ -446,3 +450,8 @@ internal class CircleOfFifths : GameInputControl<string>
 
 }
 
+enum MouseButton
+{
+    Left,
+    Right,
+}

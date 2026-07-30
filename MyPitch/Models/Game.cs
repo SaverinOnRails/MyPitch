@@ -227,7 +227,7 @@ public partial class Game : ObservableObject
                 AnswerState = AnswerState.Correct;
                 GameResponse = new ChordQualityResponse(quizQuality);
                 await Task.Delay(1000, _gameCancellationTokenSource.Token);
-                stats.AddStatForDeg(quizQuality.ToString(), responseEnd, true, null);
+                stats.Add(quizQuality.ToString(), responseEnd, true, null);
                 GameResponse = null;
             }
             else
@@ -242,7 +242,7 @@ public partial class Game : ObservableObject
                     AnswerState = AnswerState.Neutral;
                     await Task.Delay(100, _gameCancellationTokenSource.Token);
                 }
-                stats.AddStatForDeg(quizQuality.ToString(), responseEnd, false, responseQuality.ToString());
+                stats.Add(quizQuality.ToString(), responseEnd, false, responseQuality.ToString());
                 GameResponse = null;
             }
 
@@ -493,7 +493,7 @@ public partial class Game : ObservableObject
                     var resolution = MusicTheory.SimpleResolutionMap[quizDeg];
                     await PlayScaleNote(resolution.ResolveTo, hidden: false, duration: 500, resolution.ResolveToNextOctave ? Octave + 1 : Octave);
                 }
-                stats.AddStatForDeg(quizDeg, responseEnd, true, null);
+                stats.Add(quizDeg, responseEnd, true, null);
                 GameResponse = null;
             }
             else
@@ -505,7 +505,7 @@ public partial class Game : ObservableObject
                     await PlayScaleNote(quizDeg, hidden: false, duration: 200);
                     await Task.Delay(50, _gameCancellationTokenSource.Token);
                 }
-                stats.AddStatForDeg(quizDeg, responseEnd, false, MusicTheory.FifthIntervalScaleGraduation[index]);
+                stats.Add(quizDeg, responseEnd, false, MusicTheory.FifthIntervalScaleGraduation[index]);
             }
 
             if (InteractiveModeRounds == _interactiveModeMinRoundCount)
@@ -715,7 +715,7 @@ public class InteractiveModeStats(GameMode mode)
             return (float)correct / total * 100f;
         }
     }
-    public void AddStatForDeg(string deg, TimeSpan responseTime, bool correct, string? mistakenFor)
+    public void Add(string deg, TimeSpan responseTime, bool correct, string? mistakenFor)
     {
         _ = Stats.TryAdd(deg, new());
         Stats[deg].TotalResponseTime += responseTime;
