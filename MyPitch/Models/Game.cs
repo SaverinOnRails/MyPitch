@@ -39,6 +39,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private int _octave = 4;
     [ObservableProperty] private int _droneVolume = 100;
     [ObservableProperty] private int _interactiveModeRounds = 1;
+    [ObservableProperty] private int _chordQualityModeRounds = 1;
     [ObservableProperty] private TimeSpan _folkMediaDuration;
     [ObservableProperty] private TimeSpan _folkMediaProgress;
     [ObservableProperty] private float _playbackSpeed = 1;
@@ -50,6 +51,7 @@ public partial class Game : ObservableObject
     private const int _interactiveModeMinRoundCount = 20;
     private string? _currentInteractiveQuizDegree = null;
     private int _currentFolkNoteEventIndex = 0;
+    private ChordQuality? _currentQuizChordQuality = null;
     private List<string>? _currentMelodyQuizDegrees = null;
     private bool _playedCadence;
     private GameMode? _currentGameMode = null;
@@ -151,6 +153,7 @@ public partial class Game : ObservableObject
         FolkMediaDuration = TimeSpan.Zero;
         FolkMediaProgress = TimeSpan.Zero;
         InteractiveModeRounds = 1;
+        ChordQualityModeRounds = 1;
         _currentInteractiveQuizDegree = null;
         _currentFolkNoteEventIndex = 0;
         _currentMelodyQuizDegrees = null;
@@ -211,6 +214,7 @@ public partial class Game : ObservableObject
             PlatformServiceProvider.AudioDriver.PlayChord(quizChord);
 
             //await user response
+            _currentQuizChordQuality = quizQuality;
             var userResponse = await _userResponseTcs.Task.WaitAsync(_gameCancellationTokenSource.Token);
             var quality = ((ChordQualityResponse)userResponse).Quality;
             if (quality == quizQuality)
@@ -224,8 +228,30 @@ public partial class Game : ObservableObject
             {
                 AnswerState = AnswerState.Incorrect;
                 GameResponse = new ChordQualityResponse(quizQuality);
-                await Task.Delay(1000, _gameCancellationTokenSource.Token);
+
+                //flashing effect
+                for (int i = 0; i < 5; i++)
+                {
+                    AnswerState = AnswerState.Incorrect;
+                    await Task.Delay(300, _gameCancellationTokenSource.Token);
+                    AnswerState = AnswerState.Neutral;
+                    await Task.Delay(100, _gameCancellationTokenSource.Token);
+                }
+                GameResponse = null;
             }
+
+            if (ChordQualityModeRounds == _interactiveModeMinRoundCount)
+            {
+                // stats.AverageResponseTime = ((totalResponseTime) / InteractiveModeRounds);
+                // DialogNeeded?.Invoke(new(
+                //     new InteractiveModeStatsDialogContent()
+                //     {
+                //         Stats = stats
+                //     }
+                // ));
+                _gameCancellationTokenSource.Cancel();
+            }
+            ChordQualityModeRounds++;
         }
     }
 
@@ -523,6 +549,11 @@ public partial class Game : ObservableObject
             {
                 await PlayScaleNote(note, hidden: true, Settings.MelodyNoteGapMs(), cts: _repeatCancellationTokenSource);
             }
+        }
+        else if (_currentGameMode == GameMode.ChordQuality && _currentQuizChordQuality is not null)
+        {
+            var quizChord = MusicTheory.BuildChord(Tonic, Tonic, _currentQuizChordQuality.Value);
+            PlatformServiceProvider.AudioDriver.PlayChord(quizChord);
         }
         else { }
     }

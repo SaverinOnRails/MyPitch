@@ -1,6 +1,6 @@
-
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using MyPitch.Models;
@@ -26,6 +26,16 @@ internal abstract class GameInputControl<TMultiSelectable> : ContentControl
         set
         {
             SetValue(IncludedMultiSelectableProperty, value);
+        }
+    }
+    public static readonly StyledProperty<ICommand> RepeatCommandProperty = AvaloniaProperty.Register<GameInputControl<TMultiSelectable>, ICommand>(nameof(RepeatCommand));
+
+    public ICommand RepeatCommand
+    {
+        get => GetValue(RepeatCommandProperty);
+        set
+        {
+            SetValue(RepeatCommandProperty, value);
         }
     }
 
@@ -62,6 +72,7 @@ internal abstract class GameInputControl<TMultiSelectable> : ContentControl
     protected virtual void OnGameResponseChanged() { DrawFunc(); }
     protected virtual void OnAnswerStateChanged() { DrawFunc(); }
     protected virtual void OnMultiSelectableChanged() { DrawFunc(); }
+
 
     protected abstract void DrawFunc();
 

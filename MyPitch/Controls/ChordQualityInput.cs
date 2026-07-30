@@ -4,7 +4,9 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using MyPitch.Models;
 
 namespace MyPitch.Controls;
@@ -70,17 +72,38 @@ internal class ChordQualityInput : GameInputControl<ChordQuality>
             uniformGrid.Children.Add(buttonPanel);
         }
 
-        StackPanel topPanel = new() { Height = 50 };
+        var topPanel = new Grid
+        {
+            Height = 50,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            ColumnDefinitions = new ColumnDefinitions("Auto,20,Auto")
+        };
         Grid.SetRow(topPanel, 0);
-        Button repeat = new() { Content = "Repeat", Width = 150 };
+        Button repeat = new() { Content = "Repeat", Width = 150, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center };
+        repeat.Click += repeatButtonClicked;
         repeat.Classes.Add("Destructive");
-        topPanel.Children.Add(repeat);
 
+        var roundCounter = new TextBlock
+        {
+            FontSize = 30,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+        };
+
+        roundCounter.Bind(TextBlock.TextProperty, new Binding("Game.ChordQualityModeRounds")
+        {
+            StringFormat = "{0}/20"
+        });
+
+        Grid.SetColumn(repeat, 0);
+        Grid.SetColumn(roundCounter, 2);
+        topPanel.Children.Add(repeat);
+        topPanel.Children.Add(roundCounter);
         main.Children.Add(topPanel);
         main.Children.Add(uniformGrid);
         Content = main;
     }
 
+    private void repeatButtonClicked(object? sender, RoutedEventArgs e) => RepeatCommand.Execute(null);
 
     private void buttonPanelPointerPressed(object? sender, PointerPressedEventArgs e)
     {

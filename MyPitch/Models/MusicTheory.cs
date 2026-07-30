@@ -166,16 +166,17 @@ public static class MusicTheory
     public static List<int> BuildChord(Key root, Key Tonic, ChordQuality quality)
     {
         int rootIndex = Array.IndexOf(Keys, root);
-
         if (rootIndex == -1)
             throw new ArgumentException("Invalid root key.", nameof(root));
-
         int[] intervals = quality switch
         {
             ChordQuality.Major => new[] { 0, 4, 7 },
             ChordQuality.Minor => new[] { 0, 3, 7 },
-            ChordQuality.Minor7 => new[] { 0, 3, 7, 10 },
+            ChordQuality.Diminished => new[] { 0, 3, 6 },
+            ChordQuality.Augmented => new[] { 0, 4, 8 },
+            ChordQuality.Dominant7 => new[] { 0, 4, 7, 10 },
             ChordQuality.Major7 => new[] { 0, 4, 7, 11 },
+            ChordQuality.Minor7 => new[] { 0, 3, 7, 10 },
             _ => throw new ArgumentOutOfRangeException(nameof(quality))
         };
         List<int> chord = new(intervals.Length);
@@ -333,10 +334,12 @@ public enum ChordQuality
 {
     Major,
     Minor,
-    Minor7,
-    Major7
-};
-
+    Diminished,
+    Augmented,
+    Dominant7,
+    Major7,
+    Minor7
+}
 public class ResolutionData
 {
     public string ResolveTo { get; set; }

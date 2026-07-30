@@ -101,6 +101,7 @@
                 GameResponse="{Binding Game.GameResponse}"
                 IncludedMultiSelectable="{Binding ChordQualities}"
                 Tonic="{Binding Game.Tonic}"
+                RepeatCommand="{Binding Repeat}"
                 UserResponse="{Binding Game.UserResponse, Mode=TwoWay}" />
 
             <controls:CircleOfFifths

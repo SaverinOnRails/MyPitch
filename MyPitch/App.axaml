@@ -42,9 +42,9 @@
             <Style Selector="controls|PressableBorder.quality-input-button:pointerover">
                 <!-- <Setter Property="Background" Value="{DynamicResource PrimaryColor}" /> -->
                 <Setter Property="BorderBrush" Value="White" />
-                <Setter Property="RenderTransform">
-                    <ScaleTransform ScaleX="1.04" ScaleY="1.04" />
-                </Setter>
+                <!-- <Setter Property="RenderTransform"> -->
+                    <!-- <ScaleTransform ScaleX="1.04" ScaleY="1.04" /> -->
+                <!-- </Setter> -->
                 <Setter Property="BoxShadow" Value="0 10 22 0 #70000000" />
             </Style>
 

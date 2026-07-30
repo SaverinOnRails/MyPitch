@@ -3,13 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using MyPitch.Models;
-using MyPitch.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Input;
 using static MyPitch.PlatformServiceProvider;
 
 namespace MyPitch.Controls;
@@ -78,16 +76,6 @@ internal class CircleOfFifths : GameInputControl<string>
     public static readonly StyledProperty<Models.GameMode> GameModeProperty = AvaloniaProperty.Register<CircleOfFifths, Models.GameMode>(nameof(GameMode));
     public static readonly StyledProperty<int> OctaveProperty = AvaloniaProperty.Register<CircleOfFifths, int>(nameof(Octave));
 
-    public static readonly StyledProperty<ICommand> RepeatCommandProperty = AvaloniaProperty.Register<CircleOfFifths, ICommand>(nameof(RepeatCommand));
-
-    public ICommand RepeatCommand
-    {
-        get => GetValue(RepeatCommandProperty);
-        set
-        {
-            SetValue(RepeatCommandProperty, value);
-        }
-    }
     public int Octave
     {
         get => GetValue(OctaveProperty);
