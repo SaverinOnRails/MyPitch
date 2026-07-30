@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using MyPitch.Models;
 using MyPitch.ViewModels;
+using System.Text.Json;
 namespace MyPitch.Controls;
 
 public class DialogHost : Panel
@@ -114,23 +115,32 @@ public class DialogHost : Panel
         );
         Button drillButton = new Button() { Content = "Play Weaknesses", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left, Height = 40, Margin = new(20), VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom, Background = new SolidColorBrush(Color.Parse("#FFEDCE")) };
         drillButton.Classes.Add("Primary");
-        drillButton.Click += (s, _) =>
+
+        void ApplySelections<T>(
+            IList<MultiSelectableItem<T>> items,
+            List<string> interests)
         {
-            if (source is MainViewModel vm)
+            foreach (var item in items)
+                item.IsSelected = interests.Contains(item.Label);
+        }
+        drillButton.Click += (s, _) =>
             {
-                var interests = e.Stats.DegreeStats
-                    .Where(p => p.Value.TimesIncorrect > 0)
-                    .Select(p => p.Key)
-                    .Concat(e.Stats.DegreeStats.SelectMany(p => p.Value.MistakenFor))
-                    .Distinct()
-                    .ToList();
-                foreach (var deg in vm.Degrees)
+                if (source is MainViewModel vm)
                 {
-                    deg.IsSelected = interests.Contains(deg.Label);
+                    var interests = e.Stats.Stats
+                        .Where(p => p.Value.TimesIncorrect > 0)
+                        .Select(p => p.Key)
+                        .Concat(e.Stats.Stats.SelectMany(p => p.Value.MistakenFor))
+                        .Distinct()
+                        .ToList();
+                    if (e.Stats.GameMode == GameMode.Interactive)
+                        ApplySelections(vm.Degrees, interests);
+                    else
+                        ApplySelections(vm.ChordQualities, interests);
+                    Hide();
                 }
-                Hide();
-            }
-        };
+            };
+
         var parentWidth = this.FindAncestorOfType<UserControl>()?.Bounds.Width;
         if (!narrowLayout)
         {
@@ -153,11 +163,11 @@ public class DialogHost : Panel
             GridLinesVisibility = DataGridGridLinesVisibility.All
         };
         var dataModel = new List<InteractiveStatsTableViewModel>();
-        foreach (var p in e.Stats.DegreeStats)
+        foreach (var p in e.Stats.Stats)
         {
             dataModel.Add(new()
             {
-                Degree = p.Key,
+                Data = p.Key,
                 TimesCorrect = p.Value.TimesCorrect,
                 TimesIncorrect = p.Value.TimesIncorrect,
                 Familiarity = p.Value.Familiarity.ToString("F2"),
@@ -167,8 +177,8 @@ public class DialogHost : Panel
         }
         dataGrid.Columns.Add(new DataGridTextColumn
         {
-            Header = "Degree",
-            Binding = new Binding("Degree"),
+            Header = e.Stats.GameMode == GameMode.Interactive ? "Degree" : "Chords",
+            Binding = new Binding("Data"),
             IsReadOnly = true,
             FontFamily = _notoSansTypeface.FontFamily,
             Width = new DataGridLength(1, DataGridLengthUnitType.Star)
@@ -236,7 +246,7 @@ public class DialogHost : Panel
 
 public class InteractiveStatsTableViewModel
 {
-    public required string Degree { get; set; }
+    public required string Data { get; set; }
     public int TimesCorrect { get; set; }
     public int TimesIncorrect { get; set; }
     public required string Familiarity { get; set; }

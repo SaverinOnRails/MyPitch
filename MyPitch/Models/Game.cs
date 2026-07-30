@@ -48,7 +48,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private MelodyBarState _melodyBarState = new();
 
     public event DialogRequestedEventHandler? DialogNeeded;
-    private const int _interactiveModeMinRoundCount = 20;
+    private const int _interactiveModeMinRoundCount = 3;
     private string? _currentInteractiveQuizDegree = null;
     private int _currentFolkNoteEventIndex = 0;
     private ChordQuality? _currentQuizChordQuality = null;
@@ -201,6 +201,8 @@ public partial class Game : ObservableObject
 
     private async Task ChordQualityGameLoop()
     {
+        var stats = new InteractiveModeStats(GameMode.ChordQuality);
+        TimeSpan totalResponseTime = TimeSpan.Zero;
         while (true)
         {
             AnswerState = AnswerState.Neutral;
@@ -215,20 +217,23 @@ public partial class Game : ObservableObject
 
             //await user response
             _currentQuizChordQuality = quizQuality;
+            var responseStart = DateTime.Now;
             var userResponse = await _userResponseTcs.Task.WaitAsync(_gameCancellationTokenSource.Token);
-            var quality = ((ChordQualityResponse)userResponse).Quality;
-            if (quality == quizQuality)
+            var responseEnd = DateTime.Now - responseStart;
+            totalResponseTime += responseEnd;
+            var responseQuality = ((ChordQualityResponse)userResponse).Quality;
+            if (responseQuality == quizQuality)
             {
                 AnswerState = AnswerState.Correct;
                 GameResponse = new ChordQualityResponse(quizQuality);
                 await Task.Delay(1000, _gameCancellationTokenSource.Token);
+                stats.AddStatForDeg(quizQuality.ToString(), responseEnd, true, null);
                 GameResponse = null;
             }
             else
             {
                 AnswerState = AnswerState.Incorrect;
                 GameResponse = new ChordQualityResponse(quizQuality);
-
                 //flashing effect
                 for (int i = 0; i < 5; i++)
                 {
@@ -237,18 +242,19 @@ public partial class Game : ObservableObject
                     AnswerState = AnswerState.Neutral;
                     await Task.Delay(100, _gameCancellationTokenSource.Token);
                 }
+                stats.AddStatForDeg(quizQuality.ToString(), responseEnd, false, responseQuality.ToString());
                 GameResponse = null;
             }
 
             if (ChordQualityModeRounds == _interactiveModeMinRoundCount)
             {
-                // stats.AverageResponseTime = ((totalResponseTime) / InteractiveModeRounds);
-                // DialogNeeded?.Invoke(new(
-                //     new InteractiveModeStatsDialogContent()
-                //     {
-                //         Stats = stats
-                //     }
-                // ));
+                stats.AverageResponseTime = ((totalResponseTime) / InteractiveModeRounds);
+                DialogNeeded?.Invoke(new(
+                    new InteractiveModeStatsDialogContent()
+                    {
+                        Stats = stats
+                    }
+                ));
                 _gameCancellationTokenSource.Cancel();
             }
             ChordQualityModeRounds++;
@@ -454,7 +460,7 @@ public partial class Game : ObservableObject
     }
     private async Task InteractiveGameLoop()
     {
-        var stats = new InteractiveModeStats();
+        var stats = new InteractiveModeStats(GameMode.Interactive);
         TimeSpan totalResponseTime = TimeSpan.Zero;
         while (true)
         {
@@ -692,16 +698,17 @@ public class MelodyBarState
     { }
 }
 
-public class InteractiveModeStats
+public class InteractiveModeStats(GameMode mode)
 {
     public TimeSpan AverageResponseTime = TimeSpan.Zero;
-    public Dictionary<string, InteractiveDegreeStats> DegreeStats { get; private set; } = new();
+    public Dictionary<string, InteractiveStats> Stats { get; private set; } = new();
+    public GameMode GameMode { get; init; } = mode;
     public float Accuracy
     {
         get
         {
-            var correct = DegreeStats.Sum(p => p.Value.TimesCorrect);
-            var incorrect = DegreeStats.Sum(p => p.Value.TimesIncorrect);
+            var correct = Stats.Sum(p => p.Value.TimesCorrect);
+            var incorrect = Stats.Sum(p => p.Value.TimesIncorrect);
             var total = correct + incorrect;
             if (total == 0)
                 return 0;
@@ -710,23 +717,23 @@ public class InteractiveModeStats
     }
     public void AddStatForDeg(string deg, TimeSpan responseTime, bool correct, string? mistakenFor)
     {
-        _ = DegreeStats.TryAdd(deg, new());
-        DegreeStats[deg].TotalResponseTime += responseTime;
+        _ = Stats.TryAdd(deg, new());
+        Stats[deg].TotalResponseTime += responseTime;
         if (correct)
-            DegreeStats[deg].TimesCorrect += 1;
+            Stats[deg].TimesCorrect += 1;
         else
-            DegreeStats[deg].TimesIncorrect += 1;
+            Stats[deg].TimesIncorrect += 1;
         if (mistakenFor is not null)
         {
-            if (!DegreeStats[deg].MistakenFor.Contains(mistakenFor))
+            if (!Stats[deg].MistakenFor.Contains(mistakenFor))
             {
-                DegreeStats[deg].MistakenFor.Add(mistakenFor);
+                Stats[deg].MistakenFor.Add(mistakenFor);
             }
         }
     }
 
 }
-public class InteractiveDegreeStats
+public class InteractiveStats
 {
     public int TimesCorrect { get; set; }
     public int TimesIncorrect { get; set; }
