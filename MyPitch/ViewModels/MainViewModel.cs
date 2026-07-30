@@ -68,6 +68,7 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] private bool _useRandomTonic;
     [ObservableProperty] private bool _useRandomOctave;
     [ObservableProperty] private bool _playCadenceOnKeyChange = true;
+    [ObservableProperty] private bool _resolveAfterRound = true;
     [ObservableProperty] private bool _playDrone = true;
     public bool IsWasm => OperatingSystem.IsBrowser();
 
@@ -108,6 +109,11 @@ public partial class MainViewModel : ViewModelBase
     partial void OnUseRandomTonicChanged(bool value)
     {
         PushSettings(); if (value) SetRandomTonicManual();
+    }
+
+    partial void OnResolveAfterRoundChanged(bool value)
+    {
+        PushSettings();
     }
 
     private void SetRandomTonicManual()
@@ -172,7 +178,7 @@ public partial class MainViewModel : ViewModelBase
     }
     public async Task TogglePlay() => await Game.TogglePlay();
 
-    private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone, MelodyNoteGap));
+    private void PushSettings() => Game.ApplySettings(new GameSettings(GameMode, UseRandomTonic, UseRandomOctave, MelodyNoteCount, PlayCadenceOnKeyChange, PlayDrone, MelodyNoteGap, ResolveAfterRound));
 
     private void SyncDegrees() => Game.AllowedDegrees = Degrees;
     private void SyncChordQualities() => Game.AllowedChordQualities = ChordQualities;

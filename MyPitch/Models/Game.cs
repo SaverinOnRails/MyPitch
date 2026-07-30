@@ -48,7 +48,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private MelodyBarState _melodyBarState = new();
 
     public event DialogRequestedEventHandler? DialogNeeded;
-    private const int _interactiveModeMinRoundCount = 3;
+    private const int _interactiveModeMinRoundCount = 20;
     private string? _currentInteractiveQuizDegree = null;
     private int _currentFolkNoteEventIndex = 0;
     private ChordQuality? _currentQuizChordQuality = null;
@@ -487,8 +487,8 @@ public partial class Game : ObservableObject
                 AnswerState = AnswerState.Correct;
                 SetCircleIndexGameResponse(quizNoteIndex);
                 await Task.Delay(1000, _gameCancellationTokenSource.Token);
-                //resolve
-                if (MusicTheory.SimpleResolutionMap.ContainsKey(quizDeg))
+                //resolve if required
+                if (Settings.ResolveAfterRound && MusicTheory.SimpleResolutionMap.ContainsKey(quizDeg))
                 {
                     var resolution = MusicTheory.SimpleResolutionMap[quizDeg];
                     await PlayScaleNote(resolution.ResolveTo, hidden: false, duration: 500, resolution.ResolveToNextOctave ? Octave + 1 : Octave);
@@ -659,7 +659,7 @@ public partial class Game : ObservableObject
         _melodyFileBuffer = buffer;
     }
 }
-public record GameSettings(GameMode Mode = GameMode.Freeplay, bool RandomTonic = false, bool RandomOctave = false, int MelodyNoteCount = 2, bool PlayCadenceOnKeyChange = true, bool PlayDrone = true, int MelodyNoteGap = 1)
+public record GameSettings(GameMode Mode = GameMode.Freeplay, bool RandomTonic = false, bool RandomOctave = false, int MelodyNoteCount = 2, bool PlayCadenceOnKeyChange = true, bool PlayDrone = true, int MelodyNoteGap = 1, bool ResolveAfterRound = true)
 {
     public int MelodyNoteGapMs()
     {
