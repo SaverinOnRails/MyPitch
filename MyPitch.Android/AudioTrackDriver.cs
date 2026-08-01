@@ -87,10 +87,12 @@ internal class AudioTrackDriver : IAudioDriver
 
     public void PlayChord(List<int> notes)
     {
+        // Release all causes a crash in meltysynth for some reason
         // ReleaseAll();
         foreach (int note in notes)
         {
-            _synth.NoteOn(0, note, 127);
+            Release(note);
+            Play(note);
         }
     }
 
