@@ -87,19 +87,10 @@ internal class AudioTrackDriver : IAudioDriver
 
     public void PlayChord(List<int> notes)
     {
-        ReleaseAll();
-        //TODO: Find out why this throws
-        try
+        // ReleaseAll();
+        foreach (int note in notes)
         {
-            foreach (int note in notes)
-            {
-                _synth.NoteOn(0, note, 127);
-            }
-        }
-        catch
-        {
-            //for now recreate synthesizer when it dies
-            _synth = new MeltySynth.Synthesizer(_soundFontPath, SAMPLE_RATE);
+            _synth.NoteOn(0, note, 127);
         }
     }
 

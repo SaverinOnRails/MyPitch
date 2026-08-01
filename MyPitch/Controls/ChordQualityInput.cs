@@ -67,8 +67,13 @@ internal class ChordQualityInput : GameInputControl<ChordQuality>
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
             };
-
-            buttonPanel.Child = text;
+            
+            var viewbox = new Viewbox
+            {
+                Stretch = Avalonia.Media.Stretch.Uniform,
+                Child = text
+            };
+            buttonPanel.Child = viewbox;
             uniformGrid.Children.Add(buttonPanel);
         }
 
