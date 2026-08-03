@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using MyPitch.Controls;
 using System.Threading.Tasks;
+using static MyPitch.Models.MusicTheory;
 namespace MyPitch.Models;
 
 public interface IModeResponse;
@@ -54,7 +55,7 @@ public partial class Game : ObservableObject
     private ChordQuality? _currentQuizChordQuality = null;
     private List<string>? _currentMelodyQuizDegrees = null;
     private bool _playedCadence;
-    private GameMode? _currentGameMode = null;
+    public GameMode? CurrentGameMode { get; private set; } = null;
     private Type? _expectedResponseType = null;
     private const int GameClickTimeout = 500; // ms
     private CancellationTokenSource _gameCancellationTokenSource = new();
@@ -114,7 +115,7 @@ public partial class Game : ObservableObject
     }
 
     private bool _dronePlaying;
-    public bool GameModeNeedsDrone => _currentGameMode != GameMode.ChordQuality;
+    public bool GameModeNeedsDrone => CurrentGameMode != GameMode.ChordQuality;
     partial void OnTonicChanged(Key value)
     {
         if (Settings.PlayDrone && IsPlaying)
@@ -143,7 +144,7 @@ public partial class Game : ObservableObject
     {
         _gameCancellationTokenSource.Cancel();
         _repeatCancellationTokenSource.Cancel();
-        _currentGameMode = null;
+        CurrentGameMode = null;
         _expectedResponseType = null;
         SuspendDrone();
         IsPlaying = false;
@@ -168,9 +169,9 @@ public partial class Game : ObservableObject
         try
         {
             IsPlaying = true;
-            _currentGameMode = Settings.Mode;
+            CurrentGameMode = Settings.Mode;
             PlayDrone();
-            if (_currentGameMode == GameMode.ChordQuality)
+            if (CurrentGameMode == GameMode.ChordQuality)
             {
                 _expectedResponseType = typeof(ChordQualityResponse);
             }
@@ -187,6 +188,7 @@ public partial class Game : ObservableObject
                 GameMode.Cycle => CycleModeGameLoop(),
                 GameMode.Melody => MelodyGameModeLoop(),
                 GameMode.ChordQuality => ChordQualityGameLoop(),
+                GameMode.Diatonics => InteractiveGameLoop(),
                 // GameMode.Folk => FolkModeGameLoop(),
                 _ => Task.CompletedTask // Freeplay
             });
@@ -198,6 +200,7 @@ public partial class Game : ObservableObject
             Stop();
         }
     }
+
 
     private async Task ChordQualityGameLoop()
     {
@@ -212,7 +215,7 @@ public partial class Game : ObservableObject
             _userResponseTcs = new();
             var qualities = AllowedChordQualities.Where(p => p.IsSelected == true).ToList();
             var quizQuality = qualities[Random.Shared.Next(qualities.Count)].Data;
-            var quizChord = MusicTheory.BuildChord(Tonic, Tonic, quizQuality);
+            var quizChord = BuildChord(Tonic, Tonic, quizQuality);
             PlatformServiceProvider.AudioDriver.PlayChord(quizChord);
 
             //await user response
@@ -275,7 +278,7 @@ public partial class Game : ObservableObject
             var degrees = AllowedDegreeStrings;
             var melodyNoteCount = Settings.MelodyNoteCount;
             if (degrees.Count == 0) return;
-            var melody = MusicTheory.GenMelody(degrees, melodyNoteCount);
+            var melody = GenMelody(degrees, melodyNoteCount);
             foreach (var note in melody)
             {
                 await PlayScaleNote(note, hidden: true, Settings.MelodyNoteGapMs());
@@ -289,7 +292,7 @@ public partial class Game : ObservableObject
                 _userResponseTcs = new();
                 var userResponse = await _userResponseTcs.Task.WaitAsync(_gameCancellationTokenSource.Token);
                 var dict = MelodyBarState.UserChoices;
-                var deg = MusicTheory.FifthIntervalScaleGraduation[((CircleIndexResponse)userResponse).Index];
+                var deg = GetDegreeFromCircleOfFifthsIndex(((CircleIndexResponse)userResponse).Index);
                 dict[i] = deg;
                 userResponses.Add(deg);
                 MelodyBarState = new(dict, new());
@@ -400,15 +403,15 @@ public partial class Game : ObservableObject
             var deg = note.ScaleDegree;
             //get the note in the original key
             var originalTonic = Enum.Parse<Key>(_melodyFile.OriginalTonic);
-            var noteAtDeg = MusicTheory.NoteAtDegree(
+            var noteAtDeg = GetNoteAtDegree(
                 originalTonic,
-                MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1,
-                false);
-            var noteToPlay = MusicTheory.ToMidiNote(noteAtDeg, note.Octave);
+                deg);
+            var noteToPlay = ToMidiNote(noteAtDeg, note.Octave);
             Octave = note.Octave;
-            SetCircleIndexGameResponse(MusicTheory.FifthSegment(originalTonic, noteAtDeg));
+            SetCircleIndexGameResponse(GetCircleOfFifthsIndexFromNote(originalTonic, noteAtDeg));
+
             //now transpose to the user chosen tonic with the semitone offset
-            noteToPlay += MusicTheory.ChromaticScale.IndexOf(Tonic.ToString()) - MusicTheory.ChromaticScale.IndexOf(_melodyFile.OriginalTonic);
+            noteToPlay += ChromaticScale.IndexOf(Tonic.ToString()) - ChromaticScale.IndexOf(_melodyFile.OriginalTonic);
             PlatformServiceProvider.AudioDriver.Play(noteToPlay);
             lastNoteStopAt = note.TriggerAt + note.DurationMs;
             lastNote = noteToPlay;
@@ -420,10 +423,10 @@ public partial class Game : ObservableObject
         int cycleIndex = 0;
         while (true)
         {
-            int length = MusicTheory.ChromaticScaleGraduation.Length;
+            int length = ChromaticScaleGraduation.Length;
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             MaybeChangeOctave();
-            while (!AllowedDegreeStrings.Contains(MusicTheory.ChromaticScaleGraduation[cycleIndex]))
+            while (!AllowedDegreeStrings.Contains(ChromaticScaleGraduation[cycleIndex]))
             {
                 if (AllowedDegreeStrings.Count() == 0) break;
                 _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
@@ -431,12 +434,12 @@ public partial class Game : ObservableObject
             }
 
             //only randomize when we complete a cycle
-            if (AllowedDegreeStrings.Count > 0 && cycleIndex == MusicTheory.ChromaticScaleGraduation.IndexOf(AllowedDegreeStrings.First()))
+            if (AllowedDegreeStrings.Count > 0 && cycleIndex == ChromaticScaleGraduation.IndexOf(AllowedDegreeStrings.First()))
             {
                 MaybeChangeTonic();
                 await MaybePlayCadence();
             }
-            string degAtCycleIndex = MusicTheory.ChromaticScaleGraduation[cycleIndex];
+            string degAtCycleIndex = ChromaticScaleGraduation[cycleIndex];
             await PlayScaleNote(degAtCycleIndex, hidden: false, duration: 2000);
             cycleIndex = (cycleIndex + 1) % length;
             await Task.Delay(200, _gameCancellationTokenSource.Token);
@@ -452,7 +455,7 @@ public partial class Game : ObservableObject
             await MaybePlayCadence();
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             await Task.Delay(GameClickTimeout * 2, _gameCancellationTokenSource.Token);
-            var quizDeg = await PlayQuizNote(hidden: true);
+            var quizDeg = await PlayQuiz(hidden: true);
             await Task.Delay(1000, _gameCancellationTokenSource.Token);
             PlatformServiceProvider.AudioDriver.PlaySpeechSample(quizDeg);
             await Task.Delay(1000, _gameCancellationTokenSource.Token);
@@ -472,8 +475,8 @@ public partial class Game : ObservableObject
             MaybeChangeOctave();
             await MaybePlayCadence();
             await Task.Delay(GameClickTimeout * 2, _gameCancellationTokenSource.Token);
-            var quizDeg = await PlayQuizNote(hidden: true);
-            var quizNoteIndex = MusicTheory.FifthSegment(tonic, MusicTheory.NoteAtDegree(tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(quizDeg) + 1, false));
+            var quizDeg = await PlayQuiz(hidden: true);
+            var quizNoteIndex = GetCircleOfFifthsIndexFromNote(tonic, GetNoteAtDegree(tonic, quizDeg));
             _userResponseTcs = new();
             var responseStart = DateTime.Now;
             _currentInteractiveQuizDegree = quizDeg; //for repeat
@@ -482,18 +485,37 @@ public partial class Game : ObservableObject
             var responseEnd = DateTime.Now - responseStart;
             totalResponseTime += responseEnd;
             var index = ((CircleIndexResponse)userResponse).Index;
+            string statsHeader;
+            string mistakenFor;
+            if (CurrentGameMode == GameMode.Interactive)
+            {
+                statsHeader = quizDeg;
+                mistakenFor = GetDegreeFromCircleOfFifthsIndex(index);
+            }
+            else
+            {
+                var scaleMode = BestFitScaleMode(AllowedDegreeStrings);
+
+                statsHeader = MusicTheory
+                    .TriadQuality(quizDeg, scaleMode)?
+                    .RomanNumeral ?? "";
+
+                mistakenFor = MusicTheory
+                    .TriadQuality(GetDegreeFromCircleOfFifthsIndex(index), scaleMode)?
+                    .RomanNumeral ?? "";
+            }
             if (index == quizNoteIndex)
             {
                 AnswerState = AnswerState.Correct;
                 SetCircleIndexGameResponse(quizNoteIndex);
                 await Task.Delay(1000, _gameCancellationTokenSource.Token);
                 //resolve if required
-                if (Settings.ResolveAfterRound && MusicTheory.SimpleResolutionMap.ContainsKey(quizDeg))
+                if (Settings.ResolveAfterRound && SimpleResolutionMap.ContainsKey(quizDeg))
                 {
-                    var resolution = MusicTheory.SimpleResolutionMap[quizDeg];
+                    var resolution = SimpleResolutionMap[quizDeg];
                     await PlayScaleNote(resolution.ResolveTo, hidden: false, duration: 500, resolution.ResolveToNextOctave ? Octave + 1 : Octave);
                 }
-                stats.Add(quizDeg, responseEnd, true, null);
+                stats.Add(statsHeader, responseEnd, true, null);
                 GameResponse = null;
             }
             else
@@ -505,7 +527,7 @@ public partial class Game : ObservableObject
                     await PlayScaleNote(quizDeg, hidden: false, duration: 200);
                     await Task.Delay(50, _gameCancellationTokenSource.Token);
                 }
-                stats.Add(quizDeg, responseEnd, false, MusicTheory.FifthIntervalScaleGraduation[index]);
+                stats.Add(statsHeader, responseEnd, false, mistakenFor);
             }
 
             if (InteractiveModeRounds == _interactiveModeMinRoundCount)
@@ -522,6 +544,7 @@ public partial class Game : ObservableObject
             InteractiveModeRounds++;
         }
     }
+
     private async Task FreeListenGameLoop()
     {
         while (true)
@@ -532,7 +555,7 @@ public partial class Game : ObservableObject
             await MaybePlayCadence();
             _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
             await Task.Delay(GameClickTimeout * 2, _gameCancellationTokenSource.Token);
-            await PlayQuizNote(hidden: false);
+            await PlayQuiz(hidden: false);
             await Task.Delay(1000, _gameCancellationTokenSource.Token);
         }
     }
@@ -542,7 +565,7 @@ public partial class Game : ObservableObject
     public async Task TryRepeatQuizAsync()
     {
         if (!IsPlaying) return;
-        if (Settings.Mode == GameMode.Interactive && _currentInteractiveQuizDegree is not null)
+        if ((Settings.Mode == GameMode.Interactive || Settings.Mode == GameMode.Diatonics) && _currentInteractiveQuizDegree is not null)
         {
             await PlayScaleNote(_currentInteractiveQuizDegree, true);
         }
@@ -556,16 +579,16 @@ public partial class Game : ObservableObject
                 await PlayScaleNote(note, hidden: true, Settings.MelodyNoteGapMs(), cts: _repeatCancellationTokenSource);
             }
         }
-        else if (_currentGameMode == GameMode.ChordQuality && _currentQuizChordQuality is not null)
+        else if (CurrentGameMode == GameMode.ChordQuality && _currentQuizChordQuality is not null)
         {
-            var quizChord = MusicTheory.BuildChord(Tonic, Tonic, _currentQuizChordQuality.Value);
+            var quizChord = BuildChord(Tonic, Tonic, _currentQuizChordQuality.Value);
             PlatformServiceProvider.AudioDriver.PlayChord(quizChord);
         }
         else { }
     }
     private void MaybeChangeTonic()
     {
-        if (Settings.RandomTonic) Tonic = MusicTheory.Keys[Random.Shared.Next(MusicTheory.Keys.Length)];
+        if (Settings.RandomTonic) Tonic = Keys[Random.Shared.Next(Keys.Length)];
         if (Settings.PlayCadenceOnKeyChange && _oldTonic != Tonic)
         {
             _playedCadence = false;
@@ -584,15 +607,37 @@ public partial class Game : ObservableObject
     {
         if (!_playedCadence) await PlayCadence();
     }
-    private async Task<string> PlayQuizNote(bool hidden)
+    private async Task<string> PlayQuiz(bool hidden)
+    {
+        if (CurrentGameMode == GameMode.Diatonics)
+        {
+            return await PlayDiatonicQuizChord(hidden);
+        }
+        return await PlayRandomDegree(AllowedDegreeStrings, hidden);
+    }
+
+    private async Task<string> PlayDiatonicQuizChord(bool hidden)
+    {
+        var bestFitScaleMode = BestFitScaleMode(AllowedDegreeStrings);
+        var degrees = AllowedDegreeStrings
+            .Intersect(DegsForScaleMode(bestFitScaleMode));
+
+        return await PlayRandomDegree(degrees, hidden);
+    }
+
+    private async Task<string> PlayRandomDegree(IEnumerable<string> degrees, bool hidden)
     {
         _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
-        var degrees = AllowedDegreeStrings;
-        if (degrees.Count == 0) return "";
-        var randomNote = degrees[Random.Shared.Next(degrees.Count)];
+
+        var degreeList = degrees.ToList();
+        if (degreeList.Count == 0)
+            return "";
+
+        var randomNote = degreeList[Random.Shared.Next(degreeList.Count)];
         await PlayScaleNote(randomNote, hidden);
         return randomNote;
     }
+
     private async Task PlayCadence()
     {
         foreach (var deg in new[]
@@ -602,26 +647,60 @@ public partial class Game : ObservableObject
             "5",
             "1"
         })
-            await PlayScaleNote(deg, hidden: false);
+            await PlayScaleNote(deg, hidden: false, isCadence: true);
         _playedCadence = true;
     }
-    private async Task PlayScaleNote(string deg, bool hidden, int duration = 500, int octave = -1, CancellationTokenSource? cts = null)
+    private List<int>? GetPlaybackChord(string degree, int octave, bool isCadence)
+    {
+        if (CurrentGameMode != GameMode.Diatonics || isCadence)
+            return null;
+
+        var scaleMode = BestFitScaleMode(AllowedDegreeStrings);
+        var chord = GetDiatonicChord(Tonic, degree, scaleMode, octave);
+        if (chord is null) return null;
+        return [.. chord];
+    }
+
+    private async Task PlayScaleNote(
+        string degree,
+        bool hidden,
+        int duration = 500,
+        int octave = -1,
+        bool isCadence = false,
+        CancellationTokenSource? cts = null)
     {
         //use game cancellation token source unless another is specified
-        var ctx = cts == null ? _gameCancellationTokenSource : cts;
-        _gameCancellationTokenSource.Token.ThrowIfCancellationRequested();
-        var noteAtDeg = MusicTheory.NoteAtDegree(Tonic, MusicTheory.ChromaticScaleGraduation.IndexOf(deg) + 1, false);
-        var note = MusicTheory.ToMidiNote(Tonic, noteAtDeg, octave == -1 ? Octave : octave);
-        if (!hidden) SetCircleIndexGameResponse(MusicTheory.FifthSegment(Tonic, noteAtDeg));
-        PlatformServiceProvider.AudioDriver.Play(note);
+        var cancellation = cts ?? _gameCancellationTokenSource;
+        cancellation.Token.ThrowIfCancellationRequested();
+
+        int actualOctave = octave == -1 ? Octave : octave;
+
+        var noteAtDegree = GetNoteAtDegree(Tonic, degree);
+        var note = ToMidiNote(Tonic, noteAtDegree, actualOctave);
+
+        if (!hidden)
+            SetCircleIndexGameResponse(GetCircleOfFifthsIndexFromNote(Tonic, noteAtDegree));
+
+        var chord = GetPlaybackChord(degree, actualOctave, isCadence);
+
+        if (chord is not null)
+            PlatformServiceProvider.AudioDriver.PlayChord(chord);
+        else
+            PlatformServiceProvider.AudioDriver.Play(note);
+
         try
         {
-            await Task.Delay(duration, ctx.Token);
+            await Task.Delay(duration, cancellation.Token);
         }
         finally
         {
-            PlatformServiceProvider.AudioDriver.Release(note);
-            if (!hidden) GameResponse = null;
+            if (chord is not null)
+                PlatformServiceProvider.AudioDriver.ReleaseChord(chord);
+            else
+                PlatformServiceProvider.AudioDriver.Release(note);
+
+            if (!hidden)
+                GameResponse = null;
         }
     }
     private void PlayDrone()
@@ -629,7 +708,7 @@ public partial class Game : ObservableObject
 
         if (!Settings.PlayDrone || !GameModeNeedsDrone) return;
         _dronePlaying = true;
-        var note = MusicTheory.ToMidiNote(Tonic, Tonic.ToString());
+        var note = ToMidiNote(Tonic, Tonic.ToString());
         PlatformServiceProvider.AudioDriver.PlayDrone(note, DroneVolume);
     }
     private void SuspendDrone()
@@ -672,6 +751,7 @@ public enum GameMode
     Pocketmode,
     Interactive,
     Melody,
+    Diatonics,
     ChordQuality,
     Cycle,
 }

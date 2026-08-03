@@ -45,7 +45,7 @@ public partial class MainViewModel : ViewModelBase
 
 
     public bool IsMelodyMode => GameMode == GameMode.Melody;
-    public bool IsInteractiveMode => GameMode == GameMode.Interactive;
+    public bool IsInteractiveMode => GameMode == GameMode.Interactive || GameMode == GameMode.Diatonics;
     public bool IsFolkMode => false;  //GameMode == GameMode.Folk;
     public bool IsChordQualityMode => GameMode == GameMode.ChordQuality;
 
@@ -54,6 +54,8 @@ public partial class MainViewModel : ViewModelBase
     public bool GameModeNeedDroneControl => GameMode != GameMode.ChordQuality;
     public bool GameModeNeedOctaveControl => GameMode != GameMode.ChordQuality;
     public bool GameModeNeedScaleControl => GameMode != GameMode.ChordQuality;
+
+    public bool ActiveGameModeNeedStrictScaleDegreeAdherence => Game.CurrentGameMode == GameMode.Melody || Game.CurrentGameMode == GameMode.Diatonics || GameMode == GameMode.Melody || GameMode == GameMode.Diatonics;
 
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => Enum.GetValues<GameMode>();
@@ -84,12 +86,36 @@ public partial class MainViewModel : ViewModelBase
         OnPropertyChanged(nameof(GameModeNeedOctaveControl));
         OnPropertyChanged(nameof(GameModeNeedScaleControl));
         OnPropertyChanged(nameof(GameModeNeedTonicControl));
-        if (newValue == GameMode.Melody) ConfigureMelodyMode();
+        if (newValue == GameMode.Melody || newValue == GameMode.Diatonics) ConfigureDiatonic();
+        EnsureDegrees();
     }
+
+    private void EnsureDegrees()
+    {
+        if (!ActiveGameModeNeedStrictScaleDegreeAdherence)
+        {
+            foreach (var degree in Degrees)
+                degree.IsEnabled = true;
+
+            return;
+        }
+
+        var allowed = MusicTheory.DegsForScaleMode(ScaleMode).ToHashSet();
+        foreach (var degree in Degrees)
+        {
+            var enabled = allowed.Contains(degree.Label);
+
+            degree.IsEnabled = enabled;
+
+            if (!enabled)
+                degree.IsSelected = false;
+        }
+    }
+
     partial void OnMelodyNoteCountChanged(int oldValue, int newValue) => PushSettings();
     partial void OnMelodyNoteGapChanged(int oldValue, int newValue) => PushSettings();
 
-    private void ConfigureMelodyMode()
+    private void ConfigureDiatonic()
     {
         ScaleMode = ScaleMode.Ionian;
         SetScaleMode(ScaleMode);
@@ -104,6 +130,7 @@ public partial class MainViewModel : ViewModelBase
         {
             x.IsSelected = degs.Contains(x.Label);
         }
+        EnsureDegrees();
     }
 
     partial void OnUseRandomTonicChanged(bool value)
@@ -151,6 +178,11 @@ public partial class MainViewModel : ViewModelBase
         SyncChordQualities();
     }
 
+    private void ScaleDegreeSelectableChanging(PropertyChangingEventArgs e)
+    {
+        if (!ActiveGameModeNeedStrictScaleDegreeAdherence) return;
+    }
+
     private void GameDialogNeeded(DialogRequestedEventArgs e)
     {
         _dialogHost?.Show(e.Content, this);
@@ -160,7 +192,7 @@ public partial class MainViewModel : ViewModelBase
     {
         foreach (var deg in Degrees)
         {
-            deg.IsSelected = value;
+            deg.IsSelected = deg.IsEnabled;
         }
     }
     public async Task Repeat()
@@ -183,11 +215,11 @@ public partial class MainViewModel : ViewModelBase
     private void SyncDegrees() => Game.AllowedDegrees = Degrees;
     private void SyncChordQualities() => Game.AllowedChordQualities = ChordQualities;
 }
-
 public partial class MultiSelectableItem<TData> : ObservableObject
 {
     public string Label { get; set; } = "";
     [ObservableProperty] private bool _isSelected = true;
+    [ObservableProperty] private bool _isEnabled = true;
     public TData? Data { get; set; }
 
 }

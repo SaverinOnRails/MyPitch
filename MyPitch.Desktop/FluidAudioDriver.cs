@@ -26,6 +26,14 @@ public class FluidAudioDriver : IAudioDriver, IDisposable
         }
     }
 
+    public void ReleaseChord(List<int> chord)
+    {
+        foreach (int note in chord)
+        {
+            Release(note);
+        }
+    }
+
     public void Stop()
     {
         throw new NotImplementedException();
