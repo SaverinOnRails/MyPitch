@@ -118,7 +118,7 @@
                 IncludedMultiSelectable="{Binding Degrees}"
                 Octave="{Binding Game.Octave}"
                 RepeatCommand="{Binding Repeat}"
-                ScaleMode="{Binding ScaleMode }"
+                ScaleMode="{Binding Game.ScaleMode}"
                 Tonic="{Binding Game.Tonic}"
                 UserResponse="{Binding Game.UserResponse, Mode=TwoWay}" />
         </Grid>
@@ -265,7 +265,7 @@
                     shadui:ControlAssist.Label="Select Scale Mode"
                     IsVisible="{Binding GameModeNeedScaleControl}"
                     ItemsSource="{Binding ScaleModes}"
-                    SelectedValue="{Binding ScaleMode}">
+                    SelectedValue="{Binding Game.ScaleMode}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Converter={StaticResource ScaleModeDisplayConverter}}" />

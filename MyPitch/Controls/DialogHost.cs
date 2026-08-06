@@ -116,7 +116,7 @@ public class DialogHost : Panel
         Button drillButton = new Button() { Content = "Play Weaknesses", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left, Height = 40, Margin = new(20), VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom, Background = new SolidColorBrush(Color.Parse("#FFEDCE")) };
         drillButton.Classes.Add("Primary");
 
-        void ApplySelections<T>(
+        static void ApplySelections<T>(
             IList<MultiSelectableItem<T>> items,
             List<string> interests)
         {

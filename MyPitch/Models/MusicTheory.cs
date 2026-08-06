@@ -135,47 +135,40 @@ public static class MusicTheory
     }
 
 
-    public static List<string> GenMelody(List<string> degs, int noteCount)
+    public static List<string> GenMelody(List<string> degs, int noteCount , ScaleMode mode)
     {
         var result = new List<string>();
-        var bestfit = BestFitScaleMode(degs);
         for (int i = 0; i < noteCount; i++)
         {
             //the first note can be truly random
             if (i == 0)
                 result.Add(degs[Random.Shared.Next(degs.Count)]);
             else
-                result.Add(NextNote(result[i - 1], bestfit, degs));
+                result.Add(NextNote(result[i - 1], mode, degs));
         }
         return result;
     }
+
     private static string NextNote(string prevNote, ScaleMode scale, List<string> degs)
     {
         var roll = Random.Shared.Next(100);
-        // Debug.WriteLine(roll);
         string note;
-        if (roll < 20)
+        if (roll < 10)
         {
             note = prevNote;
-            // Debug.WriteLine($"Repeating {note}");
         }
-        if (roll < 60)
+        else if (roll < 60)
         {
             note = Step(prevNote, scale);
-            // Debug.WriteLine($"Stepping to {prevNote} from {note}");
         }
-        else if (roll < 80)
+        else if (roll < 90)
         {
             note = Leap(prevNote, scale);
-            // Debug.WriteLine($"Leaping to {prevNote} from {note}");
         }
         else
         {
             note = degs[Random.Shared.Next(degs.Count)];
-            // Debug.WriteLine($"Random roll {note}");
-
         }
-        // Debug.WriteLine("");
         return degs.Contains(note) ? note : degs[Random.Shared.Next(degs.Count)];
     }
 
@@ -328,7 +321,7 @@ public static class MusicTheory
         var note = scale[noteIndex];
         return note;
     }
-    public static ScaleMode BestFitScaleMode(List<string> degs)
+    private static ScaleMode BestFitScaleMode(List<string> degs)
     {
         ScaleMode bestFit = ScaleMode.Ionian;
         int strength = 0;

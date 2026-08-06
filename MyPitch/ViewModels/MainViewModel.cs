@@ -48,6 +48,7 @@ public partial class MainViewModel : ViewModelBase
     public bool IsInteractiveMode => GameMode == GameMode.Interactive || GameMode == GameMode.Diatonics;
     public bool IsFolkMode => false;  //GameMode == GameMode.Folk;
     public bool IsChordQualityMode => GameMode == GameMode.ChordQuality;
+    public bool IsChordProgressionMode => GameMode == GameMode.ChordProgression;
 
     public bool HideCircleOfFifths => GameMode == GameMode.ChordQuality;
     public bool GameModeNeedTonicControl => true;
@@ -55,7 +56,14 @@ public partial class MainViewModel : ViewModelBase
     public bool GameModeNeedOctaveControl => GameMode != GameMode.ChordQuality;
     public bool GameModeNeedScaleControl => GameMode != GameMode.ChordQuality;
 
-    public bool ActiveGameModeNeedStrictScaleDegreeAdherence => Game.CurrentGameMode == GameMode.Melody || Game.CurrentGameMode == GameMode.Diatonics || GameMode == GameMode.Melody || GameMode == GameMode.Diatonics;
+    private static bool RequiresStrictScaleDegreeAdherence(GameMode? mode) =>
+        mode is GameMode.Melody
+            or GameMode.Diatonics
+            or GameMode.ChordProgression;
+
+    public bool ActiveGameModeNeedStrictScaleDegreeAdherence =>
+        RequiresStrictScaleDegreeAdherence(Game.CurrentGameMode) ||
+        RequiresStrictScaleDegreeAdherence(GameMode);
 
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => Enum.GetValues<GameMode>();
@@ -66,7 +74,6 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] private int _melodyNoteCount = 3;
     [ObservableProperty] private int _melodyNoteGap = 1;
     [ObservableProperty] private GameMode _gameMode = GameMode.Freeplay;
-    [ObservableProperty] private ScaleMode _scaleMode;
     [ObservableProperty] private bool _useRandomTonic;
     [ObservableProperty] private bool _useRandomOctave;
     [ObservableProperty] private bool _playCadenceOnKeyChange = true;
@@ -83,14 +90,15 @@ public partial class MainViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsChordQualityMode));
         OnPropertyChanged(nameof(HideCircleOfFifths));
         OnPropertyChanged(nameof(GameModeNeedDroneControl));
+        OnPropertyChanged(nameof(IsChordProgressionMode));
         OnPropertyChanged(nameof(GameModeNeedOctaveControl));
         OnPropertyChanged(nameof(GameModeNeedScaleControl));
         OnPropertyChanged(nameof(GameModeNeedTonicControl));
         if (newValue == GameMode.Melody || newValue == GameMode.Diatonics) ConfigureDiatonic();
-        EnsureDegrees();
+        EnsureEnabledDegrees();
     }
 
-    private void EnsureDegrees()
+    private void EnsureEnabledDegrees()
     {
         if (!ActiveGameModeNeedStrictScaleDegreeAdherence)
         {
@@ -100,7 +108,7 @@ public partial class MainViewModel : ViewModelBase
             return;
         }
 
-        var allowed = MusicTheory.DegsForScaleMode(ScaleMode).ToHashSet();
+        var allowed = MusicTheory.DegsForScaleMode(Game.ScaleMode).ToHashSet();
         foreach (var degree in Degrees)
         {
             var enabled = allowed.Contains(degree.Label);
@@ -117,11 +125,10 @@ public partial class MainViewModel : ViewModelBase
 
     private void ConfigureDiatonic()
     {
-        ScaleMode = ScaleMode.Ionian;
-        SetScaleMode(ScaleMode);
+        SetScaleMode(Game.ScaleMode);
     }
 
-    partial void OnScaleModeChanged(ScaleMode value) => SetScaleMode(value);
+    void OnScaleModeChanged(ScaleMode value) => SetScaleMode(value);
 
     private void SetScaleMode(ScaleMode value)
     {
@@ -130,7 +137,7 @@ public partial class MainViewModel : ViewModelBase
         {
             x.IsSelected = degs.Contains(x.Label);
         }
-        EnsureDegrees();
+        EnsureEnabledDegrees();
     }
 
     partial void OnUseRandomTonicChanged(bool value)
@@ -173,6 +180,10 @@ public partial class MainViewModel : ViewModelBase
             qual.PropertyChanged += (_, _) => SyncChordQualities();
         }
         Game.DialogNeeded += GameDialogNeeded;
+        Game.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(Game.ScaleMode)) OnScaleModeChanged(Game.ScaleMode);
+        };
         PushSettings();
         SyncDegrees();
         SyncChordQualities();

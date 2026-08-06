@@ -37,6 +37,7 @@ public partial class Game : ObservableObject
     [ObservableProperty] private bool _isPlaying;
     [ObservableProperty] private AnswerState _answerState;
     [ObservableProperty] private Key _tonic = Key.C;
+    [ObservableProperty] private ScaleMode _scaleMode = ScaleMode.Ionian;
     [ObservableProperty] private int _octave = 4;
     [ObservableProperty] private int _droneVolume = 100;
     [ObservableProperty] private int _interactiveModeRounds = 1;
@@ -278,7 +279,7 @@ public partial class Game : ObservableObject
             var degrees = AllowedDegreeStrings;
             var melodyNoteCount = Settings.MelodyNoteCount;
             if (degrees.Count == 0) return;
-            var melody = GenMelody(degrees, melodyNoteCount);
+            var melody = GenMelody(degrees, melodyNoteCount, ScaleMode);
             foreach (var note in melody)
             {
                 await PlayScaleNote(note, hidden: true, Settings.MelodyNoteGapMs());
@@ -494,14 +495,12 @@ public partial class Game : ObservableObject
             }
             else
             {
-                var scaleMode = BestFitScaleMode(AllowedDegreeStrings);
-
                 statsHeader = MusicTheory
-                    .TriadQuality(quizDeg, scaleMode)?
+                    .TriadQuality(quizDeg, ScaleMode)?
                     .RomanNumeral ?? "";
 
                 mistakenFor = MusicTheory
-                    .TriadQuality(GetDegreeFromCircleOfFifthsIndex(index), scaleMode)?
+                    .TriadQuality(GetDegreeFromCircleOfFifthsIndex(index), ScaleMode)?
                     .RomanNumeral ?? "";
             }
             if (index == quizNoteIndex)
@@ -618,9 +617,8 @@ public partial class Game : ObservableObject
 
     private async Task<string> PlayDiatonicQuizChord(bool hidden)
     {
-        var bestFitScaleMode = BestFitScaleMode(AllowedDegreeStrings);
         var degrees = AllowedDegreeStrings
-            .Intersect(DegsForScaleMode(bestFitScaleMode));
+            .Intersect(DegsForScaleMode(ScaleMode));
 
         return await PlayRandomDegree(degrees, hidden);
     }
@@ -655,8 +653,7 @@ public partial class Game : ObservableObject
         if (CurrentGameMode != GameMode.Diatonics || isCadence)
             return null;
 
-        var scaleMode = BestFitScaleMode(AllowedDegreeStrings);
-        var chord = GetDiatonicChord(Tonic, degree, scaleMode, octave);
+        var chord = GetDiatonicChord(Tonic, degree, ScaleMode, octave);
         if (chord is null) return null;
         return [.. chord];
     }
@@ -752,6 +749,7 @@ public enum GameMode
     Interactive,
     Melody,
     Diatonics,
+    ChordProgression,
     ChordQuality,
     Cycle,
 }
