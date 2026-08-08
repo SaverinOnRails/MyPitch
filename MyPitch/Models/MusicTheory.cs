@@ -149,6 +149,7 @@ public static class MusicTheory
         return result;
     }
 
+
     private static string NextNote(string prevNote, ScaleMode scale, List<string> degs)
     {
         var roll = Random.Shared.Next(100);

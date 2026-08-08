@@ -15,10 +15,6 @@ public class GameModeDisplayConverter : IValueConverter
             {
                 return "Chord Quality";
             }
-            if (mode == GameMode.ChordProgression)
-            {
-                return "Chord Progression";
-            }
         }
         return value;
     }

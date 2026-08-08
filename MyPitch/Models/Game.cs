@@ -749,7 +749,6 @@ public enum GameMode
     Interactive,
     Melody,
     Diatonics,
-    ChordProgression,
     ChordQuality,
     Cycle,
 }

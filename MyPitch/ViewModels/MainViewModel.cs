@@ -48,7 +48,6 @@ public partial class MainViewModel : ViewModelBase
     public bool IsInteractiveMode => GameMode == GameMode.Interactive || GameMode == GameMode.Diatonics;
     public bool IsFolkMode => false;  //GameMode == GameMode.Folk;
     public bool IsChordQualityMode => GameMode == GameMode.ChordQuality;
-    public bool IsChordProgressionMode => GameMode == GameMode.ChordProgression;
 
     public bool HideCircleOfFifths => GameMode == GameMode.ChordQuality;
     public bool GameModeNeedTonicControl => true;
@@ -58,8 +57,7 @@ public partial class MainViewModel : ViewModelBase
 
     private static bool RequiresStrictScaleDegreeAdherence(GameMode? mode) =>
         mode is GameMode.Melody
-            or GameMode.Diatonics
-            or GameMode.ChordProgression;
+            or GameMode.Diatonics;
 
     public bool ActiveGameModeNeedStrictScaleDegreeAdherence =>
         RequiresStrictScaleDegreeAdherence(Game.CurrentGameMode) ||
@@ -90,7 +88,6 @@ public partial class MainViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsChordQualityMode));
         OnPropertyChanged(nameof(HideCircleOfFifths));
         OnPropertyChanged(nameof(GameModeNeedDroneControl));
-        OnPropertyChanged(nameof(IsChordProgressionMode));
         OnPropertyChanged(nameof(GameModeNeedOctaveControl));
         OnPropertyChanged(nameof(GameModeNeedScaleControl));
         OnPropertyChanged(nameof(GameModeNeedTonicControl));
