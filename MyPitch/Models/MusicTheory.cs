@@ -20,7 +20,7 @@ public static class MusicTheory
         "Bflat",
         "B"
     };
-    public static readonly string[] FifthIntervalScaleGraduation = {
+    private static readonly string[] FifthIntervalScaleGraduation = {
         "1",
         "5",
         "2",
@@ -66,7 +66,11 @@ public static class MusicTheory
         Key.C, Key.Dflat, Key.D, Key.Eflat, Key.E, Key.F, Key.Gflat, Key.G, Key.Aflat, Key.A, Key.Bflat, Key.B
     };
 
-    public static string NoteAtDegree(Key tonic, int degree, bool correctForFifths = false)
+    public static string GetDegreeFromCircleOfFifthsIndex(int index) => MusicTheory.FifthIntervalScaleGraduation[index];
+
+    public static int GetIndexFromCircleOfFithsDegree(string degree) => FifthIntervalScaleGraduation.IndexOf(degree);
+
+    private static string NoteAtDegree(Key tonic, int degree, bool correctForFifths = false)
     {
         int tonicIndex = Array.IndexOf(ChromaticScale, tonic.ToString());
         int noteIndex;
@@ -83,8 +87,20 @@ public static class MusicTheory
         return ChromaticScale[noteIndex];
     }
 
+    public static string GetNoteAtDegree(Key Tonic, string degree)
+    {
+        int index = MusicTheory.ChromaticScaleGraduation.IndexOf(degree) + 1;
+        return NoteAtDegree(Tonic, index, false);
+    }
+
+    public static string GetNoteAtCircleOfFifthIndex(Key Tonic, int index)
+    {
+        index++;
+        return NoteAtDegree(Tonic, index, true);
+    }
+
     //zero indexed
-    public static int FifthSegment(Key tonic, string note)
+    public static int GetCircleOfFifthsIndexFromNote(Key tonic, string note)
     {
         int tonicIndex = Array.IndexOf(ChromaticScale, tonic.ToString());
         int targetIndex = Array.IndexOf(ChromaticScale, note);
@@ -119,51 +135,138 @@ public static class MusicTheory
     }
 
 
-    public static List<string> GenMelody(List<string> degs, int noteCount)
+    public static List<string> GenMelody(List<string> degs, int noteCount , ScaleMode mode)
     {
         var result = new List<string>();
-        var bestfit = BestFitScaleMode(degs);
         for (int i = 0; i < noteCount; i++)
         {
             //the first note can be truly random
             if (i == 0)
                 result.Add(degs[Random.Shared.Next(degs.Count)]);
             else
-                result.Add(NextNote(result[i - 1], bestfit, degs));
+                result.Add(NextNote(result[i - 1], mode, degs));
         }
         return result;
     }
+
+
     private static string NextNote(string prevNote, ScaleMode scale, List<string> degs)
     {
         var roll = Random.Shared.Next(100);
-        // Debug.WriteLine(roll);
         string note;
-        if (roll < 20)
+        if (roll < 10)
         {
             note = prevNote;
-            // Debug.WriteLine($"Repeating {note}");
         }
-        if (roll < 60)
+        else if (roll < 60)
         {
             note = Step(prevNote, scale);
-            // Debug.WriteLine($"Stepping to {prevNote} from {note}");
         }
-        else if (roll < 80)
+        else if (roll < 90)
         {
             note = Leap(prevNote, scale);
-            // Debug.WriteLine($"Leaping to {prevNote} from {note}");
         }
         else
         {
             note = degs[Random.Shared.Next(degs.Count)];
-            // Debug.WriteLine($"Random roll {note}");
-
         }
-        // Debug.WriteLine("");
         return degs.Contains(note) ? note : degs[Random.Shared.Next(degs.Count)];
     }
 
-    public static List<int> BuildChord(Key root, Key Tonic, ChordQuality quality)
+    public static (string RomanNumeral, ChordQuality Quality)? TriadQuality(string scaleDegree, ScaleMode scaleMode)
+    {
+
+        var modeData = scaleMode switch
+        {
+            ScaleMode.Ionian => new[]
+            {
+            ("1",  "I",   ChordQuality.Major),
+            ("2",  "ii",  ChordQuality.Minor),
+            ("3",  "iii", ChordQuality.Minor),
+            ("4",  "IV",  ChordQuality.Major),
+            ("5",  "V",   ChordQuality.Major),
+            ("6",  "vi",  ChordQuality.Minor),
+            ("7",  "vii°",ChordQuality.Diminished),
+            },
+
+            ScaleMode.Dorian => new[]
+            {
+            ("1",  "i",   ChordQuality.Minor),
+            ("2",  "ii",  ChordQuality.Minor),
+            ("♭3", "III", ChordQuality.Major),
+            ("4",  "IV",  ChordQuality.Major),
+            ("5",  "v",   ChordQuality.Minor),
+            ("6",  "vi°", ChordQuality.Diminished),
+            ("♭7", "VII", ChordQuality.Major),
+        },
+
+            ScaleMode.Phrygian => new[]
+            {
+            ("1",  "i",   ChordQuality.Minor),
+            ("♭2", "II",  ChordQuality.Major),
+            ("♭3", "III", ChordQuality.Major),
+            ("4",  "iv",  ChordQuality.Minor),
+            ("5",  "v°",  ChordQuality.Diminished),
+            ("♭6", "VI",  ChordQuality.Major),
+            ("♭7", "vii", ChordQuality.Minor),
+        },
+
+            ScaleMode.Lydian => new[]
+            {
+            ("1",  "I",   ChordQuality.Major),
+            ("2",  "II",  ChordQuality.Major),
+            ("3",  "iii", ChordQuality.Minor),
+            ("#4", "iv°", ChordQuality.Diminished),
+            ("5",  "V",   ChordQuality.Major),
+            ("6",  "vi",  ChordQuality.Minor),
+            ("7",  "vii", ChordQuality.Minor),
+        },
+
+            ScaleMode.Mixolydian => new[]
+            {
+            ("1",  "I",   ChordQuality.Major),
+            ("2",  "ii",  ChordQuality.Minor),
+            ("3",  "iii°",ChordQuality.Diminished),
+            ("4",  "IV",  ChordQuality.Major),
+            ("5",  "v",   ChordQuality.Minor),
+            ("6",  "vi",  ChordQuality.Minor),
+            ("♭7", "VII", ChordQuality.Major),
+        },
+
+            ScaleMode.Aeolian => new[]
+            {
+            ("1",  "i",   ChordQuality.Minor),
+            ("2",  "ii°", ChordQuality.Diminished),
+            ("♭3", "III", ChordQuality.Major),
+            ("4",  "iv",  ChordQuality.Minor),
+            ("5",  "v",   ChordQuality.Minor),
+            ("♭6", "VI",  ChordQuality.Major),
+            ("♭7", "VII", ChordQuality.Major),
+        },
+
+            ScaleMode.Locrian => new[]
+            {
+            ("1",  "i°",  ChordQuality.Diminished),
+            ("♭2", "II",  ChordQuality.Major),
+            ("♭3", "iii", ChordQuality.Minor),
+            ("4",  "iv",  ChordQuality.Minor),
+            ("#4", "V",   ChordQuality.Major), // TODO: #4 is not present in standard locrian. This should display flat 5
+            ("♭6", "VI",  ChordQuality.Major),
+            ("♭7", "vii", ChordQuality.Minor),
+        },
+
+            _ => throw new ArgumentOutOfRangeException(nameof(scaleMode))
+        };
+
+        foreach (var chord in modeData)
+        {
+            if (chord.Item1 == scaleDegree)
+                return (chord.Item2, chord.Item3);
+        }
+
+        return null;
+    }
+    public static List<int> BuildChord(Key root, Key Tonic, ChordQuality quality, int? Octave = 4)
     {
         int rootIndex = Array.IndexOf(Keys, root);
         if (rootIndex == -1)
@@ -183,8 +286,18 @@ public static class MusicTheory
         foreach (int interval in intervals)
         {
             var key = Keys[(rootIndex + interval) % Keys.Length];
-            chord.Add(ToMidiNote(Tonic, key.ToString()));
+            chord.Add(ToMidiNote(Tonic, key.ToString(), Octave != null ? Octave.Value : 4));
         }
+        return chord;
+    }
+
+    public static List<int>? GetDiatonicChord(Key tonic, string scaleDegree, ScaleMode scaleMode, int octave)
+    {
+        var triad = TriadQuality(scaleDegree, scaleMode);
+        if (triad is null) return null; //not diatonic
+        var root = MusicTheory.GetNoteAtDegree(tonic, scaleDegree);
+        var rootAsKey = MusicTheory.Keys[Array.IndexOf(MusicTheory.ChromaticScale, root)];
+        var chord = MusicTheory.BuildChord(rootAsKey, tonic, triad.Value.Quality, octave);
         return chord;
     }
     private static string Leap(string prevNote, ScaleMode mode)
@@ -295,11 +408,10 @@ public static class MusicTheory
                     "♭2",
                     "♭3",
                     "4",
-                    "♭5",
+                    "#4", // TODO: #4 is not present in standard locrian. This should display flat 5
                     "♭6",
                     "♭7"
                 },
-            ScaleMode.All => ChromaticScaleGraduation.ToList()
         };
     }
 }
@@ -320,7 +432,6 @@ public enum Key
 }
 public enum ScaleMode
 {
-    All,
     Ionian,
     Dorian,
     Phrygian,

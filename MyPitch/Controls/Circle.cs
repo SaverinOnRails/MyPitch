@@ -9,19 +9,21 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using static MyPitch.PlatformServiceProvider;
+using static MyPitch.Models.MusicTheory;
 
 namespace MyPitch.Controls;
 
 internal class CircleOfFifths : GameInputControl<string>
 {
-    private readonly String[] _noteGraduations = MusicTheory.FifthIntervalScaleGraduation;
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        _toplevel = TopLevel.GetTopLevel(this)!;
+        _toplevel = TopLevel.GetTopLevel(this);
     }
 
     public static double EaseInOutCubic(double t) => t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
+
+    private DisplayMode _displayMode = DisplayMode.Note;
 
     private void OnToplevelRenderFrame(TimeSpan span)
     {
@@ -74,6 +76,8 @@ internal class CircleOfFifths : GameInputControl<string>
     private double _animationRotationAngle;
     private bool _mouseOnRepeatButton = false;
     public static readonly StyledProperty<Models.GameMode> GameModeProperty = AvaloniaProperty.Register<CircleOfFifths, Models.GameMode>(nameof(GameMode));
+    public static readonly StyledProperty<Models.ScaleMode> ScaleModeProperty = AvaloniaProperty.Register<CircleOfFifths, Models.ScaleMode>(nameof(ScaleMode));
+
     public static readonly StyledProperty<int> OctaveProperty = AvaloniaProperty.Register<CircleOfFifths, int>(nameof(Octave));
 
     public int Octave
@@ -86,12 +90,22 @@ internal class CircleOfFifths : GameInputControl<string>
         get => GetValue(GameModeProperty);
         set => SetValue(GameModeProperty, value);
     }
+    public ScaleMode ScaleMode
+    {
+        get => GetValue(ScaleModeProperty);
+        set => SetValue(ScaleModeProperty, value);
+    }
     private void IncludedDegreesChanged(object? sender, PropertyChangedEventArgs e)
     {
         InvalidateVisual(); //This might cause issues being done to rapidly
     }
     private int? _userClickedIndex;
     public static Typeface NotoSansTypeface = new Typeface("avares://MyPitch/Assets/Fonts/#Noto Sans");
+    public static readonly Typeface TimesTypeface = new Typeface(
+        "avares://MyPitch/Assets/Fonts/#Times New Roman",
+        FontStyle.Normal,
+        FontWeight.Bold,
+        FontStretch.Normal);
 
     private Models.Key _displayTonic = Models.Key.C;
 
@@ -102,6 +116,18 @@ internal class CircleOfFifths : GameInputControl<string>
     {
         if (change.Property == GameModeProperty)
         {
+            if (change.NewValue is null) return;
+            var mode = (GameMode)change.NewValue;
+            if (mode == GameMode.Diatonics)
+            {
+                _displayMode = DisplayMode.Chord;
+            }
+            else
+                _displayMode = DisplayMode.Note;
+            InvalidateVisual();
+        }
+        if (change.Property == ScaleModeProperty)
+        {
             InvalidateVisual();
         }
         if (change.Property == TonicProperty)
@@ -109,11 +135,11 @@ internal class CircleOfFifths : GameInputControl<string>
             var oldTonic = (Models.Key?)change.OldValue;
             var newTonic = Tonic;
             if (oldTonic is null || oldTonic == newTonic) return;
-            int oldSegment = MusicTheory.FifthSegment(oldTonic.Value, newTonic.ToString());
+            int oldSegment = GetCircleOfFifthsIndexFromNote(oldTonic.Value, newTonic.ToString());
             var diff = 12 - oldSegment; //number of segments between them when moving clockwise
             if (diff > 6)
             {
-                diff = diff - 12;
+                diff -= 12;
             }
 
             _animationRotationAngleTarget = diff * THIRTY_DEG_RAD;
@@ -132,7 +158,7 @@ internal class CircleOfFifths : GameInputControl<string>
 
         var selectedDegreeIndices = IncludedMultiSelectable
             .Where(p => p.IsSelected)
-            .Select(p => _noteGraduations.IndexOf(p.Label));
+            .Select(p => MusicTheory.GetIndexFromCircleOfFithsDegree(p.Label));
 
         for (int i = 0; i < 12; i++)
         {
@@ -140,7 +166,7 @@ internal class CircleOfFifths : GameInputControl<string>
             DrawSegment(i, angle, outer_radius, center, selectedDegreeIndices, context);
         }
 
-        if (GameMode == GameMode.Interactive || GameMode == GameMode.Melody)
+        if (GameMode == GameMode.Interactive || GameMode == GameMode.Melody || GameMode == GameMode.Diatonics)
         {
             DrawRepeatSymbol(center, outer_radius, context);
         }
@@ -280,7 +306,7 @@ internal class CircleOfFifths : GameInputControl<string>
     {
         double midRadius = (outerRadius + innerRadius) / 2;
         double fontSize = Math.Max(15, (outerRadius - innerRadius) / 2);
-        string note = MusicTheory.NoteAtDegree(_displayTonic, index + 1, correctForFifths: true);
+        string note = GetNoteAtCircleOfFifthIndex(_displayTonic, index);
         string noteDisplay = note.Length > 1 ? note[0] + "♭" : note;
         var brush = new SolidColorBrush(Color.Parse("#76D2DB"));
 
@@ -304,16 +330,29 @@ internal class CircleOfFifths : GameInputControl<string>
             ? Brushes.White
             : new SolidColorBrush(_degreeBrushes[index].Color, isGrayedOut ? 0.1 : 1.0);
 
-        DrawLabel(_noteGraduations[index], PointOnCircle(center, midAngle, midRadius), fontSize, brush, context);
+        string label;
+        bool useTimesTypeface = false;
+        if (_displayMode == DisplayMode.Note)
+        {
+            label = GetDegreeFromCircleOfFifthsIndex(index);
+        }
+        else
+        {
+            var chord = (TriadQuality(GetDegreeFromCircleOfFifthsIndex(index), ScaleMode));
+            if (chord is null) return; //focus on diatonics for now
+            useTimesTypeface = true;
+            label = chord.Value.RomanNumeral;
+        }
+        DrawLabel(label, PointOnCircle(center, midAngle, midRadius), fontSize, brush, context, useTimesTypeface == true ? TimesTypeface : null);
     }
 
-    private void DrawLabel(string text, Point position, double fontSize, IBrush brush, DrawingContext context)
+    private void DrawLabel(string text, Point position, double fontSize, IBrush brush, DrawingContext context, Typeface? typeface = null)
     {
         var formatted = new FormattedText(
             text,
             CultureInfo.CurrentCulture,
             FlowDirection.LeftToRight,
-            NotoSansTypeface,
+            typeface == null ? NotoSansTypeface : typeface.Value,
             fontSize,
             brush);
 
@@ -360,8 +399,17 @@ internal class CircleOfFifths : GameInputControl<string>
         base.OnPointerReleased(e);
         if (_userClickedIndex is not null)
         {
-            var note = MusicTheory.ToMidiNote(Tonic, MusicTheory.NoteAtDegree(Tonic, _userClickedIndex.Value + 1, true), Octave);
-            AudioDriver!.Release(note);
+            if (_displayMode == DisplayMode.Note)
+            {
+                var note = MusicTheory.ToMidiNote(Tonic, GetNoteAtCircleOfFifthIndex(Tonic, _userClickedIndex.Value), Octave);
+                AudioDriver!.Release(note);
+            }
+            else
+            {
+                var chord = GetDiatonicChord(Tonic, GetDegreeFromCircleOfFifthsIndex(_userClickedIndex.Value), ScaleMode, Octave);
+                if (chord is null) return;
+                AudioDriver.ReleaseChord(chord);
+            }
         }
         UserResponse = null;
         _userClickedIndex = null;
@@ -434,8 +482,17 @@ internal class CircleOfFifths : GameInputControl<string>
             {
                 UserResponse = new CircleIndexResponse(index);
             }
-            var note = MusicTheory.ToMidiNote(Tonic, MusicTheory.NoteAtDegree(Tonic, index + 1, true), Octave);
-            AudioDriver.Play(note);
+            if (_displayMode == DisplayMode.Note)
+            {
+                var note = ToMidiNote(Tonic, GetNoteAtCircleOfFifthIndex(Tonic, index), Octave);
+                AudioDriver.Play(note);
+            }
+            else
+            {
+                var chord = GetDiatonicChord(Tonic, GetDegreeFromCircleOfFifthsIndex(index), ScaleMode, Octave);
+                if (chord is null) return;
+                AudioDriver.PlayChord(chord);
+            }
         }
         InvalidateVisual();
     }
@@ -454,4 +511,9 @@ enum MouseButton
 {
     Left,
     Right,
+}
+enum DisplayMode
+{
+    Note,
+    Chord
 }
