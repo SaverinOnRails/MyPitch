@@ -141,4 +141,12 @@ internal class AudioTrackDriver : IAudioDriver
     {
         _synth.NoteOffAll(true);
     }
+
+    public void ReleaseChord(List<int> notes)
+    {
+        foreach (int note in notes)
+        {
+            Release(note);
+        }
+    }
 }
