@@ -78,6 +78,15 @@ internal class CircleOfFifths : GameInputControl<string>
     public static readonly StyledProperty<Models.GameMode> GameModeProperty = AvaloniaProperty.Register<CircleOfFifths, Models.GameMode>(nameof(GameMode));
     public static readonly StyledProperty<Models.ScaleMode> ScaleModeProperty = AvaloniaProperty.Register<CircleOfFifths, Models.ScaleMode>(nameof(ScaleMode));
 
+    public static readonly StyledProperty<int?> MidiPressedIndexProperty =
+        AvaloniaProperty.Register<CircleOfFifths, int?>(
+            nameof(MidiPressedIndex));
+
+    public int? MidiPressedIndex
+    {
+        get => GetValue(MidiPressedIndexProperty);
+        set => SetValue(MidiPressedIndexProperty, value);
+    }
     public static readonly StyledProperty<int> OctaveProperty = AvaloniaProperty.Register<CircleOfFifths, int>(nameof(Octave));
 
     public int Octave
@@ -130,6 +139,10 @@ internal class CircleOfFifths : GameInputControl<string>
         {
             InvalidateVisual();
         }
+	if (change.Property == MidiPressedIndexProperty)
+	{
+	    InvalidateVisual();
+	}
         if (change.Property == TonicProperty)
         {
             var oldTonic = (Models.Key?)change.OldValue;
@@ -205,7 +218,8 @@ internal class CircleOfFifths : GameInputControl<string>
         double endAngle = startAngle + THIRTY_DEG_RAD;
         double midAngle = startAngle + THIRTY_DEG_RAD / 2;
 
-        bool isClicked = _userClickedIndex == index;
+	bool isClicked =
+	    _userClickedIndex == index || MidiPressedIndex == index;
         if (GameResponse is CircleIndexResponse r)
         {
             isClicked = isClicked || (r.Index == index);

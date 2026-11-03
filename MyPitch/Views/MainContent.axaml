@@ -120,7 +120,8 @@
                 RepeatCommand="{Binding Repeat}"
                 ScaleMode="{Binding Game.ScaleMode}"
                 Tonic="{Binding Game.Tonic}"
-                UserResponse="{Binding Game.UserResponse, Mode=TwoWay}" />
+                UserResponse="{Binding Game.UserResponse, Mode=TwoWay}"
+                MidiPressedIndex="{Binding MidiPressedIndex}" />
         </Grid>
         <shadui:Card
             x:Name="Card"
@@ -261,6 +262,17 @@
                     Command="{Binding OpenFoldDatabaseDialog}"
                     Content="Folk Database"
                     IsVisible="{Binding IsFolkMode}" />
+                <ComboBox
+                    shadui:ControlAssist.Label="(Optional) MIDI Keyboard Input"
+		    IsVisible="{Binding ShowMidiInput}"
+                    ItemsSource="{Binding MidiInputDevices}"
+                    SelectedItem="{Binding SelectedMidiInputDevice, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:CompileBindings="False">
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <ComboBox
                     shadui:ControlAssist.Label="Select Scale Mode"
                     IsVisible="{Binding GameModeNeedScaleControl}"

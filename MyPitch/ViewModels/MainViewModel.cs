@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Commons.Music.Midi;
 
 namespace MyPitch.ViewModels;
 
@@ -13,6 +14,9 @@ public partial class MainViewModel : ViewModelBase
 {
     public Game Game { get; } = new();
     public DialogHost? _dialogHost;
+    private IMidiInput? _midiInput;
+    private byte _midiStatus;
+    private int _midiFirstDataByte = -1;
     public List<MultiSelectableItem<string>> Degrees { get; } =
     [
         new() { Label = "1"  },
@@ -54,6 +58,9 @@ public partial class MainViewModel : ViewModelBase
     public bool GameModeNeedDroneControl => GameMode != GameMode.ChordQuality;
     public bool GameModeNeedOctaveControl => GameMode != GameMode.ChordQuality;
     public bool GameModeNeedScaleControl => GameMode != GameMode.ChordQuality;
+    public bool ShowMidiInput =>
+        GameModeNeedScaleControl
+            && !IsWasm;
 
     private static bool RequiresStrictScaleDegreeAdherence(GameMode? mode) =>
         mode is GameMode.Melody
@@ -66,6 +73,11 @@ public partial class MainViewModel : ViewModelBase
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => Enum.GetValues<GameMode>();
     public ScaleMode[] ScaleModes => Enum.GetValues<ScaleMode>();
+    public IMidiPortDetails[] MidiInputDevices =>
+        IsWasm
+            ? Array.Empty<IMidiPortDetails>()
+            : MidiAccessManager.Default.Inputs.ToArray();
+
 
     [ObservableProperty] private bool _wideLayout;
     [ObservableProperty] private bool _shouldSelectAllDegrees = true;
@@ -77,6 +89,8 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] private bool _playCadenceOnKeyChange = true;
     [ObservableProperty] private bool _resolveAfterRound = true;
     [ObservableProperty] private bool _playDrone = true;
+    [ObservableProperty] private IMidiPortDetails? _selectedMidiInputDevice;
+    [ObservableProperty] private int? _midiPressedIndex;
     public bool IsWasm => OperatingSystem.IsBrowser();
 
     partial void OnGameModeChanged(GameMode oldValue, GameMode newValue)
@@ -93,6 +107,7 @@ public partial class MainViewModel : ViewModelBase
         OnPropertyChanged(nameof(GameModeNeedTonicControl));
         if (newValue == GameMode.Melody || newValue == GameMode.Diatonics) ConfigureDiatonic();
         EnsureEnabledDegrees();
+        OnPropertyChanged(nameof(ShowMidiInput));
     }
 
     private void EnsureEnabledDegrees()
@@ -203,6 +218,40 @@ public partial class MainViewModel : ViewModelBase
             deg.IsSelected = deg.IsEnabled;
         }
     }
+
+    async partial void OnSelectedMidiInputDeviceChanged(IMidiPortDetails? value)
+    {
+        try
+        {
+            if (_midiInput is not null)
+            {
+                await _midiInput.CloseAsync();
+                _midiInput = null;
+            }
+
+            if (value is null) return;
+            _midiInput = await MidiAccessManager.Default.OpenInputAsync(value.Id);
+            Console.WriteLine($"Opened MIDI input: {value.Name}");
+
+           _midiStatus = 0;
+           _midiFirstDataByte = -1;
+
+           _midiInput.MessageReceived += (sender, e) =>
+           {
+               for (int i = e.Start; i < e.Start + e.Length; i++)
+               {
+                   ProcessMidiByte(e.Data[i]);
+               //    Console.WriteLine(BitConverter.ToString(e.Data, e.Start, e.Length));
+               }
+           };
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Could not open MIDI input: {ex.Message}");
+        }
+    }
+
     public async Task Repeat()
     {
         await Game.TryRepeatQuizAsync();
@@ -222,6 +271,82 @@ public partial class MainViewModel : ViewModelBase
 
     private void SyncDegrees() => Game.AllowedDegrees = Degrees;
     private void SyncChordQualities() => Game.AllowedChordQualities = ChordQualities;
+
+    private void AnswerMidiNote(int noteNumber)
+    {
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            string note = MusicTheory.ChromaticScale[noteNumber % 12];
+
+            int index = MusicTheory.GetCircleOfFifthsIndexFromNote(
+                Game.Tonic, note);
+	    PlatformServiceProvider.AudioDriver.Play(noteNumber);
+            MidiPressedIndex = index;
+            Game.UserResponse = new CircleIndexResponse(index);
+        });
+    }
+
+    private void ReleaseMidiNote(int noteNumber)
+    {
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            PlatformServiceProvider.AudioDriver.Release(noteNumber);
+
+            string note = MusicTheory.ChromaticScale[noteNumber % 12];
+            int index = MusicTheory.GetCircleOfFifthsIndexFromNote(
+                Game.Tonic, note);
+
+            if (MidiPressedIndex == index)
+            {
+                MidiPressedIndex = null;
+            }
+        });
+    }
+
+private void ProcessMidiByte(byte value)
+{
+        // Timing messages can appear anywhere; skip them.
+        if (value >= 0xF8) return;
+
+        // A status byte starts a message.
+        if ((value & 0x80) != 0)
+        {
+            _midiStatus = value < 0xF0 ? value : (byte)0;
+            _midiFirstDataByte = -1;
+            return;
+        }
+
+        if (_midiStatus == 0) return;
+
+        int messageType = _midiStatus & 0xF0;
+
+        // These message types have one data byte and aren't note presses.
+        if (messageType == 0xC0 || messageType == 0xD0) return;
+
+        if (_midiFirstDataByte == -1)
+        {
+            _midiFirstDataByte = value;
+            return;
+        }
+
+        int noteNumber = _midiFirstDataByte;
+        int velocity = value;
+        _midiFirstDataByte = -1;
+
+        if (messageType == 0x90 && velocity > 0)
+        {
+            AnswerMidiNote(noteNumber);
+        }
+        else if (messageType == 0x80 ||
+                 (messageType == 0x90 && velocity == 0))
+        {
+            ReleaseMidiNote(noteNumber);
+        }
+
+    }
+
+
+
 }
 public partial class MultiSelectableItem<TData> : ObservableObject
 {

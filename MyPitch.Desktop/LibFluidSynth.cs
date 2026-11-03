@@ -115,7 +115,7 @@ public class FluidSynth : IDisposable
         // LibFluidSynth.fluid_settings_setint(_settings, "synth.chorus.active", 1);
         LibFluidSynth.fluid_settings_setint(_settings, "audio.period-size", 1024);
         LibFluidSynth.fluid_settings_setint(_settings, "audio.periods", 8);
-        LibFluidSynth.fluid_settings_setint(_settings, "audio.sample-rate", 44100);
+	LibFluidSynth.fluid_settings_setnum(_settings, "synth.sample-rate", 44100.0);
 
         LibFluidSynth.fluid_settings_setint(_settings, "synth.polyphony", 128);
         LibFluidSynth.fluid_settings_setint(_settings, "synth.reverb.active", 0);
