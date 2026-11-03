@@ -6,6 +6,7 @@
     xmlns:converters="using:MyPitch.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:midi="using:Commons.Music.Midi"
     xmlns:shadui="using:ShadUI"
     xmlns:vm="using:MyPitch.ViewModels"
     d:DesignHeight="450"
@@ -116,12 +117,12 @@
                 GameMode="{Binding GameMode}"
                 GameResponse="{Binding Game.GameResponse}"
                 IncludedMultiSelectable="{Binding Degrees}"
+                MidiPressedIndex="{Binding MidiPressedIndex}"
                 Octave="{Binding Game.Octave}"
                 RepeatCommand="{Binding Repeat}"
                 ScaleMode="{Binding Game.ScaleMode}"
                 Tonic="{Binding Game.Tonic}"
-                UserResponse="{Binding Game.UserResponse, Mode=TwoWay}"
-                MidiPressedIndex="{Binding MidiPressedIndex}" />
+                UserResponse="{Binding Game.UserResponse, Mode=TwoWay}" />
         </Grid>
         <shadui:Card
             x:Name="Card"
@@ -262,17 +263,23 @@
                     Command="{Binding OpenFoldDatabaseDialog}"
                     Content="Folk Database"
                     IsVisible="{Binding IsFolkMode}" />
-                <ComboBox
-                    shadui:ControlAssist.Label="(Optional) MIDI Keyboard Input"
-		    IsVisible="{Binding ShowMidiInput}"
-                    ItemsSource="{Binding MidiInputDevices}"
-                    SelectedItem="{Binding SelectedMidiInputDevice, Mode=TwoWay}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:CompileBindings="False">
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                <StackPanel IsVisible="{Binding ShowMidiInput}" Orientation="Horizontal" Spacing="5">
+                    <ComboBox
+                        shadui:ControlAssist.Label="(Optional) MIDI Keyboard Input"
+                        ItemsSource="{Binding MidiInputDevices}"
+                        SelectedItem="{Binding SelectedMidiInputDevice, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="midi:IMidiPortDetails">
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <!-- <Button -->
+                        <!-- Command="{Binding RefreshMidiDevices}" -->
+                        <!-- Margin="0,25,0,0" -->
+                        <!-- Classes="Secondary" -->
+                        <!-- Content="Refresh" /> -->
+                </StackPanel>
                 <ComboBox
                     shadui:ControlAssist.Label="Select Scale Mode"
                     IsVisible="{Binding GameModeNeedScaleControl}"
@@ -310,9 +317,9 @@
                                     <CheckBox
                                         Margin="0,2"
                                         Content="{Binding Label}"
-                                        IsEnabled="{Binding IsEnabled}"
                                         FontFamily="{StaticResource NotoSans}"
-                                        IsChecked="{Binding IsSelected}" />
+                                        IsChecked="{Binding IsSelected}"
+                                        IsEnabled="{Binding IsEnabled}" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
