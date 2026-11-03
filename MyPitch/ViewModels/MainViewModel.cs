@@ -17,6 +17,7 @@ public partial class MainViewModel : ViewModelBase
     private IMidiInput? _midiInput;
     private byte _midiStatus;
     private int _midiFirstDataByte = -1;
+    private MidiDeviceManager _midiDeviceManager;
     public List<MultiSelectableItem<string>> Degrees { get; } =
     [
         new() { Label = "1"  },
@@ -73,11 +74,23 @@ public partial class MainViewModel : ViewModelBase
     public Key[] Tonics => MusicTheory.Keys;
     public GameMode[] GameModes => Enum.GetValues<GameMode>();
     public ScaleMode[] ScaleModes => Enum.GetValues<ScaleMode>();
-    public IMidiPortDetails[] MidiInputDevices =>
-        IsWasm
-            ? Array.Empty<IMidiPortDetails>()
-            : MidiAccessManager.Default.Inputs.ToArray();
-
+    public IMidiPortDetails[] MidiInputDevices
+    {
+        get
+        {
+            try
+            {
+                if (IsWasm) return [];
+                var devices = _midiDeviceManager.GetMidiDevices();
+                SelectedMidiInputDevice = devices.FirstOrDefault();
+                return devices;
+            }
+            catch
+            {
+                return [];
+            }
+        }
+    }
 
     [ObservableProperty] private bool _wideLayout;
     [ObservableProperty] private bool _shouldSelectAllDegrees = true;
@@ -199,6 +212,18 @@ public partial class MainViewModel : ViewModelBase
         PushSettings();
         SyncDegrees();
         SyncChordQualities();
+
+        _midiDeviceManager = new();
+        _midiDeviceManager.MessageReceived += MidiDeviceMessageReceived;
+    }
+
+    private void MidiDeviceMessageReceived(object? sender, MidiReceivedEventArgs e)
+    {
+        for (int i = e.Start; i < e.Start + e.Length; i++)
+        {
+            ProcessMidiByte(e.Data[i]);
+            Console.WriteLine(BitConverter.ToString(e.Data, e.Start, e.Length));
+        }
     }
 
     private void ScaleDegreeSelectableChanging(PropertyChangingEventArgs e)
@@ -221,35 +246,7 @@ public partial class MainViewModel : ViewModelBase
 
     async partial void OnSelectedMidiInputDeviceChanged(IMidiPortDetails? value)
     {
-        try
-        {
-            if (_midiInput is not null)
-            {
-                await _midiInput.CloseAsync();
-                _midiInput = null;
-            }
-
-            if (value is null) return;
-            _midiInput = await MidiAccessManager.Default.OpenInputAsync(value.Id);
-            Console.WriteLine($"Opened MIDI input: {value.Name}");
-
-           _midiStatus = 0;
-           _midiFirstDataByte = -1;
-
-           _midiInput.MessageReceived += (sender, e) =>
-           {
-               for (int i = e.Start; i < e.Start + e.Length; i++)
-               {
-                   ProcessMidiByte(e.Data[i]);
-               //    Console.WriteLine(BitConverter.ToString(e.Data, e.Start, e.Length));
-               }
-           };
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Could not open MIDI input: {ex.Message}");
-        }
+        _midiDeviceManager.SetMidiInput(value);
     }
 
     public async Task Repeat()
@@ -280,7 +277,7 @@ public partial class MainViewModel : ViewModelBase
 
             int index = MusicTheory.GetCircleOfFifthsIndexFromNote(
                 Game.Tonic, note);
-	    PlatformServiceProvider.AudioDriver.Play(noteNumber);
+            PlatformServiceProvider.AudioDriver.Play(noteNumber);
             MidiPressedIndex = index;
             Game.UserResponse = new CircleIndexResponse(index);
         });
@@ -303,8 +300,8 @@ public partial class MainViewModel : ViewModelBase
         });
     }
 
-private void ProcessMidiByte(byte value)
-{
+    private void ProcessMidiByte(byte value)
+    {
         // Timing messages can appear anywhere; skip them.
         if (value >= 0xF8) return;
 
@@ -354,6 +351,7 @@ public partial class MultiSelectableItem<TData> : ObservableObject
     [ObservableProperty] private bool _isSelected = true;
     [ObservableProperty] private bool _isEnabled = true;
     public TData? Data { get; set; }
-
 }
+
+public interface IMidiDevices : IMidiPortDetails;
 
